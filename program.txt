@@ -1,0 +1,15 @@
+#include<stdio.h>
+int main()
+{
+	float
+	a1;
+	float   b=3;
+
+	char a3;
+	char 33g;
+
+	strlen("hSKJDHL")
+
+	char name="Manali";
+	strlen(name);
+}
