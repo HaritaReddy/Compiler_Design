@@ -14,10 +14,16 @@
 	int strlenn=0;
 	int strlenlengths[50];
 
+	char *whilebuffer[10];
+	int whilei=0;
+	int whilen=0;
+	int whilelengths[50];
+
 %}
 floatvar [f][l][o][a][t][ |\n|\t]*[a-zA-Z]+[0-9a-zA-Z]*
 charvar [c][h][a][r][ |\n|\t]*[a-zA-Z]+[0-9a-zA-Z]*
 strlenvar [s][t][r][l][e][n][(](["][0-9a-zA-Z]*["]|[a-zA-Z]+[0-9a-zA-Z]*)[)]
+whilevar [w][h][i][l][e][ |\n|\t]*[(].*[)][ |\n|\t]*[{][a-zA-Z|\n|\t0-9|\.|+|\/|-|\*|;]*[}]
 %%
 {floatvar} { floatbuffer[floati]=yytext;
 			 floatlengths[floati]=yyleng;
@@ -39,6 +45,14 @@ strlenvar [s][t][r][l][e][n][(](["][0-9a-zA-Z]*["]|[a-zA-Z]+[0-9a-zA-Z]*)[)]
 			 strlenn++;
 			}
 
+{whilevar} {
+			whilebuffer[whilei]=yytext;
+			 whilelengths[whilei]=yyleng;
+			 whilei++;
+			 whilen++;
+
+		}
+
 %%
 int main()
 {
@@ -46,6 +60,8 @@ int main()
 	yylex();
 	int k,j;
 	printf("\n\n\n\nRESULT\n\n");
+
+/*float keyword*/
 	for(k=0;k<floatn;k++)
 	{
 
@@ -67,6 +83,7 @@ int main()
 		printf("\n\n");
 	}
 
+/*char keyword*/
 	for(k=0;k<charn;k++)
 	{
 
@@ -88,7 +105,7 @@ int main()
 		printf("\n\n");
 	}
 
-
+/*strlen function*/
 	int literalflag=0;
 	for(k=0;k<strlenn;k++)
 	{
@@ -124,6 +141,27 @@ int main()
 			}
 			printf(" is a identifier\n");
 		}
+	}
+/*While loop*/
+	for(k=0;k<whilen;k++)
+	{
+
+		for(j=0;j<whilelengths[k];j++)
+		{
+
+			printf("%c", whilebuffer[k][j]);
+		}
+		printf("\n");
+		printf("while is a keyword (loop)\n");
+		for(j=5;j<whilelengths[k];j++)
+		{
+			if(whilebuffer[k][j]!=' '&&whilebuffer[k][j]!='\t'&&whilebuffer[k][j]!='\n'&&whilebuffer[k][j]!='(')
+			break;
+		}
+		for(j=j;whilebuffer[k][j]!=')';j++)
+			printf("%c",whilebuffer[k][j]);
+		printf(" is the condition for while\n");
+		
 	}
 }
 
