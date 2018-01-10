@@ -1,0 +1,88 @@
+TEST CASE 1
+#include<stdio.h>
+int main()
+{
+	float a=9;
+	char aa1=’m’;
+	floatb=7;
+	int i=4;
+	while(a)
+	{
+		a--;
+	}
+	if(i%2==0)
+	{
+		continue;
+	}
+	else
+	{
+		rreturn(0);
+	}
+	return 0;
+}
+
+
+TEST CASE 2
+#include<stdio.h>
+int main()
+{
+	char 8a;
+	float b10=5;
+	char** var="NITK"
+	if(a<0)
+	{
+		while(b10)
+		{
+		b10--;
+		8a='c'+ int(b10);
+		}
+	}
+	else
+	{
+		float a_=10;
+		a_=a_/10;
+	}
+	return 0;
+}
+
+
+TEST CASE 3
+#include<stdio.h>
+#include<string.h>
+int main()
+{
+	float v1AA =strlen("Surathkal") ;
+	char** name="NITK";
+	FLOAT a3;
+	float Aav=strlen(name);
+	v1AA = v1AA + Aav;
+	v1AA= sterlen(name);
+	return 0;
+}
+
+
+
+TEST CASE 4
+#include<stdio.h>
+int main()
+{
+	float a=-3.14;
+	while(a<0)
+	{
+	Float c=4;
+	while(c>0)
+	{
+		c=c-1.0;
+	}
+	a=a+0.5;
+	}
+int ao1=9.0;
+	float a&a, a@;
+	while(ao1--)
+	{
+		ao1=ao1+1;
+		break;
+	}
+	return 0;
+}
+		
