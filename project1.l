@@ -1,4 +1,5 @@
 %{
+	
 	char *floatbuffer[10];
 	int floati=0;
 	int floatn=0;
@@ -9,23 +10,27 @@
 	int charn=0;
 	int charlengths[50];
 
-	char *strlenbuffer[10];
-	int strleni=0;
-	int strlenn=0;
-	int strlenlengths[50];
-
-	char *whilebuffer[10];
-	int whilei=0;
-	int whilen=0;
-	int whilelengths[50];
 
 %}
-floatvar [f][l][o][a][t][ |\n|\t]*[a-zA-Z]+[0-9a-zA-Z]*
-charvar [c][h][a][r][ |\n|\t]*[a-zA-Z]+[0-9a-zA-Z]*
-strlenvar [s][t][r][l][e][n][(](["][0-9a-zA-Z]*["]|[a-zA-Z]+[0-9a-zA-Z]*)[)]
-whilevar [w][h][i][l][e][ |\n|\t]*[(].*[)][ |\n|\t]*[{][a-zA-Z|\n|\t0-9|\.|+|\/|-|\*|;]*[}]
+alpha [a-zA-Z]
+digit [0-9]
+
+floatvar [f][l][o][a][t][ |\n|\t]+[a-zA-Z0-9]+
+charvar [c][h][a][r][ |\n|\t]+[a-zA-Z0-9]+  
+kw ("auto")|("break")|("case")|("const")|("continue")|("main")|("default")|("do")|("double")|("else")|("enum")|("extern")|("for")|("goto")|("if")|("int")|("long")|("register")|("return")|("short")|("signed")|("sizeof")|("static")|("struct")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")|("while")
+whilevar [w][h][i][l][e]
+strvar ["][a-zA-Z0-9]*["]
+id [a-zA-Z][a-zA-Z0-9]*
+wrongid [0-9_][a-zA-Z0-9_]+
+unaryop ("++")|("--")
+op [+\-*%=<>{}()/]
+
+strlenvar [s][t][r][l][e][n][(](["][{digit}|{alpha}]*["]|[{alpha}]+[{digit}|{alpha}]*)[)]
+constant -?(([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
+delimiter [;]
 %%
-{floatvar} { floatbuffer[floati]=yytext;
+{floatvar} { 
+			floatbuffer[floati]=yytext;
 			 floatlengths[floati]=yyleng;
 			 floati++;
 			 floatn++;
@@ -36,32 +41,53 @@ whilevar [w][h][i][l][e][ |\n|\t]*[(].*[)][ |\n|\t]*[{][a-zA-Z|\n|\t0-9|\.|+|\/|
 			 charlengths[chari]=yyleng;
 			 chari++;
 			 charn++;
-			 
 		   }
-
-{strlenvar} {strlenbuffer[strleni]=yytext;
-			 strlenlengths[strleni]=yyleng;
-			 strleni++;
-			 strlenn++;
-			}
-
 {whilevar} {
-			whilebuffer[whilei]=yytext;
-			 whilelengths[whilei]=yyleng;
-			 whilei++;
-			 whilen++;
+			
+			 printf("\n%s is a keyword(loop)\n",yytext);
 
 		}
+{strvar} {
+	printf("\n%s is a string\n",yytext);
+}
+{kw} {
+	printf
+	("\n%s is a keyword\n",yytext);
+}
+{delimiter} {
+	printf("\n%s is the delimiter\n",yytext);
+}
+{unaryop} {
+	printf("\n%s is a unary operator\n",yytext);
+}
+{op} {
+	printf("\n%s is an operator\n",yytext);
+}
+{id} {
+	printf("\n%s is an identifier\n",yytext);
+}
+{wrongid}
+{
+	printf("Wrong Token!\n");
+}
+
+
+{strlenvar} {
+			}
+
+{constant} {
+
+	printf("\n%s is a constant\n",yytext);
+}
 
 %%
 int main()
 {
-	yyin = fopen("program.txt","r");
+	yyin = fopen("testprogram.c","r");
 	yylex();
-	int k,j;
-	printf("\n\n\n\nRESULT\n\n");
-
-/*float keyword*/
+	
+printf("\n\n\n\nRESULT\n\n");
+int k,j;
 	for(k=0;k<floatn;k++)
 	{
 
@@ -72,6 +98,16 @@ int main()
 		}
 		printf("\n");
 		printf("float is a keyword\n");
+		int p;
+		for(p=5;p<floatlengths[k];p++)
+		{
+			if(floatbuffer[k][p]!=' ')
+			break;
+		}
+		if(floatbuffer[k][p]>=48&&floatbuffer[k][p]<=57||floatbuffer[k][p]=='_')
+		printf("Erroneous Identifier\n");
+		else
+		{
 		for(j=5;j<floatlengths[k];j++)
 		{
 			if(floatbuffer[k][j]!=' '&&floatbuffer[k][j]!='\t'&&floatbuffer[k][j]!='\n')
@@ -79,11 +115,11 @@ int main()
 		}
 		for(j=j;j<floatlengths[k];j++)
 			printf("%c",floatbuffer[k][j]);
-		printf(" is an identifier\n");
+		printf(" is a float identifier\n");
 		printf("\n\n");
+		}
 	}
 
-/*char keyword*/
 	for(k=0;k<charn;k++)
 	{
 
@@ -94,6 +130,16 @@ int main()
 		}
 		printf("\n");
 		printf("char is a keyword\n");
+		int p;
+		for(p=4;p<charlengths[k];p++)
+		{
+			if(charbuffer[k][p]!=' ')
+			break;
+		}
+		if(charbuffer[k][p]>=48&&charbuffer[k][p]<=57||charbuffer[k][p]=='_')
+		printf("Erroneous Identifier\n");
+		else
+		{
 		for(j=4;j<charlengths[k];j++)
 		{
 			if(charbuffer[k][j]!=' '&&charbuffer[k][j]!='\t'&&charbuffer[k][j]!='\n')
@@ -101,68 +147,12 @@ int main()
 		}
 		for(j=j;j<charlengths[k];j++)
 			printf("%c",charbuffer[k][j]);
-		printf(" is an identifier\n");
+		printf(" is a char identifier\n");
 		printf("\n\n");
 	}
-
-/*strlen function*/
-	int literalflag=0;
-	for(k=0;k<strlenn;k++)
-	{
-		literalflag=0;
-		for(j=0;j<strlenlengths[k];j++)
-		{
-
-			printf("%c", strlenbuffer[k][j]);
-		}
-		printf("\n");
-		printf("strlen is a function name\n");
-		for(j=7;j<strlenlengths[k];j++)
-		{
-			if(strlenbuffer[k][j]=='"')
-			{
-				literalflag=1;
-				j++;
-				while(strlenbuffer[k][j]!='"')
-				{
-					printf("%c",strlenbuffer[k][j]);
-					j++;
-				}
-				printf(" is a literal\n");
-				
-			}
-			break;
-		}
-		if(literalflag==0)
-		{
-			for(j=7;j<strlenlengths[k]-1;j++)
-			{
-				printf("%c",strlenbuffer[k][j]);
-			}
-			printf(" is a identifier\n");
-		}
 	}
-/*While loop*/
-	for(k=0;k<whilen;k++)
-	{
 
-		for(j=0;j<whilelengths[k];j++)
-		{
 
-			printf("%c", whilebuffer[k][j]);
-		}
-		printf("\n");
-		printf("while is a keyword (loop)\n");
-		for(j=5;j<whilelengths[k];j++)
-		{
-			if(whilebuffer[k][j]!=' '&&whilebuffer[k][j]!='\t'&&whilebuffer[k][j]!='\n'&&whilebuffer[k][j]!='(')
-			break;
-		}
-		for(j=j;whilebuffer[k][j]!=')';j++)
-			printf("%c",whilebuffer[k][j]);
-		printf(" is the condition for while\n");
-		
-	}
 }
 
 int yywrap()
