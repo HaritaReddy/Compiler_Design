@@ -69,6 +69,8 @@ TEST CASE 4
 int main()
 {
 //Test Case 4
+/*This is 
+test case 4 */
 	float a=-3.14;
 	while(a<0)
 	{
@@ -80,7 +82,7 @@ int main()
 	a=a+0.5;
 	}
 int ao1=9.0;
-	float a&a, a@;
+	float a&a;
 	while(ao1--)
 	{
 		ao1=ao1+1;
