@@ -35,7 +35,7 @@ delimiter [;]
 			 floati++;
 			 floatn++;
 			 
-		   }
+		  }
 
 {charvar} { charbuffer[chari]=yytext;
 			 charlengths[chari]=yyleng;
@@ -149,6 +149,7 @@ int k,j;
 			printf("%c",charbuffer[k][j]);
 		printf(" is a char identifier\n");
 		printf("\n\n");
+		//Hi
 	}
 	}
 
