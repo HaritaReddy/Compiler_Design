@@ -1,4 +1,4 @@
-%{
+%{#include<string.h>
 	
 	char *floatbuffer[10];
 	int floati=0;
@@ -15,11 +15,71 @@
 	int charptrn=0;
 	int charptrlengths[50];
 
+	struct node
+	{
+		char name[50];
+		char class[50];
+		struct node* next;
+	} *symtable[53];
+
+	int poscalc(char* name)
+	{
+		int i,pos=0;
+		for(i=0;i<strlen(name);i++)
+		{
+			pos=pos+name[i];
+		}
+		printf("Position calc\n");
+		pos=pos%8;
+		return pos;
+
+	}
+
+	void insert(char* name,char* class)
+	{
+		int pos=poscalc(name);
+		if(symtable[pos]==NULL)
+		{
+			printf("Condition entered\n");
+			symtable[pos]=(struct node*)malloc(sizeof(struct node));
+			strcpy(symtable[pos]->name,name);
+			printf("aa\n");
+
+			strcpy(symtable[pos]->class,class);
+			symtable[pos]->next=NULL;
+			printf("entered first element\n");
+		}
+		else
+		{	
+			int flag=0;
+			struct node* check=symtable[pos];
+			while(check!=NULL)
+			{
+				if(strcmp(check->name,name)==0)
+				{
+				flag=1;
+				break;
+				}
+				check=check->next;
+			}
+			if(flag==1)
+			return;
+			struct node* ptr=(struct node*)malloc(sizeof(struct node));
+			strcpy(ptr->name,symtable[pos]->name);
+			strcpy(ptr->class,symtable[pos]->class);
+			ptr->next=symtable[pos]->next;
+			strcpy(symtable[pos]->name,name);
+			strcpy(symtable[pos]->class,class);
+			symtable[pos]->next=ptr;
+		}
+	}
+
 %}
 alpha [a-zA-Z]
 digit [0-9]
 scomment [/][/].*[\n]
 mcomment [/][*](.*[\n].*)*[*][/]
+preprocessor [#].+
 floatvar [f][l][o][a][t][ |\n|\t]+[a-zA-Z0-9_]+
 charvar [c][h][a][r][ |\n|\t]+[a-zA-Z0-9_]+ 
 floatcap [Ff][Ll][Oo][Aa][Tt][ |\n|\t]+[a-zA-Z0-9_]+
@@ -28,7 +88,6 @@ charptr [c][h][a][r][*][*][ |\n|\t]+[a-zA-Z0-9_]+
 kw ("auto")|("break")|("case")|("const")|("continue")|("main")|("default")|("do")|("double")|("else")|("enum")|("extern")|("for")|("goto")|("if")|("int")|("long")|("register")|("return")|("short")|("signed")|("sizeof")|("static")|("struct")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")|("while")
 whilevar [w][h][i][l][e]
 strvar ["][a-zA-Z0-9]*["]
-function [a-zA-Z][a-zA-Z0-9_]*[(].*[)]
 id [a-zA-Z][a-zA-Z0-9_]*
 wrongid [0-9_][a-zA-Z0-9_]+
 unaryop ("++")|("--")
@@ -43,10 +102,15 @@ delimiter [;]
 %%
 {scomment} {
 	printf("Its a comment : %s\n",yytext);
+	
 }
 
 {mcomment} {
 	printf("Its a comment : %s\n",yytext);
+}
+
+{preprocessor} {
+	printf("Its a preprocessor directive: %s\n",yytext);
 }
 
 {floatvar} { 
@@ -81,8 +145,8 @@ delimiter [;]
 	printf("\n%s is a string\n",yytext);
 }
 {kw} {
-	printf
-	("\n%s is a keyword\n",yytext);
+	printf("\n%s is a keyword\n",yytext);
+	insert(yytext,"keyword");
 }
 {delimiter} {
 	printf("\n%s is the delimiter\n",yytext);
@@ -94,25 +158,7 @@ delimiter [;]
 	printf("\n%s is an operator\n",yytext);
 }
 
-{function} {
-	int i=0;
-	while(yytext[i]!='(')
-	{
-	 printf("%c",yytext[i]);
-	 i++;
-	}
-	printf(" is a function\n");
-	i++;
 
-	printf("Sent parameters : ");
-	while(yytext[i]!=')')
-	{
-		printf("%c",yytext[i]);
-		i++;
-	}
-   printf("\n");
-
-}
 {id} {
 	printf("\n%s is an identifier\n",yytext);
 }
@@ -138,7 +184,7 @@ delimiter [;]
 %%
 int main()
 {
-	yyin = fopen("test1.c","r");
+	yyin = fopen("test_case_1.c","r");
 	yylex();
 	
 printf("\n\n\n\nRESULT\n\n");
@@ -238,6 +284,18 @@ int k,j;
 		printf("\n\n");
 		//Hi
 	}
+	}
+	
+	for(j=0;j<8;j++)
+	{
+		printf("Position: %d\t",j);
+		struct node* ptr=symtable[j];
+		while(ptr!=NULL)
+		{
+			printf("%s\t%s |\t",ptr->name,ptr->class);
+			ptr=ptr->next;
+		}
+		printf("\n");
 	}
 
 }
