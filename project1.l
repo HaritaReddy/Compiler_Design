@@ -29,8 +29,8 @@
 		{
 			pos=pos+name[i];
 		}
-		printf("Position calc\n");
-		pos=pos%8;
+		//printf("Position calc\n");
+		pos=pos%53;
 		return pos;
 
 	}
@@ -40,14 +40,13 @@
 		int pos=poscalc(name);
 		if(symtable[pos]==NULL)
 		{
-			printf("Condition entered\n");
+			//printf("Condition entered\n");
 			symtable[pos]=(struct node*)malloc(sizeof(struct node));
 			strcpy(symtable[pos]->name,name);
-			printf("aa\n");
 
 			strcpy(symtable[pos]->class,class);
 			symtable[pos]->next=NULL;
-			printf("entered first element\n");
+			//printf("entered first element\n");
 		}
 		else
 		{	
@@ -84,19 +83,20 @@ floatvar [f][l][o][a][t][ |\n|\t]+[a-zA-Z0-9_]+
 charvar [c][h][a][r][ |\n|\t]+[a-zA-Z0-9_]+ 
 floatcap [Ff][Ll][Oo][Aa][Tt][ |\n|\t]+[a-zA-Z0-9_]+
 charcap [Cc][Hh][Aa][Rr][ |\n|\t]+[a-zA-Z0-9_]+
-charptr [c][h][a][r][*][*][ |\n|\t]+[a-zA-Z0-9_]+ 
-kw ("auto")|("break")|("case")|("const")|("continue")|("main")|("default")|("do")|("double")|("else")|("enum")|("extern")|("for")|("goto")|("if")|("int")|("long")|("register")|("return")|("short")|("signed")|("sizeof")|("static")|("struct")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")|("while")
+charptr [c][h][a][r][*]+[ |\n|\t]+[a-zA-Z0-9_]+ 
+kw ("float")|("char")|("auto")|("break")|("case")|("const")|("continue")|("main")|("default")|("do")|("double")|("else")|("enum")|("extern")|("for")|("goto")|("if")|("int")|("long")|("register")|("return")|("short")|("signed")|("sizeof")|("static")|("struct")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")|("while")
 whilevar [w][h][i][l][e]
 strvar ["][a-zA-Z0-9]*["]
 id [a-zA-Z][a-zA-Z0-9_]*
 wrongid [0-9_][a-zA-Z0-9_]+
 unaryop ("++")|("--")
-op [+\-*%=<>{}()/]|"=="
+op [+\-*%=<>/]|"=="
+spchar [{}()]
 
 strlenvar [s][t][r][l][e][n][(](["][{digit}|{alpha}]*["]|[{alpha}]+[{digit}|{alpha}]*)[)]
 constant -?(([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
 charconstant [\'].*[\']
-delimiter [;]
+delimiter [;,]
 
 
 %%
@@ -118,6 +118,7 @@ delimiter [;]
 			 floatlengths[floati]=yyleng;
 			 floati++;
 			 floatn++;
+			 insert("float","keyword");
 			 
 		  }
 {floatcap} {
@@ -127,7 +128,11 @@ delimiter [;]
 			 charlengths[chari]=yyleng;
 			 chari++;
 			 charn++;
+			 insert("char","keyword");
+
 		   }
+
+
 {charcap} {
 	printf("Error : %s : Did you mean 'char'?\n",yytext);
 }
@@ -139,29 +144,40 @@ delimiter [;]
 {whilevar} {
 			
 			 printf("\n%s is a keyword(loop)\n",yytext);
-
+			 insert(yytext,"keyword");
 		}
 {strvar} {
 	printf("\n%s is a string\n",yytext);
+	insert(yytext,"string literal");
 }
+
 {kw} {
 	printf("\n%s is a keyword\n",yytext);
 	insert(yytext,"keyword");
 }
+{id} {
+	printf("\n%s is an identifier\n",yytext);
+	insert(yytext,"identifier");
+}
 {delimiter} {
-	printf("\n%s is the delimiter\n",yytext);
+	printf("\n%s is the separator\n",yytext);
+	insert(yytext,"separator");
 }
 {unaryop} {
 	printf("\n%s is a unary operator\n",yytext);
+	insert(yytext,"unary operator");
 }
 {op} {
 	printf("\n%s is an operator\n",yytext);
+	insert(yytext,"binary operator");
+}
+
+{spchar} {
+	printf("\n%s is a special character\n",yytext);
+	insert(yytext,"sp. character");
 }
 
 
-{id} {
-	printf("\n%s is an identifier\n",yytext);
-}
 {wrongid}
 {
 	printf("Wrong Token!\n");
@@ -174,10 +190,12 @@ delimiter [;]
 {constant} {
 
 	printf("\n%s is a constant\n",yytext);
+	insert(yytext,"constant");
 }
 
 {charconstant} {
 	printf("%s is a character constant\n",yytext);
+	insert(yytext,"constant");
 }
 
 
@@ -206,7 +224,7 @@ int k,j;
 			break;
 		}
 		if(floatbuffer[k][p]>=48&&floatbuffer[k][p]<=57||floatbuffer[k][p]=='_')
-		printf("Erroneous Identifier\n");
+		printf("Error: Invalid Identifier\n");
 		else
 		{
 		for(j=5;j<floatlengths[k];j++)
@@ -214,8 +232,16 @@ int k,j;
 			if(floatbuffer[k][j]!=' '&&floatbuffer[k][j]!='\t'&&floatbuffer[k][j]!='\n')
 			break;
 		}
+		char arr[32];
+		int s=0;
 		for(j=j;j<floatlengths[k];j++)
+			{
 			printf("%c",floatbuffer[k][j]);
+			arr[s]=floatbuffer[k][j];
+			s++;
+		}
+		arr[s]='\0';
+		insert(arr,"identifier");
 		printf(" is a float identifier\n");
 		printf("\n\n");
 		}
@@ -238,7 +264,7 @@ int k,j;
 			break;
 		}
 		if(charbuffer[k][p]>=48&&charbuffer[k][p]<=57||charbuffer[k][p]=='_')
-		printf("Erroneous Identifier\n");
+		printf("Error: Invalid Identifier\n");
 		else
 		{
 		for(j=4;j<charlengths[k];j++)
@@ -246,11 +272,19 @@ int k,j;
 			if(charbuffer[k][j]!=' '&&charbuffer[k][j]!='\t'&&charbuffer[k][j]!='\n')
 			break;
 		}
+		char arr[32];
+		int s=0;
 		for(j=j;j<charlengths[k];j++)
+			{
 			printf("%c",charbuffer[k][j]);
+			arr[s]=charbuffer[k][j];
+			s++;
+		}
+		arr[s]='\0';
+		insert(arr,"identifier");
 		printf(" is a char identifier\n");
 		printf("\n\n");
-		//Hi
+		
 	}
 	}
 
@@ -262,6 +296,16 @@ int k,j;
 			printf("%c", charptrbuffer[k][j]);
 		}
 		printf("\n");
+		int starcount=0;
+		for(j=0;j<charptrlengths[k];j++)
+		{
+
+			if(charptrbuffer[k][j]=='*')
+			starcount++;
+		}
+		if(starcount==1)
+		printf("char* is a char pointer\n");
+		else
 		printf("char** is a char pointer\n");
 		int p;
 		for(p=6;p<charptrlengths[k];p++)
@@ -270,7 +314,7 @@ int k,j;
 			break;
 		}
 		if(charptrbuffer[k][p]>=48&&charptrbuffer[k][p]<=57||charptrbuffer[k][p]=='_')
-		printf("Erroneous pointer Identifier\n");
+		printf("Error: Invalid Identifier\n");
 		else
 		{
 		for(j=6;j<charptrlengths[k];j++)
@@ -278,21 +322,33 @@ int k,j;
 			if(charptrbuffer[k][j]!=' '&&charptrbuffer[k][j]!='\t'&&charptrbuffer[k][j]!='\n')
 			break;
 		}
+		char arr[32];
+		int s=0;
 		for(j=j;j<charptrlengths[k];j++)
+			{
 			printf("%c",charptrbuffer[k][j]);
+			arr[s]=charptrbuffer[k][j];
+			s++;
+		}
+		arr[s]='\0';
+		insert(arr,"identifier");
 		printf(" is a char pointer identifier\n");
 		printf("\n\n");
-		//Hi
+		
 	}
 	}
 	
-	for(j=0;j<8;j++)
+	for(j=0;j<53;j++)
 	{
-		printf("Position: %d\t",j);
+		
 		struct node* ptr=symtable[j];
+		if(ptr==NULL)
+		continue;
+		printf("Position: %d\t",j);
 		while(ptr!=NULL)
 		{
-			printf("%s\t%s |\t",ptr->name,ptr->class);
+
+			printf("%s\t\t%s\t |\t",ptr->name,ptr->class);
 			ptr=ptr->next;
 		}
 		printf("\n");
