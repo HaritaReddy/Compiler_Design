@@ -72,17 +72,17 @@ int main()
 /*This is 
 test case 4 */
 	float a=-3.14;
+	float b=-8.0
 	while(a<0)
 	{
 	Float c=4;
 	while(c>0)
 	{
-		c=c-1.0;
+		c=c+5.0*a+b;
 	}
 	a=a+0.5;
 	}
 int ao1=9.0;
-	float a&a;
 	while(ao1--)
 	{
 		ao1=ao1+1;
@@ -91,3 +91,22 @@ int ao1=9.0;
 	return 0;
 }
 		
+TEST CASE 5
+#include<stdio.h>
+#include<math.h>
+
+struct{
+	int count;
+	char a;
+};
+void main()
+{
+	int c;
+	switch(c)
+	{
+		case 1: sizeof(c);	
+				break;
+		case 2: c++;
+				break;
+	}
+}
