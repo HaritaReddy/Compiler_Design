@@ -19,8 +19,9 @@
 	{
 		char name[50];
 		char class[50];
+		int count;
 		struct node* next;
-	} *symtable[53];
+	} *symtable[53],*constable[53];
 
 	int poscalc(char* name)
 	{
@@ -34,19 +35,29 @@
 		return pos;
 
 	}
+	int poscalccons(char* name)
+	{
+		int i,pos=0;
+		for(i=0;i<strlen(name);i++)
+		{
+			pos=pos+name[i];
+		}
+		//printf("Position calc\n");
+		pos=pos%53;
+		return pos;
 
+	}
 	void insert(char* name,char* class)
 	{
 		int pos=poscalc(name);
 		if(symtable[pos]==NULL)
 		{
-			//printf("Condition entered\n");
 			symtable[pos]=(struct node*)malloc(sizeof(struct node));
 			strcpy(symtable[pos]->name,name);
 
 			strcpy(symtable[pos]->class,class);
 			symtable[pos]->next=NULL;
-			//printf("entered first element\n");
+			symtable[pos]->count=1;
 		}
 		else
 		{	
@@ -57,6 +68,7 @@
 				if(strcmp(check->name,name)==0)
 				{
 				flag=1;
+				check->count++;
 				break;
 				}
 				check=check->next;
@@ -66,51 +78,92 @@
 			struct node* ptr=(struct node*)malloc(sizeof(struct node));
 			strcpy(ptr->name,symtable[pos]->name);
 			strcpy(ptr->class,symtable[pos]->class);
+			ptr->count=symtable[pos]->count;
 			ptr->next=symtable[pos]->next;
 			strcpy(symtable[pos]->name,name);
 			strcpy(symtable[pos]->class,class);
 			symtable[pos]->next=ptr;
+			symtable[pos]->count=1;
 		}
 	}
+	void insertincons(char* name,char* class)
+	{
+		int pos=poscalc(name);
+		if(constable[pos]==NULL)
+		{
+			constable[pos]=(struct node*)malloc(sizeof(struct node));
+			strcpy(constable[pos]->name,name);
 
+			strcpy(constable[pos]->class,class);
+			constable[pos]->next=NULL;
+			constable[pos]->count=1;
+		}
+		else
+		{	
+			int flag=0;
+			struct node* check=constable[pos];
+			while(check!=NULL)
+			{
+				if(strcmp(check->name,name)==0)
+				{
+				flag=1;
+				check->count++;
+				break;
+				}
+				check=check->next;
+			}
+			if(flag==1)
+			return;
+			struct node* ptr=(struct node*)malloc(sizeof(struct node));
+			strcpy(ptr->name,constable[pos]->name);
+			strcpy(ptr->class,constable[pos]->class);
+			ptr->count=constable[pos]->count;
+			ptr->next=constable[pos]->next;
+			strcpy(constable[pos]->name,name);
+			strcpy(constable[pos]->class,class);
+			constable[pos]->next=ptr;
+			constable[pos]->count=1;
+		}
+	}
 %}
 alpha [a-zA-Z]
 digit [0-9]
 scomment [/][/].*[\n]
 mcomment [/][*](.*[\n].*)*[*][/]
+charconstant [\'][a-zA-Z][\']
 preprocessor [#].+
 floatvar [f][l][o][a][t][ |\n|\t]+[a-zA-Z0-9_]+
 charvar [c][h][a][r][ |\n|\t]+[a-zA-Z0-9_]+ 
 floatcap [Ff][Ll][Oo][Aa][Tt][ |\n|\t]+[a-zA-Z0-9_]+
 charcap [Cc][Hh][Aa][Rr][ |\n|\t]+[a-zA-Z0-9_]+
 charptr [c][h][a][r][*]+[ |\n|\t]+[a-zA-Z0-9_]+ 
+
 kw ("float")|("char")|("auto")|("break")|("case")|("const")|("continue")|("main")|("default")|("do")|("double")|("else")|("enum")|("extern")|("for")|("goto")|("if")|("int")|("long")|("register")|("return")|("short")|("signed")|("sizeof")|("static")|("struct")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")|("while")
 whilevar [w][h][i][l][e]
 strvar ["][a-zA-Z0-9]*["]
 id [a-zA-Z][a-zA-Z0-9_]*
-wrongid [0-9_][a-zA-Z0-9_]+
+wrongid [0-9_][a-zA-Z0-9_]+|[a-zA-Z0-9]*[\&][a-zA-Z0-9]*
 unaryop ("++")|("--")
 op [+\-*%=<>/]|"=="
 spchar [{}()]
 
 strlenvar [s][t][r][l][e][n][(](["][{digit}|{alpha}]*["]|[{alpha}]+[{digit}|{alpha}]*)[)]
 constant -?(([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
-charconstant [\'].*[\']
 delimiter [;,]
 
 
 %%
 {scomment} {
-	printf("Its a comment : %s\n",yytext);
+	printf("%-20s : Comment\n",yytext);
 	
 }
 
 {mcomment} {
-	printf("Its a comment : %s\n",yytext);
+	printf("%-20s : Comment\n",yytext);
 }
 
 {preprocessor} {
-	printf("Its a preprocessor directive: %s\n",yytext);
+	printf("%-20s : Preprocessor directive: \n",yytext);
 }
 
 {floatvar} { 
@@ -119,7 +172,7 @@ delimiter [;,]
 			 floati++;
 			 floatn++;
 			 insert("float","keyword");
-			 
+			 printf("%s : datatype declaration\n",yytext);
 		  }
 {floatcap} {
 	printf("Error : %s : Did you mean 'float'?\n",yytext);
@@ -129,6 +182,7 @@ delimiter [;,]
 			 chari++;
 			 charn++;
 			 insert("char","keyword");
+			 printf("%s : datatype declaration\n",yytext);
 
 		   }
 
@@ -141,39 +195,45 @@ delimiter [;,]
 			 charptri++;
 			 charptrn++;
 		   }
+{charconstant} {
+	printf("%-20s : character constant\n",yytext);
+	insert(yytext,"constant");
+	insertincons(yytext,"char");
+}
 {whilevar} {
 			
-			 printf("\n%s is a keyword(loop)\n",yytext);
+			 printf("\n%-20s : keyword(loop)\n",yytext);
 			 insert(yytext,"keyword");
 		}
 {strvar} {
-	printf("\n%s is a string\n",yytext);
+	printf("\n%-20s : string\n",yytext);
 	insert(yytext,"string literal");
+	insertincons(yytext,"string");
 }
 
 {kw} {
-	printf("\n%s is a keyword\n",yytext);
+	printf("\n%-20s : keyword\n",yytext);
 	insert(yytext,"keyword");
 }
 {id} {
-	printf("\n%s is an identifier\n",yytext);
+	printf("\n%-20s : identifier\n",yytext);
 	insert(yytext,"identifier");
 }
 {delimiter} {
-	printf("\n%s is the separator\n",yytext);
+	printf("\n%-20s : separator\n",yytext);
 	insert(yytext,"separator");
 }
 {unaryop} {
-	printf("\n%s is a unary operator\n",yytext);
+	printf("\n%-20s : unary operator\n",yytext);
 	insert(yytext,"unary operator");
 }
 {op} {
-	printf("\n%s is an operator\n",yytext);
+	printf("\n%-20s : operator\n",yytext);
 	insert(yytext,"binary operator");
 }
 
 {spchar} {
-	printf("\n%s is a special character\n",yytext);
+	printf("\n%-20s : special character\n",yytext);
 	insert(yytext,"sp. character");
 }
 
@@ -188,21 +248,31 @@ delimiter [;,]
 			}
 
 {constant} {
-
-	printf("\n%s is a constant\n",yytext);
+	int i=0;
+	printf("\n%-20s : constant\n",yytext);
 	insert(yytext,"constant");
+	int isfloat=0;
+	for(i=0;i<yyleng;i++)
+	{
+		if(yytext[i]=='.')
+		{
+			isfloat=1;
+			break;
+		}
+	}
+	if(isfloat==1)
+	insertincons(yytext,"float");
+	else
+	insertincons(yytext,"int");
 }
 
-{charconstant} {
-	printf("%s is a character constant\n",yytext);
-	insert(yytext,"constant");
-}
+
 
 
 %%
 int main()
 {
-	yyin = fopen("test_case_1.c","r");
+	yyin = fopen("program.txt","r");
 	yylex();
 	
 printf("\n\n\n\nRESULT\n\n");
@@ -216,7 +286,7 @@ int k,j;
 			printf("%c", floatbuffer[k][j]);
 		}
 		printf("\n");
-		printf("float is a keyword\n");
+		printf("float : keyword\n");
 		int p;
 		for(p=5;p<floatlengths[k];p++)
 		{
@@ -242,7 +312,7 @@ int k,j;
 		}
 		arr[s]='\0';
 		insert(arr,"identifier");
-		printf(" is a float identifier\n");
+		printf(" : float identifier\n");
 		printf("\n\n");
 		}
 	}
@@ -256,7 +326,7 @@ int k,j;
 			printf("%c", charbuffer[k][j]);
 		}
 		printf("\n");
-		printf("char is a keyword\n");
+		printf("char : keyword\n");
 		int p;
 		for(p=4;p<charlengths[k];p++)
 		{
@@ -282,7 +352,7 @@ int k,j;
 		}
 		arr[s]='\0';
 		insert(arr,"identifier");
-		printf(" is a char identifier\n");
+		printf(" : char identifier\n");
 		printf("\n\n");
 		
 	}
@@ -304,9 +374,9 @@ int k,j;
 			starcount++;
 		}
 		if(starcount==1)
-		printf("char* is a char pointer\n");
+		printf("char* : char pointer\n");
 		else
-		printf("char** is a char pointer\n");
+		printf("char** : char pointer\n");
 		int p;
 		for(p=6;p<charptrlengths[k];p++)
 		{
@@ -332,12 +402,13 @@ int k,j;
 		}
 		arr[s]='\0';
 		insert(arr,"identifier");
-		printf(" is a char pointer identifier\n");
+		printf(" : char pointer identifier\n");
 		printf("\n\n");
 		
 	}
 	}
 	
+	printf("--SYMBOL TABLE--\n");
 	for(j=0;j<53;j++)
 	{
 		
@@ -348,7 +419,23 @@ int k,j;
 		while(ptr!=NULL)
 		{
 
-			printf("%s\t\t%s\t |\t",ptr->name,ptr->class);
+			printf("%-10s %-15s\t\t%-2d|\t",ptr->name,ptr->class,ptr->count);
+			ptr=ptr->next;
+		}
+		printf("\n");
+	}
+	printf("\n\n--CONSTANTS TABLE--\n");
+	for(j=0;j<53;j++)
+	{
+		
+		struct node* ptr=constable[j];
+		if(ptr==NULL)
+		continue;
+		printf("Position: %d\t",j);
+		while(ptr!=NULL)
+		{
+
+			printf("%-10s %-15s\t\t%-2d|\t",ptr->name,ptr->class,ptr->count);
 			ptr=ptr->next;
 		}
 		printf("\n");
