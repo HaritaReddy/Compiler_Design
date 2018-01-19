@@ -1,4 +1,5 @@
-%{#include<string.h>
+%{
+	#include<string.h>
 	
 	char *floatbuffer[10];
 	int floati=0;
@@ -30,7 +31,6 @@
 		{
 			pos=pos+name[i];
 		}
-		//printf("Position calc\n");
 		pos=pos%53;
 		return pos;
 
@@ -42,7 +42,6 @@
 		{
 			pos=pos+name[i];
 		}
-		//printf("Position calc\n");
 		pos=pos%53;
 		return pos;
 
@@ -70,7 +69,7 @@
 				flag=1;
 				check->count++;
 				break;
-				}
+			}
 				check=check->next;
 			}
 			if(flag==1)
@@ -109,7 +108,7 @@
 				flag=1;
 				check->count++;
 				break;
-				}
+			}
 				check=check->next;
 			}
 			if(flag==1)
@@ -125,11 +124,14 @@
 			constable[pos]->count=1;
 		}
 	}
+
+	int commstart=0;
 %}
 alpha [a-zA-Z]
 digit [0-9]
 scomment [/][/].*[\n]
-mcomment [/][*](.*[\n].*)*[*][/]
+mcommentstart [/][*]
+mcommentend [*][/]
 charconstant [\'][a-zA-Z][\']
 preprocessor [#].+
 floatvar [f][l][o][a][t][ |\n|\t]+[a-zA-Z0-9_]+
@@ -137,20 +139,18 @@ charvar [c][h][a][r][ |\n|\t]+[a-zA-Z0-9_]+
 floatcap [Ff][Ll][Oo][Aa][Tt][ |\n|\t]+[a-zA-Z0-9_]+
 charcap [Cc][Hh][Aa][Rr][ |\n|\t]+[a-zA-Z0-9_]+
 charptr [c][h][a][r][*]+[ |\n|\t]+[a-zA-Z0-9_]+ 
-
 kw ("float")|("char")|("auto")|("break")|("case")|("const")|("continue")|("main")|("default")|("do")|("double")|("else")|("enum")|("extern")|("for")|("goto")|("if")|("int")|("long")|("register")|("return")|("short")|("signed")|("sizeof")|("static")|("struct")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")|("while")
 whilevar [w][h][i][l][e]
 strvar ["][a-zA-Z0-9]*["]
 id [a-zA-Z][a-zA-Z0-9_]*
-wrongid [0-9_][a-zA-Z0-9_]+|[a-zA-Z0-9]*[\&][a-zA-Z0-9]*
 unaryop ("++")|("--")
 op [+\-*%=<>/]|"=="
 spchar [{}()]
-
 strlenvar [s][t][r][l][e][n][(](["][{digit}|{alpha}]*["]|[{alpha}]+[{digit}|{alpha}]*)[)]
 constant -?(([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
+wrongid [0-9_][a-zA-Z0-9_]+|[a-zA-Z0-9]*[\&][a-zA-Z0-9]*
 delimiter [;,]
-
+stray [$&`@~]
 
 %%
 {scomment} {
@@ -158,96 +158,124 @@ delimiter [;,]
 	
 }
 
-{mcomment} {
-	printf("%-20s : Comment\n",yytext);
+{mcommentstart} {
+	if(commstart==0)
+	commstart++;
+	
 }
 
+{mcommentend} {
+	if(commstart==1)
+	commstart--;
+	else printf("\nStray symbols found : %s",yytext);
+}
 {preprocessor} {
+
+	if(commstart==0)
 	printf("%-20s : Preprocessor directive: \n",yytext);
 }
 
 {floatvar} { 
+	if(commstart==0){
 			floatbuffer[floati]=yytext;
 			 floatlengths[floati]=yyleng;
 			 floati++;
 			 floatn++;
 			 insert("float","keyword");
 			 printf("%s : datatype declaration\n",yytext);
-		  }
-{floatcap} {
+			}
+		}
+		{floatcap} {
+			if(commstart==0)
 	printf("Error : %s : Did you mean 'float'?\n",yytext);
 }
-{charvar} { charbuffer[chari]=yytext;
+{charvar} { 
+	if(commstart==0){
+			charbuffer[chari]=yytext;
 			 charlengths[chari]=yyleng;
 			 chari++;
 			 charn++;
 			 insert("char","keyword");
 			 printf("%s : datatype declaration\n",yytext);
+			}
+		}
 
-		   }
 
-
-{charcap} {
+		{charcap} {
+			if(commstart==0)
 	printf("Error : %s : Did you mean 'char'?\n",yytext);
 }
-{charptr} { charptrbuffer[charptri]=yytext;
+{charptr} { if(commstart==0){
+			charptrbuffer[charptri]=yytext;
 			 charptrlengths[charptri]=yyleng;
 			 charptri++;
 			 charptrn++;
-		   }
-{charconstant} {
+			}
+		}
+		{charconstant} {
+			if(commstart==0){
 	printf("%-20s : character constant\n",yytext);
 	insert(yytext,"constant");
 	insertincons(yytext,"char");
 }
+}
 {whilevar} {
-			
+	if(commstart==0){
 			 printf("\n%-20s : keyword(loop)\n",yytext);
 			 insert(yytext,"keyword");
+			}
 		}
-{strvar} {
+		{strvar} {
+			if(commstart==0){
 	printf("\n%-20s : string\n",yytext);
 	insert(yytext,"string literal");
 	insertincons(yytext,"string");
 }
+}
 
 {kw} {
+	if(commstart==0){
 	printf("\n%-20s : keyword\n",yytext);
 	insert(yytext,"keyword");
 }
-{id} {
+}
+{id} { if(commstart==0)
+	{
 	printf("\n%-20s : identifier\n",yytext);
 	insert(yytext,"identifier");
 }
+}
 {delimiter} {
+	if(commstart==0){
 	printf("\n%-20s : separator\n",yytext);
 	insert(yytext,"separator");
 }
+}
 {unaryop} {
+	if(commstart==0){
 	printf("\n%-20s : unary operator\n",yytext);
 	insert(yytext,"unary operator");
 }
+}
 {op} {
+	if(commstart==0){
 	printf("\n%-20s : operator\n",yytext);
 	insert(yytext,"binary operator");
 }
+}
 
 {spchar} {
+	if(commstart==0){
 	printf("\n%-20s : special character\n",yytext);
 	insert(yytext,"sp. character");
 }
-
-
-{wrongid}
-{
-	printf("Wrong Token!\n");
 }
 
-
 {strlenvar} {
-			}
+}
 
 {constant} {
+	if(commstart==0){
 	int i=0;
 	printf("\n%-20s : constant\n",yytext);
 	insert(yytext,"constant");
@@ -266,6 +294,15 @@ delimiter [;,]
 	insertincons(yytext,"int");
 }
 
+}
+
+{wrongid} {	if(commstart==0)
+	printf("%s  : Invalid identifer\n",yytext);
+}
+
+{stray} {
+	printf("%s : Stray character\n",yytext);
+}
 
 
 
@@ -277,6 +314,11 @@ int main()
 	
 printf("\n\n\n\nRESULT\n\n");
 int k,j;
+
+if(commstart==1)
+{
+		printf("\nError : Unterminated Comment\n\n");
+	}
 	for(k=0;k<floatn;k++)
 	{
 
@@ -305,7 +347,7 @@ int k,j;
 		char arr[32];
 		int s=0;
 		for(j=j;j<floatlengths[k];j++)
-			{
+		{
 			printf("%c",floatbuffer[k][j]);
 			arr[s]=floatbuffer[k][j];
 			s++;
@@ -314,8 +356,8 @@ int k,j;
 		insert(arr,"identifier");
 		printf(" : float identifier\n");
 		printf("\n\n");
-		}
 	}
+}
 
 	for(k=0;k<charn;k++)
 	{
@@ -345,7 +387,7 @@ int k,j;
 		char arr[32];
 		int s=0;
 		for(j=j;j<charlengths[k];j++)
-			{
+		{
 			printf("%c",charbuffer[k][j]);
 			arr[s]=charbuffer[k][j];
 			s++;
@@ -356,7 +398,7 @@ int k,j;
 		printf("\n\n");
 		
 	}
-	}
+}
 
 	for(k=0;k<charptrn;k++)
 	{
@@ -395,7 +437,7 @@ int k,j;
 		char arr[32];
 		int s=0;
 		for(j=j;j<charptrlengths[k];j++)
-			{
+		{
 			printf("%c",charptrbuffer[k][j]);
 			arr[s]=charptrbuffer[k][j];
 			s++;
@@ -406,8 +448,8 @@ int k,j;
 		printf("\n\n");
 		
 	}
-	}
-	
+}
+
 	printf("--SYMBOL TABLE--\n");
 	for(j=0;j<53;j++)
 	{
