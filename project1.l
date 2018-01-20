@@ -148,7 +148,7 @@ op [+\-*%=<>/]|"=="
 spchar [{}()]
 strlenvar [s][t][r][l][e][n][(](["][{digit}|{alpha}]*["]|[{alpha}]+[{digit}|{alpha}]*)[)]
 constant -?(([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
-wrongid [0-9_][a-zA-Z0-9_]+|[a-zA-Z0-9]*[\&][a-zA-Z0-9]*
+wrongid [0-9_][a-zA-Z0-9_]+
 delimiter [;,]
 stray [$&`@~]
 
@@ -297,7 +297,9 @@ stray [$&`@~]
 }
 
 {wrongid} {	if(commstart==0)
-	printf("%s  : Invalid identifer\n",yytext);
+	
+		printf("%s  : Invalid identifer\n",yytext);
+	
 }
 
 {stray} {
@@ -309,7 +311,7 @@ stray [$&`@~]
 %%
 int main()
 {
-	yyin = fopen("test_case.txt","r");
+	yyin = fopen("program.txt","r");
 	yylex();
 	
 printf("\n\n\n\nRESULT\n\n");

@@ -3,7 +3,7 @@ TEST CASE 1
 int main()
 {
 	float a=9;
-	char aa1=’m’;
+	char aa1='m';
 	floatb=7;
 	int i=4;
 	while(a)
