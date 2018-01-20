@@ -1,6 +1,6 @@
 %{
 	#include<string.h>
-	
+	/* Buffers for storing float, char, char pointers declarations */
 	char *floatbuffer[10];
 	int floati=0;
 	int floatn=0;
@@ -15,7 +15,7 @@
 	int charptri=0;
 	int charptrn=0;
 	int charptrlengths[50];
-
+	/* Structure for implementing symbol and constant table */
 	struct node
 	{
 		char name[50];
@@ -24,32 +24,32 @@
 		struct node* next;
 	} *symtable[53],*constable[53];
 
-	int poscalc(char* name)
+	int poscalc(char* name) //Calculates position of token in symbol table( hash function)
+	{ 
+		int i,pos=0;
+		for(i=0;i<strlen(name);i++)
+		{
+			pos=pos+name[i]; //ASCII values of chacacters added
+		}
+		pos=pos%53;
+		return pos; //returns hash value
+
+	}
+	int poscalccons(char* name) //Calculates position of constant in constant table( hash function)
 	{
 		int i,pos=0;
 		for(i=0;i<strlen(name);i++)
 		{
-			pos=pos+name[i];
+			pos=pos+name[i]; //ASCII values of chacacters added
 		}
 		pos=pos%53;
-		return pos;
+		return pos; //returns hash value
 
 	}
-	int poscalccons(char* name)
-	{
-		int i,pos=0;
-		for(i=0;i<strlen(name);i++)
-		{
-			pos=pos+name[i];
-		}
-		pos=pos%53;
-		return pos;
-
-	}
-	void insert(char* name,char* class)
+	void insert(char* name,char* class) //Inserts the token in symbol table
 	{
 		int pos=poscalc(name);
-		if(symtable[pos]==NULL)
+		if(symtable[pos]==NULL) //If there is no element already at that index
 		{
 			symtable[pos]=(struct node*)malloc(sizeof(struct node));
 			strcpy(symtable[pos]->name,name);
@@ -58,13 +58,13 @@
 			symtable[pos]->next=NULL;
 			symtable[pos]->count=1;
 		}
-		else
+		else //Chaining is required
 		{	
 			int flag=0;
 			struct node* check=symtable[pos];
 			while(check!=NULL)
 			{
-				if(strcmp(check->name,name)==0)
+				if(strcmp(check->name,name)==0) //If that token already exists, increments count
 				{
 				flag=1;
 				check->count++;
@@ -85,10 +85,10 @@
 			symtable[pos]->count=1;
 		}
 	}
-	void insertincons(char* name,char* class)
+	void insertincons(char* name,char* class) //Inserts token into constant table
 	{
 		int pos=poscalc(name);
-		if(constable[pos]==NULL)
+		if(constable[pos]==NULL) //If there is no element already at that index
 		{
 			constable[pos]=(struct node*)malloc(sizeof(struct node));
 			strcpy(constable[pos]->name,name);
@@ -97,13 +97,13 @@
 			constable[pos]->next=NULL;
 			constable[pos]->count=1;
 		}
-		else
+		else //Chaining is required
 		{	
 			int flag=0;
 			struct node* check=constable[pos];
 			while(check!=NULL)
 			{
-				if(strcmp(check->name,name)==0)
+				if(strcmp(check->name,name)==0) //If that constant already exists, increments count
 				{
 				flag=1;
 				check->count++;
@@ -125,7 +125,7 @@
 		}
 	}
 
-	int commstart=0;
+	int commstart=0; //For keeping track of multiline comments and checking if they have ended properly
 %}
 alpha [a-zA-Z]
 digit [0-9]
@@ -167,7 +167,7 @@ stray [$&`@~]
 {mcommentend} {
 	if(commstart==1)
 	commstart--;
-	else printf("\nStray symbols found : %s",yytext);
+	else printf("\nStray symbols found : %s",yytext); 
 }
 {preprocessor} {
 
@@ -309,7 +309,7 @@ stray [$&`@~]
 %%
 int main()
 {
-	yyin = fopen("program.txt","r");
+	yyin = fopen("test_case.txt","r");
 	yylex();
 	
 printf("\n\n\n\nRESULT\n\n");
@@ -317,7 +317,7 @@ int k,j;
 
 if(commstart==1)
 {
-		printf("\nError : Unterminated Comment\n\n");
+		printf("\nError : Unterminated Comment\n\n"); // The multi line comment hasn't been terminated
 	}
 	for(k=0;k<floatn;k++)
 	{
@@ -336,7 +336,7 @@ if(commstart==1)
 			break;
 		}
 		if(floatbuffer[k][p]>=48&&floatbuffer[k][p]<=57||floatbuffer[k][p]=='_')
-		printf("Error: Invalid Identifier\n");
+		printf("Error: Invalid Identifier\n"); //Starting character of identifier should be alphabet
 		else
 		{
 		for(j=5;j<floatlengths[k];j++)
@@ -376,7 +376,7 @@ if(commstart==1)
 			break;
 		}
 		if(charbuffer[k][p]>=48&&charbuffer[k][p]<=57||charbuffer[k][p]=='_')
-		printf("Error: Invalid Identifier\n");
+		printf("Error: Invalid Identifier\n"); //Starting character of identifier should be alphabet
 		else
 		{
 		for(j=4;j<charlengths[k];j++)
@@ -426,7 +426,7 @@ if(commstart==1)
 			break;
 		}
 		if(charptrbuffer[k][p]>=48&&charptrbuffer[k][p]<=57||charptrbuffer[k][p]=='_')
-		printf("Error: Invalid Identifier\n");
+		printf("Error: Invalid Identifier\n"); //Starting character of identifier should be alphabet
 		else
 		{
 		for(j=6;j<charptrlengths[k];j++)
@@ -450,7 +450,7 @@ if(commstart==1)
 	}
 }
 
-	printf("--SYMBOL TABLE--\n");
+	printf("--SYMBOL TABLE--\n"); //Printing Symbol Table
 	for(j=0;j<53;j++)
 	{
 		
@@ -466,7 +466,7 @@ if(commstart==1)
 		}
 		printf("\n");
 	}
-	printf("\n\n--CONSTANTS TABLE--\n");
+	printf("\n\n--CONSTANTS TABLE--\n"); //Printing Constant Table
 	for(j=0;j<53;j++)
 	{
 		
