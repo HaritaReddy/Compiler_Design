@@ -1,0 +1,21 @@
+#include<stdio.h>
+int main()
+{
+	float a=9;
+	char aa1='m';
+	floatb=7;
+	int i=4;
+	while(a)
+	{
+		a--;
+	}
+	if(i%2==0)
+	{
+		continue;
+	}
+	else
+	{
+		rreturn(0);
+	}
+	return 0;
+}
