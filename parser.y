@@ -7,10 +7,11 @@
 %%
 ED: whileloop { printf("WHILE LOOP\n ");}
 ;
-whileloop : WHILE '(' E ')' '{' statement '}'
+whileloop : WHILE '(' E ')' '{' statement ';' '}'
+|WHILE '(' statement ')' '{' statement ';' '}'
 ;
 
-statement : ID'='E';' { printf("Statement\n ");}
+statement : ID'='E { printf("Statement\n ");}
 ;
 
 E : E'+'E {printf("Addition: %s  %s\n",$1,$3);}
@@ -30,6 +31,7 @@ int main()
 {
 	printf("Enter Expression:");
 	//yylex();
+
     yyparse();
     return 0;
 }
