@@ -11,7 +11,7 @@ ID {letter}({letter}|{digit})*
 NUM {digit}+
 
 %%
-[\n\t ] ;
+[\n\t ] ;   //ignore spaces, tabs,newlines
 {WHILE} {return WHILE;}
 {ID} {yylval = strdup(yytext);
 return ID;}
