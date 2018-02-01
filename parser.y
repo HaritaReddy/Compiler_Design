@@ -5,8 +5,11 @@
 	#include<stdio.h>
 %}
 %%
-ED:E { printf("Valid Expression\n ");}
+ED:statement { printf("Valid statement\n ");}
 ;
+statement : ID'='E';' { printf("Statement\n ");}
+;
+
 E : E'+'E {printf("Addition: %s  %s\n",$1,$3);}
 |E'-'E {printf("s: %s  %s\n",$1,$3);}
 |E'*'E {printf("m: %s  %s\n",$1,$3);}
