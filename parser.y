@@ -1,25 +1,25 @@
-%token ID NUM OP
+%token ID NUM
+%left '+' '-'
+%left '*' '/'
 %{
 	#include<stdio.h>
 %}
 %%
 ED:E { printf("Valid Expression\n ");}
 ;
-E : E OP E {printf("Addition: %s %s %s\n",$1,$2,$3);}
-|E'-'E
-|E'*'E
-|E'/'E
+E : E'+'E {printf("Addition: %s  %s\n",$1,$3);}
+|E'-'E {printf("s: %s  %s\n",$1,$3);}
+|E'*'E {printf("m: %s  %s\n",$1,$3);}
+|E'/'E {printf("d: %s  %s\n",$1,$3);}
 |'('E')'
 |ID 
 |NUM
 ;
 %%
-
 void yyerror()
 {
 	printf("Invalid Expression\n");
 }
-
 int main()
 {
 	printf("Enter Expression:");
@@ -27,4 +27,3 @@ int main()
     yyparse();
     return 0;
 }
-
