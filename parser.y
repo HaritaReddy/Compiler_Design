@@ -1,12 +1,15 @@
-%token ID NUM
+%token ID NUM WHILE
 %left '+' '-'
 %left '*' '/'
 %{
 	#include<stdio.h>
 %}
 %%
-ED:statement { printf("Valid statement\n ");}
+ED: whileloop { printf("WHILE LOOP\n ");}
 ;
+whileloop : WHILE '(' E ')' '{' statement '}'
+;
+
 statement : ID'='E';' { printf("Statement\n ");}
 ;
 
