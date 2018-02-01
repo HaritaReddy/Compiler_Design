@@ -11,13 +11,12 @@ ID {letter}({letter}|{digit})*
 NUM {digit}+
 
 %%
+[\n\t ] ;
 {WHILE} {return WHILE;}
 {ID} {yylval = strdup(yytext);
 return ID;}
 {NUM} {yylval=strdup(yytext);
    return NUM;}
 . return yytext[0];
-\n return 0;
+
 %%  
-
-
