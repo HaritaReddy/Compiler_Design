@@ -3,3 +3,9 @@
 Roll Numbers: 15CO217, 15CO214
 
 Lab Batch: Thursday
+
+Note: while(expression)
+      {
+        statement1
+        statement2
+      }
