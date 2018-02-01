@@ -18,6 +18,7 @@ ED: whileloop { printf("WHILE LOOP\n ");}
 ;
 whileloop : WHILE '(' E ')' '{' statement ';' '}'
 |WHILE '(' statement ')' '{' statement ';' '}'
+|WHILE '(' ')' '{' statement ';' '}'
 ;
 
 statement : statement ';' F
