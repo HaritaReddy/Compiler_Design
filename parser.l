@@ -6,10 +6,12 @@
 
 letter [a-zA-Z]
 digit [0-9]
+WHILE "while"
 ID {letter}({letter}|{digit})*
 NUM {digit}+
 
 %%
+{WHILE} {return WHILE;}
 {ID} {yylval = strdup(yytext);
 return ID;}
 {NUM} {yylval=strdup(yytext);
