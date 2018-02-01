@@ -8,12 +8,12 @@ struct treenode{
 }tree[10];
 %}
 
-%token ID NUM WHILE
+%token ID NUM WHILE DEC CHARCONST
 %left '+' '-'
 %left '*' '/'
 
-
 %%
+
 ED: whileloop { printf("WHILE LOOP\n ");}
 ;
 whileloop : WHILE '(' E ')' '{' statement ';' '}'
@@ -25,7 +25,8 @@ statement : statement ';' F
 ;
 
 F:ID'='E
-|  { printf("Statement\n "); }
+| DEC ID
+| DEC ID'='E { printf("Statement\n "); }
 ;
 
 E : E'+'E {printf("Addition: %s  %s\n",$1,$3); }
@@ -35,6 +36,7 @@ E : E'+'E {printf("Addition: %s  %s\n",$1,$3); }
 |'('E')'
 |ID 
 |NUM
+|CHARCONST
 ;
 %%
 #include <stdio.h>
