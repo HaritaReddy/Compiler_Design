@@ -4,7 +4,7 @@ INPUT:
 
 #include<stdio.h>
 
-main()
+int main()
 {
 	int a=5;
 	int b=5;
@@ -18,3 +18,59 @@ main()
 OUTPUT:
 
 Parsing Successfully Completed (No error)
+---------------------------------------------------------------------------------------------------------------
+
+TEST CASE 2:
+
+INPUT:
+
+#include<stdio.h>
+
+int main()
+{
+	//This is test case 2 of the project
+   float f;
+   f=0.19;
+   
+   char a='m';
+   a=a+5
+   
+   f=a*0.5;
+}
+
+OUTPUT:
+
+Parsing unsuccessful due to syntax error.
+-----------------------------------------------------------------------------------------------------------------
+
+TEST CASE 3:
+
+INPUT:
+
+#include<stdio.h>
+
+struct node
+{
+	int var;
+	char c;
+	float f;
+}
+
+int main()
+{
+	int a=10;
+	
+	while(a)
+	{
+	 a=a-1;
+	 if(a==5)
+	   break;
+	}
+	
+	return (0);
+}
+
+OUTPUT:
+
+Parsing Successfully Completed (No error)
+-------------------------------------------------------------------------------------------------------------------
