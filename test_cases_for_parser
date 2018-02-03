@@ -74,3 +74,43 @@ OUTPUT:
 
 Parsing Successfully Completed (No error)
 -------------------------------------------------------------------------------------------------------------------
+
+TEST CASE 4:
+
+INPUT:
+
+#include<stdio.h>
+
+int main()
+{
+	int a;
+	while()
+	{
+	a++;
+	}
+	
+	return (0);
+}
+
+OUTPUT:
+
+Parsing Unsuccessful due to Syntax Error
+-------------------------------------------------------------------------------------------------------------------
+TEST CASE 5:
+
+INPUT:
+
+#include<stdio.h>
+
+int main()
+{
+	int a=0;
+	int b=2;
+	int c=6;
+	c=a+*b;
+}
+
+OUTPUT:
+
+Parsing Unsuccessful due to Syntax Error
+-------------------------------------------------------------------------------------------------------------------
