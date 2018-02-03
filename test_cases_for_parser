@@ -8,9 +8,10 @@ int main()
 {
 	int a=5;
 	int b=5;
+	int d=9;
 	while(a==b)
 	{
-	a=a+b;
+	a=a+b*d;
 	b=b-a;
 	}
 }
