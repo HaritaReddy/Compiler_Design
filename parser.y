@@ -8,7 +8,7 @@ struct treenode{
 }tree[10];
 %}
 
-%token ID NUM WHILE DEC CHARCONST
+%token ID NUM WHILE DEC CHARCONST COMPARE
 %left '+' '-'
 %left '*' '/'
 
@@ -18,7 +18,7 @@ ED: whileloop { printf("WHILE LOOP\n ");}
 ;
 whileloop : WHILE '(' E ')' '{' statement ';' '}'
 |WHILE '(' statement ')' '{' statement ';' '}'
-|WHILE '(' ')' '{' statement ';' '}'
+|WHILE '(' E COMPARE E ')' '{' statement ';' '}' {printf("Comparison inside while\n");}
 ;
 
 statement : statement ';' F
@@ -31,9 +31,9 @@ F:ID'='E
 ;
 
 E : E'+'E {printf("Addition: %s  %s\n",$1,$3); }
-|E'-'E {printf("s: %s  %s\n",$1,$3);}
-|E'*'E {printf("m: %s  %s\n",$1,$3);}
-|E'/'E {printf("d: %s  %s\n",$1,$3);}
+|E'-'E {printf("Subtraction: %s  %s\n",$1,$3);}
+|E'*'E {printf("Multiplication: %s  %s\n",$1,$3);}
+|E'/'E {printf("Division: %s  %s\n",$1,$3);}
 |'('E')'
 |ID 
 |NUM
@@ -49,7 +49,7 @@ extern FILE *yyin;
 
 main() {
 	// open a file handle to a particular file:
-	FILE *myfile = fopen("test.txt", "r");
+	FILE *myfile = fopen("program.txt", "r");
 	// make sure it is valid:
 	
 	// set lex to read from it instead of defaulting to STDIN:
@@ -62,6 +62,6 @@ main() {
 	
 }
 
-void yyerror(char *s) {
+yyerror(char *s) {
 	printf("invalid\n");
 }

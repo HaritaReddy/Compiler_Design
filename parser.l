@@ -11,7 +11,7 @@ DEC ("float")|("char")|("int")
 ID [a-zA-Z][a-zA-Z0-9_]*
 NUM {digit}+
 CHARCONST [\'][a-zA-Z][\']
-
+COMPARE [<>]|"<="|">="|"=="
 
 
 %%
@@ -23,6 +23,7 @@ return ID;}
 {NUM} {yylval=strdup(yytext);
    return NUM;}
 {CHARCONST} {return CHARCONST;}
+{COMPARE} {return COMPARE;}
 . return yytext[0];
 
 %%  
