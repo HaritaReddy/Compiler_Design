@@ -8,18 +8,25 @@ struct treenode{
 }tree[10];
 %}
 
-%token ID NUM WHILE DEC CHARCONST COMPARE
+%token ID NUM WHILE DEC CHARCONST COMPARE PREPRO
 %left '+' '-'
 %left '*' '/'
 
 %%
-
-ED: whileloop { printf("WHILE LOOP\n ");}
+ED: program { printf("Program Started\n"); }
 ;
+
+program : PREPRO whileloop
+| whileloop  
+;
+
+
 whileloop : WHILE '(' E ')' '{' statement ';' '}'
 |WHILE '(' statement ')' '{' statement ';' '}'
 |WHILE '(' E COMPARE E ')' '{' statement ';' '}' {printf("Comparison inside while\n");}
 ;
+
+
 
 statement : statement ';' F
 |F

@@ -1,5 +1,7 @@
 
-	while(a==b)
+main()
+{
+while(a==b)
 	{
 	int a=5;
 	int b=5;
@@ -7,3 +9,4 @@
 	a=a+b*d;
 	b=b-a;
 	}
+}

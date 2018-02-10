@@ -50,7 +50,8 @@ extern int yydebug;
     WHILE = 260,
     DEC = 261,
     CHARCONST = 262,
-    COMPARE = 263
+    COMPARE = 263,
+    PREPRO = 264
   };
 #endif
 /* Tokens.  */
@@ -60,6 +61,7 @@ extern int yydebug;
 #define DEC 261
 #define CHARCONST 262
 #define COMPARE 263
+#define PREPRO 264
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
