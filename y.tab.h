@@ -51,7 +51,10 @@ extern int yydebug;
     DEC = 261,
     CHARCONST = 262,
     COMPARE = 263,
-    PREPRO = 264
+    PREPRO = 264,
+    MAIN = 265,
+    INT = 266,
+    RETURN = 267
   };
 #endif
 /* Tokens.  */
@@ -62,6 +65,9 @@ extern int yydebug;
 #define CHARCONST 262
 #define COMPARE 263
 #define PREPRO 264
+#define MAIN 265
+#define INT 266
+#define RETURN 267
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

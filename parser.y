@@ -8,7 +8,7 @@ struct treenode{
 }tree[10];
 %}
 
-%token ID NUM WHILE DEC CHARCONST COMPARE PREPRO
+%token ID NUM WHILE DEC CHARCONST COMPARE PREPRO MAIN INT RETURN
 %left '+' '-'
 %left '*' '/'
 
@@ -16,25 +16,39 @@ struct treenode{
 ED: program { printf("Program Started\n"); }
 ;
 
-program : PREPRO whileloop
-| whileloop  
+program : PREPRO main 
+|main
+;
+
+main: INT MAIN '(' ')' '{' code return '}' { printf("Main Loop\n");}
+;
+
+return: RETURN '(' NUM ')' ';'
+|RETURN  ';'
+|RETURN  NUM ';'
+|
+;
+
+code: code A
+|
+; 
+
+A: whileloop 
+|statement ';'
+;
+
+whileloop : WHILE '(' E ')' '{' code '}'
+|WHILE '(' statement ')' '{' code '}'
+|WHILE '(' E COMPARE E ')' '{' code '}' {printf("Comparison inside while\n");}
 ;
 
 
-whileloop : WHILE '(' E ')' '{' statement ';' '}'
-|WHILE '(' statement ')' '{' statement ';' '}'
-|WHILE '(' E COMPARE E ')' '{' statement ';' '}' {printf("Comparison inside while\n");}
-;
 
-
-
-statement : statement ';' F
-|F
-;
-
-F:ID'='E
+statement :ID'='E
 | DEC ID
 | DEC ID'='E { printf("Statement\n "); }
+| INT ID
+| INT ID'='E { printf("Statement\n "); }
 ;
 
 E : E'+'E {printf("Addition: %s  %s\n",$1,$3); }

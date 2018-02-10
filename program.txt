@@ -1,9 +1,15 @@
+#include<stdio.h>
 
-	while(a==b)
+
+
+int main()
+{
+	int a=10;
+	
+	while(a)
 	{
-	int a=5;
-	int b=5;
-	int d=9;
-	a=a+b*d;
-	b=b-a;
+	 a=a+1;
+	 
 	}
+	
+}
