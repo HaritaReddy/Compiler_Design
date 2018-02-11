@@ -6,12 +6,21 @@ struct treenode{
 	struct treenode* middle;
 	struct treenode* right;
 }tree[10];
+struct node
+	{
+		char name[50];
+		char class[50];
+		int count;
+		struct node* next;
+	} ;
+extern struct node* symtable[53];
+extern struct node* constable[53];
+extern struct node* ptr;
+extern int linecount;
 %}
-
-%token ID NUM WHILE DEC CHARCONST COMPARE PREPRO MAIN INT RETURN
+%token ID NUM WHILE DEC CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE
 %left '+' '-'
 %left '*' '/'
-
 %%
 ED: program { printf("Program Started\n"); }
 ;
@@ -31,7 +40,7 @@ return: RETURN '(' NUM ')' ';'
 
 code: code A
 |
-; 
+;
 
 A: whileloop 
 |statement ';'
@@ -50,7 +59,6 @@ statement :ID'='E
 | INT ID
 | INT ID'='E { printf("Statement\n "); }
 ;
-
 E : E'+'E {printf("Addition: %s  %s\n",$1,$3); }
 |E'-'E {printf("Subtraction: %s  %s\n",$1,$3);}
 |E'*'E {printf("Multiplication: %s  %s\n",$1,$3);}
@@ -62,12 +70,9 @@ E : E'+'E {printf("Addition: %s  %s\n",$1,$3); }
 ;
 %%
 #include <stdio.h>
-
-
 extern int yylex();
 extern int yyparse();
 extern FILE *yyin;
-
 main() {
 	// open a file handle to a particular file:
 	FILE *myfile = fopen("program.txt", "r");
@@ -80,9 +85,47 @@ main() {
 	do {
 		yyparse();
 	} while (!feof(yyin));
+
+	int j;
+	printf("\n\n\n");
+	printf("--SYMBOL TABLE--\n"); //Printing Symbol Table
+	for(j=0;j<53;j++)
+	{
+		
+		ptr=symtable[j];
+		if(ptr==NULL)
+		continue;
+		printf("Position: %d\t",j);
+		while(ptr!=NULL)
+		{
+
+			printf("%-10s %-15s\t\t%-2d|\t",ptr->name,ptr->class,ptr->count);
+			ptr=ptr->next;
+		}
+		printf("\n");
+	}
+
+
+	printf("\n\n");
+	printf("--CONSTANT TABLE--\n"); //Printing Constant Table
+	for(j=0;j<53;j++)
+	{
+		
+		ptr=constable[j];
+		if(ptr==NULL)
+		continue;
+		printf("Position: %d\t",j);
+		while(ptr!=NULL)
+		{
+
+			printf("%-10s %-15s\t\t%-2d|\t",ptr->name,ptr->class,ptr->count);
+			ptr=ptr->next;
+		}
+		printf("\n");
+	}
 	
 }
-
 yyerror(char *s) {
-	printf("invalid\n");
+	printf("Parsing Unsuccessful Due to Syntax Error\n");
+	printf("Error in line: %d\n",linecount);
 }

@@ -54,7 +54,9 @@ extern int yydebug;
     PREPRO = 264,
     MAIN = 265,
     INT = 266,
-    RETURN = 267
+    RETURN = 267,
+    IF = 268,
+    ELSE = 269
   };
 #endif
 /* Tokens.  */
@@ -68,6 +70,8 @@ extern int yydebug;
 #define MAIN 265
 #define INT 266
 #define RETURN 267
+#define IF 268
+#define ELSE 269
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
