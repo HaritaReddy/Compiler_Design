@@ -1618,4 +1618,5 @@ main() {
 yyerror(char *s) {
 	printf("Parsing Unsuccessful Due to Syntax Error\n");
 	printf("Error in line: %d\n",linecount);
+	yyerrok; yyclearin;
 }
