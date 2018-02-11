@@ -18,23 +18,24 @@ extern struct node* constable[53];
 extern struct node* ptr;
 extern int linecount;
 %}
-%token ID NUM WHILE DEC CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE
+%token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE STRUCT STATEKW
 %left '+' '-'
 %left '*' '/'
 %%
-ED: program { printf("Program Started\n"); }
+ED: program { printf("Parsing Successfully Completed (No error)\n"); }
 ;
 
-program : PREPRO main 
+program : PREPRO code main 
 |main
 ;
 
-main: INT MAIN '(' ')' '{' code return '}' { printf("Main Loop\n");}
+main: TYPE MAIN '(' ')' '{' code return '}' 
 ;
 
 return: RETURN '(' NUM ')' ';'
 |RETURN  ';'
 |RETURN  NUM ';'
+|RETURN ID ';'
 |
 ;
 
@@ -44,6 +45,8 @@ code: code A
 
 A: whileloop 
 |statement ';'
+|ifelse
+|function
 ;
 
 whileloop : WHILE '(' E ')' '{' code '}'
@@ -51,14 +54,48 @@ whileloop : WHILE '(' E ')' '{' code '}'
 |WHILE '(' E COMPARE E ')' '{' code '}' {printf("Comparison inside while\n");}
 ;
 
+conditions : E
+|statement
+|E COMPARE E
+;
 
+ifelse : IF '(' conditions ')' '{' code '}'
+| IF '(' conditions ')'  statement ';'
+| IF '(' conditions ')' '{' code '}' ELSE '{' code '}'
+|IF '(' conditions ')' statement ';'  ELSE '{' code '}'
+|IF '(' conditions ')' '{' code '}' ELSE statement ';'
+|IF '(' conditions ')' statement ';' ELSE statement ';'
+;
+
+arguments: arguments ',' D
+|D
+|
+;
+
+D: TYPE ID
+|ID
+;
+
+function : TYPE ID '(' arguments ')' '{' code return '}'
+| ID '(' arguments ')' ';'
+|TYPE ID '(' arguments ')' ';'
+;
 
 statement :ID'='E
-| DEC ID
-| DEC ID'='E { printf("Statement\n "); }
-| INT ID
-| INT ID'='E { printf("Statement\n "); }
+| TYPE ID
+| TYPE ID'='E { printf("Statement\n "); }
+| STRUCT ID '{' declarations '}'
+| STATEKW
 ;
+
+declarations: declarations B
+|B
+;
+
+B: TYPE ID ';'
+;
+
+
 E : E'+'E {printf("Addition: %s  %s\n",$1,$3); }
 |E'-'E {printf("Subtraction: %s  %s\n",$1,$3);}
 |E'*'E {printf("Multiplication: %s  %s\n",$1,$3);}
@@ -127,5 +164,5 @@ main() {
 }
 yyerror(char *s) {
 	printf("Parsing Unsuccessful Due to Syntax Error\n");
-	printf("Error in line: %d\n",linecount);
+	printf("Error in line: %d\n",linecount+1);
 }

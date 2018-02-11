@@ -11,7 +11,7 @@
 	} ;
 	struct node* symtable[53],*constable[53];
 	struct node* ptr;
-	int linecount;
+	int linecount=0;
 	int poscalc(char* name) //Calculates position of token in symbol table( hash function)
 	{ 
 		int i,pos=0;
@@ -128,9 +128,10 @@ MAIN ("main")
 RETURN ("return")
 IF ("if")
 ELSE ("else")
-kw ("auto")|("break")|("case")|("const")|("continue")|("default")|("do")|("double")|("enum")|("extern")|("for")|("goto")|("long")|("register")|("short")|("signed")|("sizeof")|("static")|("struct")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")
-DEC ("float")|("char")
-INT ("int")
+STRUCT ("struct")
+kw ("auto")|("case")|("const")|("default")|("do")|("double")|("enum")|("extern")|("for")|("goto")|("long")|("register")|("short")|("signed")|("sizeof")|("static")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")
+STATEKW ("break")|("continue")
+TYPE ("float")|("char")|("int")
 ID [a-zA-Z][a-zA-Z0-9_]*
 NUM (([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
 CHARCONST [\'][a-zA-Z][\']
@@ -140,7 +141,7 @@ COMPARE [<>]|"<="|">="|"=="
 %%
 [\t ] ;
 [\n] {linecount++;}
-{scomment} ;
+{scomment} {linecount--;}
 {WHILE} { insert(yytext,"Keyword"); return WHILE;}
 {PREPRO} {printf("%-20s : Preprocessor directive: \n",yytext); 
           return PREPRO;}
@@ -148,10 +149,11 @@ COMPARE [<>]|"<="|">="|"=="
 {RETURN} { insert(yytext,"Keyword"); return RETURN;}
 {IF} {insert(yytext,"Keyword");return IF;}
 {ELSE} {insert(yytext,"Keyword");return ELSE;}
+{STRUCT} {insert(yytext,"Keyword");return STRUCT;}
 {kw} {insert(yytext,"Keyword");printf("%s:Keyword\n",yytext);}
-{DEC} {insert(yytext,"Keyword");return DEC;}
-{INT} {insert(yytext,"Keyword");return INT;}
-{ID} {insert(yytext,"Identifier");yylval = strdup(yytext);
+{STATEKW} {insert(yytext,"Keyword"); return STATEKW;}
+{TYPE} {insert(yytext,"Keyword");return TYPE;}
+{ID} {insert(yytext,"Identifier");yylval = strdup(yytext); 
 return ID;}
 {NUM} { insert(yytext,"Constant");
 int isfloat=0; int i;

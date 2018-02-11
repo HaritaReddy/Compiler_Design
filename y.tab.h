@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ extern int yydebug;
     ID = 258,
     NUM = 259,
     WHILE = 260,
-    DEC = 261,
+    TYPE = 261,
     CHARCONST = 262,
     COMPARE = 263,
     PREPRO = 264,
@@ -56,14 +56,16 @@ extern int yydebug;
     INT = 266,
     RETURN = 267,
     IF = 268,
-    ELSE = 269
+    ELSE = 269,
+    STRUCT = 270,
+    STATEKW = 271
   };
 #endif
 /* Tokens.  */
 #define ID 258
 #define NUM 259
 #define WHILE 260
-#define DEC 261
+#define TYPE 261
 #define CHARCONST 262
 #define COMPARE 263
 #define PREPRO 264
@@ -72,6 +74,8 @@ extern int yydebug;
 #define RETURN 267
 #define IF 268
 #define ELSE 269
+#define STRUCT 270
+#define STATEKW 271
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
