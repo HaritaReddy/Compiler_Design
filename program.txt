@@ -1,16 +1,13 @@
 #include<stdio.h>
 
-int func(int a);
-
-int func(int a)
-{
-	a=a+b;
-	return a;
-}
-
 int main()
 {
-	int c=90;
-	func(c);
-
+	//This is test case 2 of the project
+   float f;
+   f=0.19;
+   
+   char a='m';
+   a=a+5
+   
+   f=a*0.5;
 }

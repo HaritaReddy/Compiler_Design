@@ -18,7 +18,7 @@ extern struct node* constable[53];
 extern struct node* ptr;
 extern int linecount;
 %}
-%token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE STRUCT STATEKW
+%token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE STRUCT STATEKW STRING 
 %left '+' '-'
 %left '*' '/'
 %%
@@ -96,6 +96,7 @@ B: TYPE ID ';'
 ;
 
 
+
 E : E'+'E {printf("Addition: %s  %s\n",$1,$3); }
 |E'-'E {printf("Subtraction: %s  %s\n",$1,$3);}
 |E'*'E {printf("Multiplication: %s  %s\n",$1,$3);}
@@ -104,6 +105,7 @@ E : E'+'E {printf("Addition: %s  %s\n",$1,$3); }
 |ID 
 |NUM
 |CHARCONST
+|STRING
 ;
 %%
 #include <stdio.h>

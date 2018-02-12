@@ -1,9 +1,7 @@
 
 int main()
 {
-	int func(int a)
-	{
-		a++;
-	}
+	int n=8;
+	int arr[n];
 	return 0;
 }

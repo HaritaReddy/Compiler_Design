@@ -136,6 +136,7 @@ ID [a-zA-Z][a-zA-Z0-9_]*
 NUM (([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
 CHARCONST [\'][a-zA-Z][\']
 COMPARE [<>]|"<="|">="|"=="
+STRING ["].*["]
 
 
 %%
@@ -175,6 +176,7 @@ return NUM;}
 insertincons(yytext,"character");
 return CHARCONST;}
 {COMPARE} {insert(yytext,"Comparison Operator");return COMPARE;}
+{STRING} {return STRING;}
 . return yytext[0];
 
 %%  
