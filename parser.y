@@ -18,7 +18,7 @@ extern struct node* constable[53];
 extern struct node* ptr;
 extern int linecount;
 %}
-%token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE STRUCT STATEKW STRING 
+%token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE STRUCT UNARYOP STATEKW STRING 
 %left '+' '-'
 %left '*' '/'
 %%
@@ -47,11 +47,12 @@ A: whileloop
 |statement ';'
 |ifelse
 |function
+|unaryst ';'
 ;
 
 whileloop : WHILE '(' E ')' '{' code '}'
 |WHILE '(' statement ')' '{' code '}'
-|WHILE '(' E COMPARE E ')' '{' code '}' {printf("Comparison inside while\n");}
+|WHILE '(' E COMPARE E ')' '{' code '}' 
 ;
 
 conditions : E
@@ -83,10 +84,13 @@ function : TYPE ID '(' arguments ')' '{' code return '}'
 
 statement :ID'='E
 | TYPE ID
-| TYPE ID'='E { printf("Statement\n "); }
+| TYPE ID'='E 
 | STRUCT ID '{' declarations '}'
 | STATEKW
 | TYPE '*' ID
+| TYPE '*' '*' ID
+| TYPE '*' ID '=' E
+| TYPE '*' '*' ID '=' E
 ;
 
 declarations: declarations B
@@ -96,17 +100,23 @@ declarations: declarations B
 B: TYPE ID ';'
 ;
 
+unaryst: UNARYOP ID 
+| ID UNARYOP
+;
 
 
-E : E'+'E {printf("Addition: %s  %s\n",$1,$3); }
-|E'-'E {printf("Subtraction: %s  %s\n",$1,$3);}
-|E'*'E {printf("Multiplication: %s  %s\n",$1,$3);}
-|E'/'E {printf("Division: %s  %s\n",$1,$3);}
+E : E'+'E 
+|E'-'E 
+|E'*'E 
+|E'/'E 
 |'('E')'
 |ID 
 |NUM
 |CHARCONST
 |STRING
+|ID '(' arguments ')' 
+| UNARYOP ID 
+| ID UNARYOP
 ;
 %%
 #include <stdio.h>

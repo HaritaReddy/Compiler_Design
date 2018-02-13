@@ -135,8 +135,10 @@ TYPE ("float")|("char")|("int")
 ID [a-zA-Z][a-zA-Z0-9_]*
 NUM (([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
 CHARCONST [\'][a-zA-Z][\']
-COMPARE [<>]|"<="|">="|"=="
+COMPARE [<>]|"<="|">="|"=="|"!="
+UNARYOP "++"|"--"
 STRING ["].*["]
+
 
 
 %%
@@ -144,8 +146,7 @@ STRING ["].*["]
 [\n] {linecount++;}
 {scomment} {linecount--;}
 {WHILE} { insert(yytext,"Keyword"); return WHILE;}
-{PREPRO} {printf("%-20s : Preprocessor directive: \n",yytext); 
-          return PREPRO;}
+{PREPRO} {return PREPRO;}
 {MAIN} {insert(yytext,"Keyword"); return MAIN;}
 {RETURN} { insert(yytext,"Keyword"); return RETURN;}
 {IF} {insert(yytext,"Keyword");return IF;}
@@ -176,6 +177,7 @@ return NUM;}
 insertincons(yytext,"character");
 return CHARCONST;}
 {COMPARE} {insert(yytext,"Comparison Operator");return COMPARE;}
+{UNARYOP} {insert(yytext,"Unary Operator"); return UNARYOP;}
 {STRING} {return STRING;}
 . return yytext[0];
 
