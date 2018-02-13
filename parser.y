@@ -86,6 +86,7 @@ statement :ID'='E
 | TYPE ID'='E { printf("Statement\n "); }
 | STRUCT ID '{' declarations '}'
 | STATEKW
+| TYPE '*' ID
 ;
 
 declarations: declarations B
