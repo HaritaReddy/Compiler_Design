@@ -123,6 +123,7 @@
 letter [a-zA-Z]
 digit [0-9]
 scomment [/][/].*[\n]
+mcommentstart [/][*](.|\n)*[*][/]
 WHILE "while"
 PREPRO [#].+
 MAIN ("main")
@@ -146,6 +147,7 @@ STRING ["].*["]
 [\t ] ;
 [\n] {linecount++;}
 {scomment} {linecount--;}
+{mcommentstart} ;
 {WHILE} { insert(yytext,"Keyword"); return WHILE;}
 {PREPRO} {return PREPRO;}
 {MAIN} {insert(yytext,"Keyword"); return MAIN;}
@@ -180,7 +182,8 @@ insertincons(yytext,"character");
 return CHARCONST;}
 {COMPARE} {insert(yytext,"Comparison Operator");return COMPARE;}
 {UNARYOP} {insert(yytext,"Unary Operator"); return UNARYOP;}
-{STRING} {return STRING;}
+{STRING} {insert(yytext,"String Constant");
+insertincons(yytext,"string");return STRING; }
 . return yytext[0];
 
 %%  
