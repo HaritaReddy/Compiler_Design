@@ -1,5 +1,7 @@
 %{
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 struct treenode{
 	char data[25];
 	struct treenode* left;
@@ -12,11 +14,29 @@ struct node
 		char class[50];
 		int count;
 		struct node* next;
+		char type[10];
 	} ;
 extern struct node* symtable[53];
 extern struct node* constable[53];
 extern struct node* ptr;
 extern int linecount;
+
+
+void inserttype(char* type,char* name) //Inserts the token in symbol table
+	{
+		int pos=poscalc(name);
+		
+
+			int flag=0;
+			struct node* check=symtable[pos];
+			while(check!=NULL&&check->name!=name)
+			{
+				check=check->next;
+			}
+			
+			strcpy(symtable[pos]->type,type);
+	}
+
 %}
 %token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE STRUCT UNARYOP STATEKW STRING 
 %left '+' '-'
@@ -60,12 +80,13 @@ conditions : E
 |E COMPARE E
 ;
 
-ifelse : IF '(' conditions ')' '{' code '}'
+
+ifelse :  IF '(' conditions ')' '{' code '}'
 | IF '(' conditions ')'  statement ';'
 | IF '(' conditions ')' '{' code '}' ELSE '{' code '}'
 |IF '(' conditions ')' statement ';'  ELSE '{' code '}'
 |IF '(' conditions ')' '{' code '}' ELSE statement ';'
-|IF '(' conditions ')' statement ';' ELSE statement ';'
+|IF '(' conditions ')' statement ';' ELSE A
 ;
 
 arguments: arguments ',' D
@@ -83,21 +104,29 @@ function : TYPE ID '(' arguments ')' '{' code return '}'
 ;
 
 statement :ID'='E
-| TYPE ID
-| TYPE ID'='E 
+| TYPE ID  { inserttype($1,$2);}
+| TYPE ID'='E { inserttype($1,$2);}
 | STRUCT ID '{' declarations '}'
 | STATEKW
-| TYPE '*' ID
-| TYPE '*' '*' ID
-| TYPE '*' ID '=' E
-| TYPE '*' '*' ID '=' E
+| TYPE '*' ID {
+				char point[20];
+				strcpy(point,$1); strcat(point," pointer"); inserttype(point,$3);}
+| TYPE '*' '*' ID {
+				char point[20];
+				strcpy(point,$1); strcat(point," double pointer"); inserttype(point,$4);}
+| TYPE '*' ID '=' E {
+				char point[20];
+				strcpy(point,$1); strcat(point," pointer"); inserttype(point,$3);}
+| TYPE '*' '*' ID '=' E {
+				char point[20];
+				strcpy(point,$1); strcat(point," double pointer"); inserttype(point,$4);}
 ;
 
 declarations: declarations B
-|B
+|B 
 ;
 
-B: TYPE ID ';'
+B: TYPE ID ';' 
 ;
 
 unaryst: UNARYOP ID 
@@ -149,7 +178,12 @@ main() {
 		while(ptr!=NULL)
 		{
 
-			printf("%-10s %-15s\t\t%-2d|\t",ptr->name,ptr->class,ptr->count);
+			printf("%-10s %-15s\t\t%-2d\t",ptr->name,ptr->class,ptr->count);
+			if(strlen(ptr->type)!=0)
+			printf("%-20s",ptr->type);
+			else
+			printf("\t  ");
+			printf("|\t");
 			ptr=ptr->next;
 		}
 		printf("\n");

@@ -579,6 +579,7 @@ char *yytext;
 		char class[50];
 		int count;
 		struct node* next;
+		char type[10];
 	} ;
 	struct node* symtable[53],*constable[53];
 	struct node* ptr;
@@ -688,7 +689,7 @@ char *yytext;
 		}
 	}
 	
-#line 692 "lex.yy.c"
+#line 693 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -906,9 +907,9 @@ YY_DECL
 		}
 
 	{
-#line 144 "parser.l"
+#line 145 "parser.l"
 
-#line 912 "lex.yy.c"
+#line 913 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -967,80 +968,81 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 145 "parser.l"
+#line 146 "parser.l"
 ;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 146 "parser.l"
+#line 147 "parser.l"
 {linecount++;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 147 "parser.l"
+#line 148 "parser.l"
 {linecount--;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 148 "parser.l"
+#line 149 "parser.l"
 { insert(yytext,"Keyword"); return WHILE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 149 "parser.l"
+#line 150 "parser.l"
 {return PREPRO;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 150 "parser.l"
+#line 151 "parser.l"
 {insert(yytext,"Keyword"); return MAIN;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 151 "parser.l"
+#line 152 "parser.l"
 { insert(yytext,"Keyword"); return RETURN;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 152 "parser.l"
+#line 153 "parser.l"
 {insert(yytext,"Keyword");return IF;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 153 "parser.l"
+#line 154 "parser.l"
 {insert(yytext,"Keyword");return ELSE;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 154 "parser.l"
+#line 155 "parser.l"
 {insert(yytext,"Keyword");return STRUCT;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 155 "parser.l"
+#line 156 "parser.l"
 {insert(yytext,"Keyword");printf("%s:Keyword\n",yytext);}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 156 "parser.l"
+#line 157 "parser.l"
 {insert(yytext,"Keyword"); return STATEKW;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 157 "parser.l"
-{insert(yytext,"Keyword");return TYPE;}
+#line 158 "parser.l"
+{insert(yytext,"Keyword");yylval = strdup(yytext);
+return TYPE;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 158 "parser.l"
+#line 160 "parser.l"
 {insert(yytext,"Identifier");yylval = strdup(yytext); 
 return ID;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 160 "parser.l"
+#line 162 "parser.l"
 { insert(yytext,"Constant");
 int isfloat=0; int i;
 	for(i=0;i<yyleng;i++)
@@ -1060,37 +1062,37 @@ return NUM;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 176 "parser.l"
+#line 178 "parser.l"
 {insert(yytext,"Character Constant");
 insertincons(yytext,"character");
 return CHARCONST;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 179 "parser.l"
+#line 181 "parser.l"
 {insert(yytext,"Comparison Operator");return COMPARE;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 180 "parser.l"
+#line 182 "parser.l"
 {insert(yytext,"Unary Operator"); return UNARYOP;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 181 "parser.l"
+#line 183 "parser.l"
 {return STRING;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 182 "parser.l"
+#line 184 "parser.l"
 return yytext[0];
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 184 "parser.l"
+#line 186 "parser.l"
 ECHO;
 	YY_BREAK
-#line 1094 "lex.yy.c"
+#line 1096 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2091,7 +2093,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 184 "parser.l"
+#line 186 "parser.l"
 
 
 

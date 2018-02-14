@@ -8,6 +8,7 @@
 		char class[50];
 		int count;
 		struct node* next;
+		char type[10];
 	} ;
 	struct node* symtable[53],*constable[53];
 	struct node* ptr;
@@ -154,7 +155,8 @@ STRING ["].*["]
 {STRUCT} {insert(yytext,"Keyword");return STRUCT;}
 {kw} {insert(yytext,"Keyword");printf("%s:Keyword\n",yytext);}
 {STATEKW} {insert(yytext,"Keyword"); return STATEKW;}
-{TYPE} {insert(yytext,"Keyword");return TYPE;}
+{TYPE} {insert(yytext,"Keyword");yylval = strdup(yytext);
+return TYPE;}
 {ID} {insert(yytext,"Identifier");yylval = strdup(yytext); 
 return ID;}
 {NUM} { insert(yytext,"Constant");
