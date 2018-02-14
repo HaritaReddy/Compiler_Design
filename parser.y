@@ -80,13 +80,16 @@ conditions : E
 |E COMPARE E
 ;
 
+S: statement
+|unaryst
+;
 
 ifelse :  IF '(' conditions ')' '{' code '}'
-| IF '(' conditions ')'  statement ';'
+| IF '(' conditions ')'  S ';'
 | IF '(' conditions ')' '{' code '}' ELSE '{' code '}'
-|IF '(' conditions ')' statement ';'  ELSE '{' code '}'
-|IF '(' conditions ')' '{' code '}' ELSE statement ';'
-|IF '(' conditions ')' statement ';' ELSE A
+|IF '(' conditions ')' S ';'  ELSE '{' code '}'
+|IF '(' conditions ')' '{' code '}' ELSE A 
+|IF '(' conditions ')' S ';' ELSE A
 ;
 
 arguments: arguments ',' D

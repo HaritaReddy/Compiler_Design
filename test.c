@@ -1,7 +1,14 @@
+#include<stdio.h>
 
 int main()
 {
-	int n=8;
-	int arr[n];
-	return 0;
-}
+	int a,b,c;
+	if(a<b)
+	a++;
+	else if(a>b)
+	{b++;}
+	else if(a++)
+	c++;
+
+
+	}
