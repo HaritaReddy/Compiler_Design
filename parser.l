@@ -146,7 +146,7 @@ STRING ["].*["]
 %%
 [\t ] ;
 [\n] {linecount++;}
-{scomment} {linecount--;}
+{scomment} {linecount++;}
 {mcommentstart} ;
 {WHILE} { insert(yytext,"Keyword"); return WHILE;}
 {PREPRO} {return PREPRO;}
@@ -180,8 +180,10 @@ return NUM;}
 {CHARCONST} {insert(yytext,"Character Constant");
 insertincons(yytext,"character");
 return CHARCONST;}
-{COMPARE} {insert(yytext,"Comparison Operator");return COMPARE;}
-{UNARYOP} {insert(yytext,"Unary Operator"); return UNARYOP;}
+{COMPARE} {//insert(yytext,"Comparison Operator");
+			return COMPARE;}
+{UNARYOP} {//insert(yytext,"Unary Operator");
+			  return UNARYOP;}
 {STRING} {insert(yytext,"String Constant");
 insertincons(yytext,"string");return STRING; }
 . return yytext[0];
