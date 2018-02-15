@@ -160,7 +160,7 @@ main() {
 	FILE *myfile = fopen("program.txt", "r");
 	// make sure it is valid:
 	
-	// set lex to read from it instead of defaulting to STDIN:
+	// set lex to read from it
 	yyin = myfile;
 	
 	// parse through the input until there is no more:
@@ -171,6 +171,7 @@ main() {
 	int j;
 	printf("\n\n\n");
 	printf("--SYMBOL TABLE--\n"); //Printing Symbol Table
+	printf("\t\tName       Class         \t\tCount\tDataType\n\n");
 	for(j=0;j<53;j++)
 	{
 		
@@ -185,8 +186,8 @@ main() {
 			if(strlen(ptr->type)!=0)
 			printf("%-20s",ptr->type);
 			else
-			printf("\t  ");
-			printf("|\t");
+			printf("\t\t  ");
+			printf("\t|");
 			ptr=ptr->next;
 		}
 		printf("\n");
@@ -195,6 +196,8 @@ main() {
 
 	printf("\n\n");
 	printf("--CONSTANT TABLE--\n"); //Printing Constant Table
+	printf("\t\tConstant   Datatype\t\t\tCount\n\n");
+
 	for(j=0;j<53;j++)
 	{
 		
