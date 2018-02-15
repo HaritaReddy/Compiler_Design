@@ -2,12 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-struct treenode{
-	char data[25];
-	struct treenode* left;
-	struct treenode* middle;
-	struct treenode* right;
-}tree[10];
+
 struct node
 	{
 		char name[50];
