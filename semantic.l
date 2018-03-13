@@ -9,6 +9,8 @@
 		struct node* next;
 		char type[10];
 		int scope;
+		char size[20];
+		int defflag;
 	} ;
 	struct node* symtable[53],*constable[53];
 	struct node* ptr;

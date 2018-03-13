@@ -1,7 +1,11 @@
 #include<stdio.h>
+int func();
+
+int func()
+{
+}
 int main()
 {
-	char a;
-	g=1;
-	
+	func();
 }
+
