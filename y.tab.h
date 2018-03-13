@@ -60,7 +60,9 @@ extern int yydebug;
     STRUCT = 270,
     UNARYOP = 271,
     STATEKW = 272,
-    STRING = 273
+    STRING = 273,
+    CC = 274,
+    CO = 275
   };
 #endif
 /* Tokens.  */
@@ -80,6 +82,8 @@ extern int yydebug;
 #define UNARYOP 271
 #define STATEKW 272
 #define STRING 273
+#define CC 274
+#define CO 275
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

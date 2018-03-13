@@ -2,7 +2,6 @@
 
 int main()
 {
-/*fkhvdlkhkgkg*/
 
 	int a=5;
 	char i='k';
