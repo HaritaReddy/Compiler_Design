@@ -697,25 +697,69 @@ char *yytext;
 		int i=0;
 		for(i=0;i<53;i++)
 		{
+
 			struct node* temp=symtable[i];
 			if(temp==NULL)
 			continue;
-			while(temp->next!=NULL)
-			{
-				if(temp->next->scope==globalscope)
-				{
-					struct node* ptr=temp->next;
-					temp->next=ptr->next;
-					free(ptr);
 
+			struct node* prev=temp;
+			while(temp!=NULL)
+			{
+				if(temp->scope==globalscope&&temp==symtable[i])
+				{
+				symtable[i]=temp->next;
+				free(temp);
+				temp=symtable[i];
 				}
-				else
-				temp=temp->next;
+				else if(temp->scope==globalscope)
+				{
+					prev->next=temp->next;
+					struct node* temp1=temp;
+					temp=temp->next;
+					free(temp1);
+				}
+				else 
+				{
+					prev=temp;
+					temp=temp->next;
+				}
 			}
 		}
 	}
 
-#line 719 "lex.yy.c"
+	void printsymtable()
+{
+	printf("\n\n\n");
+	int j;
+	printf("--SYMBOL TABLE--\n"); //Printing Symbol Table
+	printf("\t\tName       Class         \t\tDataType\t\tSize\n\n");
+	for(j=0;j<53;j++)
+	{
+		
+		ptr=symtable[j];
+		if(ptr==NULL)
+		continue;
+		printf("Position: %d\t",j);
+		while(ptr!=NULL)
+		{
+
+			printf("%-10s %-15s\t\t",ptr->name,ptr->class);
+			if(strlen(ptr->type)!=0)
+			printf("%-20s",ptr->type);
+			if(strlen(ptr->size)!=0)
+					printf("%-10s",ptr->size);
+
+			else
+			printf("\t\t  ");
+			
+			printf("\t|");
+			ptr=ptr->next;
+		}
+		printf("\n");
+	}
+}
+
+#line 763 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -933,9 +977,9 @@ YY_DECL
 		}
 
 	{
-#line 167 "semantic.l"
+#line 211 "semantic.l"
 
-#line 939 "lex.yy.c"
+#line 983 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -994,86 +1038,86 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 168 "semantic.l"
+#line 212 "semantic.l"
 ;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 169 "semantic.l"
+#line 213 "semantic.l"
 {linecount++;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 170 "semantic.l"
+#line 214 "semantic.l"
 {linecount++;}
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 171 "semantic.l"
+#line 215 "semantic.l"
 ;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 172 "semantic.l"
+#line 216 "semantic.l"
 { insert(yytext,"Keyword"); return WHILE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 173 "semantic.l"
+#line 217 "semantic.l"
 {return PREPRO;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 174 "semantic.l"
+#line 218 "semantic.l"
 {insert(yytext,"Keyword"); return MAIN;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 175 "semantic.l"
+#line 219 "semantic.l"
 { insert(yytext,"Keyword"); return RETURN;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 176 "semantic.l"
+#line 220 "semantic.l"
 {insert(yytext,"Keyword");return IF;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 177 "semantic.l"
+#line 221 "semantic.l"
 {insert(yytext,"Keyword");return ELSE;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 178 "semantic.l"
+#line 222 "semantic.l"
 {insert(yytext,"Keyword");return STRUCT;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 179 "semantic.l"
+#line 223 "semantic.l"
 {insert(yytext,"Keyword");printf("%s:Keyword\n",yytext);}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 180 "semantic.l"
+#line 224 "semantic.l"
 {insert(yytext,"Keyword"); return STATEKW;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 181 "semantic.l"
+#line 225 "semantic.l"
 {insert(yytext,"Keyword"); printf("type %s detected\n",yytext); yylval = strdup(yytext);
 return TYPE;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 183 "semantic.l"
-{ printf("id %s detected\n",yytext); yylval = strdup(yytext); return ID;}
+#line 227 "semantic.l"
+{ printf("\n\n-----id %s detected : scope : %d-----\n",yytext,globalscope); yylval = strdup(yytext); return ID;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 184 "semantic.l"
+#line 228 "semantic.l"
 { insert(yytext,"Constant");
 int isfloat=0; int i;
 	for(i=0;i<yyleng;i++)
@@ -1093,56 +1137,59 @@ return NUM;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 200 "semantic.l"
+#line 244 "semantic.l"
 {insert(yytext,"Character Constant");
 insertincons(yytext,"character");
 return CHARCONST;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 203 "semantic.l"
+#line 247 "semantic.l"
 {globalscope++;
-			printf("globalscope = %d\n",globalscope);
+			
 			printf("%s detected\n",yytext);
-			insert(yytext,"curly bracket"); return CO;}
+			printf("globalscope = %d\n",globalscope);
+			printsymtable();return CO;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 207 "semantic.l"
+#line 252 "semantic.l"
 {deleteoutofscope();
+			printf("%s detected\n",yytext);
+
 			 globalscope--;
 			 printf("globalscope = %d\n",globalscope);
-			 insert(yytext,"curly bracket"); return CC;}
+			 printsymtable(); return CC;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 211 "semantic.l"
+#line 258 "semantic.l"
 {//insert(yytext,"Comparison Operator");
 			return COMPARE;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 213 "semantic.l"
+#line 260 "semantic.l"
 {//insert(yytext,"Unary Operator");
 			  return UNARYOP;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 215 "semantic.l"
+#line 262 "semantic.l"
 {insert(yytext,"String Constant");
 insertincons(yytext,"string");return STRING; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 217 "semantic.l"
+#line 264 "semantic.l"
 return yytext[0];
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 219 "semantic.l"
+#line 266 "semantic.l"
 ECHO;
 	YY_BREAK
-#line 1146 "lex.yy.c"
+#line 1193 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2143,7 +2190,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 219 "semantic.l"
+#line 266 "semantic.l"
 
 
 

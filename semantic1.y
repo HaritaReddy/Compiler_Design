@@ -221,112 +221,198 @@ void printsym()
 
 
 %}
-%token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE STRUCT UNARYOP STATEKW STRING CC CO
+%token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE STRUCT UNARYOP STATEKW STRING CC CO FLOAT CHAR STATIC AND OR
 %left '+' '-'
 %left '*' '/'
 %%
 ED: program { printf("Parsing Completed\n"); }
 ;
 
-program : PREPRO code main 
-|main
+program : declarationlist
 ;
 
-main: TYPE MAIN '(' ')' compoundst
+declarationlist : declarationlist declaration 
+|declaration
 ;
 
-return: RETURN '(' NUM ')' ';'
-|RETURN  ';'
-|RETURN  NUM ';'
-|RETURN ID ';'
+declaration : vardeclaration
+|fundeclaration
+;
+
+vardeclaration : typespecifier vardeclist
+;
+
+scopedvardeclaration : scopedtypespecifier vardeclist
+;
+
+vardeclist : vardeclist ',' vardecinitialize 
+|vardecinitialize
+;
+
+vardecinitialize : vardecid
+;
+
+vardecid : ID
+|ID '[' NUM ']'
+;
+
+scopedtypespecifier : STATIC typespecifier
+|typespecifier
+;
+
+typespecifier : returntypespecifier 
+;
+
+returntypespecifier: INT
+|FLOAT
+|CHAR
+;
+
+fundeclaration: typespecifier ID '(' params ')' statement 
+|ID '(' params ')' statement
+;
+
+
+params : paramlist
 |
 ;
 
-code: code A
+paramlist : paramlist ';' paramtypelist 
+|paramtypelist
+;
+
+paramtypelist : typespecifier paramidlist
+;
+
+paramidlist: paramidlist ',' paramid
+|paramid
+;
+
+paramid:ID
+|ID '[' ']'
+;
+
+statement: expressionst
+|compoundst
+|selectionst
+|iterationst
+|returnst
+|breakst
+;
+
+compoundst: CO localdeclarations statementlist CC
+;
+
+localdeclarations: localdeclarations scopedvardeclaration
 |
 ;
 
-A: whileloop 
-|statement ';'
-|ifelse
-|function
-|unaryst ';'
-|compoundst 
-;
-
-compoundst: CO code CC
-;
-
-whileloop : WHILE '(' E ')' CO code CC  
-|WHILE '(' statement ')' CO code CC
-|WHILE '(' E COMPARE E ')' CO code CC 
-;
-
-conditions : E
-|statement
-|E COMPARE E
-;
-
-S: statement
-|unaryst
-;
-
-ifelse :  IF '(' conditions ')' compoundst
-| IF '(' conditions ')'  S ';'
-| IF '(' conditions ')' compoundst ELSE compoundst
-|IF '(' conditions ')' S ';'  ELSE compoundst
-;
-
-arguments: arguments ',' D   
-|D
+statementlist: statementlist statement
 |
 ;
 
-D: TYPE ID   
-|ID
-|TYPE
+expressionst: expression ';' 
+|';'
 ;
 
-function : TYPE ID '(' arguments ')' CO code return CC  
-| ID '(' arguments ')' ';'    
-|TYPE ID '(' arguments ')' ';' {printf("\n\nARGUMENT LIST : %s %s\n\n",$4,$5);}  
+selectionst: IF '(' simpleexpression ')' statement 
+|IF '(' simpleexpression ')' statement ELSE statement
 ;
 
-statement :ID'='E  { if(checkid($1)==-1)
-						printf("\n\n%s Undeclared\n\n\nm",$1);}
-| TYPE ID  { printf("declaration done\n"); int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\nDuplicate declaration of %s\n\n",$2); printsym();}
-| TYPE ID'='E {if(checkvar($2)==0) insertvar($1,$2); else printf("\n\nDuplicate declaration of %s\n\n",$2); printsym(); }
-| STRUCT ID CO declarations CC
-| STATEKW
-| TYPE ID '[' E ']' { printf("$4 : %s\n\n",$4);insertarray($1,$2,$4); printf("\n\narray ddetected\n\n");}
-| TYPE ID '[' ']' {printf("Semantic Error! Array has no subscript.\n");}
+iterationst: WHILE '(' simpleexpression ')' statement
 ;
 
-declarations: declarations B
-|B 
+returnst: RETURN ';'
+|RETURN expression ';'
 ;
 
-B: TYPE ID ';'  { printf("declaration done\n"); int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\nDuplicate declaration of %s\n\n",$2);}
+breakst: STATEKW ';'
 ;
 
-unaryst: UNARYOP ID 
-| ID UNARYOP
+expression: mutable '=' expression
+|mutable UNARYOP
+|simpleexpression
 ;
 
+simpleexpression: simpleexpression OR andexpression
+|andexpression
+;
 
-E : E'+'E 
-|E'-'E 
-|E'*'E 
-|E'/'E 
-|'('E')'
-|ID 
-|NUM
+andexpression: andexpression AND unaryrelexpression
+|unaryrelexpression
+;
+
+unaryrelexpression: '!' unaryrelexpression|
+|relexpression
+;
+
+relexpression: sumexpression relop sumexpression
+|sumexpression
+;
+
+relop : '<' '>'
+|'<' '='
+|'>' '='
+|'=' '='
+|'!' '='
+;
+
+sumexpression: sumexpression sumop term
+|term
+;
+
+sumop: '+'
+|'-'
+;
+
+term: term mulop unaryexpression
+|unaryexpression
+;
+
+mulop: '/'
+|'*'
+|'%'
+;
+
+unaryexpression: unaryop unaryexpression
+|factor
+;
+
+unaryop: '-'
+|'*'
+|'?'
+;
+
+factor: mutable
+|immutable
+;
+
+mutable: ID
+|mutable '[' expression ']'
+|mutable '.' ID
+;
+
+immutable: '(' expression ')' 
+|call
+|constant
+;
+
+call: ID '(' args ')'
+;
+
+args: arglist
+;
+
+arglist: arglist ',' expression
+|expression
+;
+
+constant: NUM
 |CHARCONST
 |STRING
-|ID '(' arguments ')' 
-| UNARYOP ID 
-| ID UNARYOP
 ;
+
+
 %%
 
 #include <stdio.h>

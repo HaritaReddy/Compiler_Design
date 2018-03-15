@@ -1,11 +1,13 @@
 #include<stdio.h>
-int func();
-
-int func()
+int func(int c, char b)
 {
+	int a;
 }
+
 int main()
 {
-	func();
+	int a;
+	b=4;
+
 }
 

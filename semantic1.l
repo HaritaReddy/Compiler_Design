@@ -170,10 +170,8 @@
 			printf("%-20s",ptr->type);
 			if(strlen(ptr->size)!=0)
 					printf("%-10s",ptr->size);
-
 			else
 			printf("\t\t  ");
-			
 			printf("\t|");
 			ptr=ptr->next;
 		}
@@ -194,9 +192,12 @@ RETURN ("return")
 IF ("if")
 ELSE ("else")
 STRUCT ("struct")
-kw ("auto")|("case")|("const")|("default")|("do")|("double")|("enum")|("extern")|("for")|("goto")|("long")|("register")|("short")|("signed")|("sizeof")|("static")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")
+kw ("auto")|("case")|("const")|("default")|("do")|("double")|("enum")|("extern")|("for")|("goto")|("long")|("register")|("short")|("signed")|("sizeof")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")
 STATEKW ("break")|("continue")
-TYPE ("float")|("char")|("int")
+STATIC ("static")
+FLOAT ("float")
+CHAR ("char")
+INT ("int")
 ID [a-zA-Z][a-zA-Z0-9_]*
 NUM (([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
 CHARCONST [\'][a-zA-Z][\']
@@ -205,6 +206,8 @@ CC "}"
 COMPARE [<>]|"<="|">="|"=="|"!="
 UNARYOP "++"|"--"
 STRING ["].*["]
+AND "&&"
+OR "||"
 
 
 
@@ -222,9 +225,11 @@ STRING ["].*["]
 {STRUCT} {insert(yytext,"Keyword");return STRUCT;}
 {kw} {insert(yytext,"Keyword");printf("%s:Keyword\n",yytext);}
 {STATEKW} {insert(yytext,"Keyword"); return STATEKW;}
-{TYPE} {insert(yytext,"Keyword"); printf("type %s detected\n",yytext); yylval = strdup(yytext);
-return TYPE;}
-{ID} { printf("\n\n-----id %s detected : scope : %d-----\n",yytext,globalscope); yylval = strdup(yytext); return ID;}
+{STATIC} {return STATIC;}
+{INT} {return INT;}
+{FLOAT} {return FLOAT;}
+{CHAR} {return CHAR;}
+{ID} { printf("id %s detected\n",yytext); yylval = strdup(yytext); return ID;}
 {NUM} { insert(yytext,"Constant");
 int isfloat=0; int i;
 	for(i=0;i<yyleng;i++)
@@ -245,9 +250,8 @@ return NUM;}
 insertincons(yytext,"character");
 return CHARCONST;}
 {CO} {globalscope++;
-			
-			printf("%s detected\n",yytext);
 			printf("globalscope = %d\n",globalscope);
+			printf("%s detected\n",yytext);
 			printsymtable();return CO;}
 {CC} {deleteoutofscope();
 			printf("%s detected\n",yytext);
@@ -259,6 +263,8 @@ return CHARCONST;}
 			return COMPARE;}
 {UNARYOP} {//insert(yytext,"Unary Operator");
 			  return UNARYOP;}
+{AND} {return AND;}
+{OR} {return OR;}
 {STRING} {insert(yytext,"String Constant");
 insertincons(yytext,"string");return STRING; }
 . return yytext[0];
