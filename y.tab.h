@@ -62,7 +62,12 @@ extern int yydebug;
     STATEKW = 272,
     STRING = 273,
     CC = 274,
-    CO = 275
+    CO = 275,
+    FLOAT = 276,
+    CHAR = 277,
+    STATIC = 278,
+    AND = 279,
+    OR = 280
   };
 #endif
 /* Tokens.  */
@@ -84,6 +89,11 @@ extern int yydebug;
 #define STRING 273
 #define CC 274
 #define CO 275
+#define FLOAT 276
+#define CHAR 277
+#define STATIC 278
+#define AND 279
+#define OR 280
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

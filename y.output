@@ -1,21 +1,12 @@
 Terminals unused in grammar
 
    TYPE
-   COMPARE
    PREPRO
    MAIN
    STRUCT
 
 
-State 30 conflicts: 1 shift/reduce
-State 42 conflicts: 1 shift/reduce
-State 70 conflicts: 1 shift/reduce
-State 76 conflicts: 1 shift/reduce
-State 120 conflicts: 1 shift/reduce
-State 137 conflicts: 1 shift/reduce
 State 138 conflicts: 1 shift/reduce
-State 146 conflicts: 1 shift/reduce
-State 147 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -109,88 +100,81 @@ Grammar
    56              | unaryrelexpression
 
    57 unaryrelexpression: '!' unaryrelexpression
-   58                   | %empty
-   59                   | relexpression
+   58                   | relexpression
 
-   60 relexpression: sumexpression relop sumexpression
-   61              | sumexpression
+   59 relexpression: sumexpression relop sumexpression
+   60              | sumexpression
 
-   62 relop: '<' '>'
-   63      | '<' '='
-   64      | '>' '='
-   65      | '=' '='
-   66      | '!' '='
+   61 relop: COMPARE
 
-   67 sumexpression: sumexpression sumop term
-   68              | term
+   62 sumexpression: sumexpression sumop term
+   63              | term
 
-   69 sumop: '+'
-   70      | '-'
+   64 sumop: '+'
+   65      | '-'
 
-   71 term: term mulop unaryexpression
-   72     | unaryexpression
+   66 term: term mulop unaryexpression
+   67     | unaryexpression
 
-   73 mulop: '/'
-   74      | '*'
-   75      | '%'
+   68 mulop: '/'
+   69      | '*'
+   70      | '%'
 
-   76 unaryexpression: unaryop unaryexpression
-   77                | factor
+   71 unaryexpression: unaryop unaryexpression
+   72                | factor
 
-   78 unaryop: '-'
-   79        | '*'
-   80        | '?'
+   73 unaryop: '-'
+   74        | '*'
+   75        | '?'
 
-   81 factor: mutable
-   82       | immutable
+   76 factor: mutable
+   77       | immutable
 
-   83 mutable: ID
-   84        | mutable '[' expression ']'
-   85        | mutable '.' ID
+   78 mutable: ID
+   79        | mutable '[' expression ']'
+   80        | mutable '.' ID
 
-   86 immutable: '(' expression ')'
-   87          | call
-   88          | constant
+   81 immutable: '(' expression ')'
+   82          | call
+   83          | constant
 
-   89 call: ID '(' args ')'
+   84 call: ID '(' args ')'
 
-   90 args: arglist
+   85 args: arglist
 
-   91 arglist: arglist ',' expression
-   92        | expression
+   86 arglist: arglist ',' expression
+   87        | expression
 
-   93 constant: NUM
-   94         | CHARCONST
-   95         | STRING
+   88 constant: NUM
+   89         | CHARCONST
+   90         | STRING
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'!' (33) 57 66
-'%' (37) 75
-'(' (40) 20 21 44 45 46 86 89
-')' (41) 20 21 44 45 46 86 89
-'*' (42) 74 79
-'+' (43) 69
-',' (44) 9 27 91
-'-' (45) 70 78
-'.' (46) 85
-'/' (47) 73
+'!' (33) 57
+'%' (37) 70
+'(' (40) 20 21 44 45 46 81 84
+')' (41) 20 21 44 45 46 81 84
+'*' (42) 69 74
+'+' (43) 64
+',' (44) 9 27 86
+'-' (45) 65 73
+'.' (46) 80
+'/' (47) 68
 ';' (59) 24 42 43 47 48 49
-'<' (60) 62 63
-'=' (61) 50 63 64 65 66
-'>' (62) 62 64
-'?' (63) 80
-'[' (91) 13 30 84
-']' (93) 13 30 84
+'=' (61) 50
+'?' (63) 75
+'[' (91) 13 30 79
+']' (93) 13 30 79
 error (256)
-ID (258) 12 13 20 21 29 30 83 85 89
-NUM (259) 13 93
+ID (258) 12 13 20 21 29 30 78 80 84
+NUM (259) 13 88
 WHILE (260) 46
 TYPE (261)
-CHARCONST (262) 94
-COMPARE (263)
+CHARCONST (262) 89
+COMPARE (263) 61
 PREPRO (264)
 MAIN (265)
 INT (266) 17
@@ -200,7 +184,7 @@ ELSE (269) 45
 STRUCT (270)
 UNARYOP (271) 51
 STATEKW (272) 49
-STRING (273) 95
+STRING (273) 90
 CC (274) 37
 CO (275) 37
 FLOAT (276) 18
@@ -212,100 +196,100 @@ OR (280) 53
 
 Nonterminals, with rules where they appear
 
-$accept (43)
+$accept (41)
     on left: 0
-ED (44)
+ED (42)
     on left: 1, on right: 0
-program (45)
+program (43)
     on left: 2, on right: 1
-declarationlist (46)
+declarationlist (44)
     on left: 3 4, on right: 2 3
-declaration (47)
+declaration (45)
     on left: 5 6, on right: 3 4
-vardeclaration (48)
+vardeclaration (46)
     on left: 7, on right: 5
-scopedvardeclaration (49)
+scopedvardeclaration (47)
     on left: 8, on right: 38
-vardeclist (50)
+vardeclist (48)
     on left: 9 10, on right: 7 8 9
-vardecinitialize (51)
+vardecinitialize (49)
     on left: 11, on right: 9 10
-vardecid (52)
+vardecid (50)
     on left: 12 13, on right: 11
-scopedtypespecifier (53)
+scopedtypespecifier (51)
     on left: 14 15, on right: 8
-typespecifier (54)
+typespecifier (52)
     on left: 16, on right: 7 14 15 20 26
-returntypespecifier (55)
+returntypespecifier (53)
     on left: 17 18 19, on right: 16
-fundeclaration (56)
+fundeclaration (54)
     on left: 20 21, on right: 6
-params (57)
+params (55)
     on left: 22 23, on right: 20 21
-paramlist (58)
+paramlist (56)
     on left: 24 25, on right: 22 24
-paramtypelist (59)
+paramtypelist (57)
     on left: 26, on right: 24 25
-paramidlist (60)
+paramidlist (58)
     on left: 27 28, on right: 26 27
-paramid (61)
+paramid (59)
     on left: 29 30, on right: 27 28
-statement (62)
+statement (60)
     on left: 31 32 33 34 35 36, on right: 20 21 40 44 45 46
-compoundst (63)
+compoundst (61)
     on left: 37, on right: 32
-localdeclarations (64)
+localdeclarations (62)
     on left: 38 39, on right: 37 38
-statementlist (65)
+statementlist (63)
     on left: 40 41, on right: 37 40
-expressionst (66)
+expressionst (64)
     on left: 42 43, on right: 31
-selectionst (67)
+selectionst (65)
     on left: 44 45, on right: 33
-iterationst (68)
+iterationst (66)
     on left: 46, on right: 34
-returnst (69)
+returnst (67)
     on left: 47 48, on right: 35
-breakst (70)
+breakst (68)
     on left: 49, on right: 36
-expression (71)
-    on left: 50 51 52, on right: 42 48 50 84 86 91 92
-simpleexpression (72)
+expression (69)
+    on left: 50 51 52, on right: 42 48 50 79 81 86 87
+simpleexpression (70)
     on left: 53 54, on right: 44 45 46 52 53
-andexpression (73)
+andexpression (71)
     on left: 55 56, on right: 53 54 55
-unaryrelexpression (74)
-    on left: 57 58 59, on right: 55 56 57
-relexpression (75)
-    on left: 60 61, on right: 59
-relop (76)
-    on left: 62 63 64 65 66, on right: 60
-sumexpression (77)
-    on left: 67 68, on right: 60 61 67
-sumop (78)
-    on left: 69 70, on right: 67
-term (79)
-    on left: 71 72, on right: 67 68 71
-mulop (80)
+unaryrelexpression (72)
+    on left: 57 58, on right: 55 56 57
+relexpression (73)
+    on left: 59 60, on right: 58
+relop (74)
+    on left: 61, on right: 59
+sumexpression (75)
+    on left: 62 63, on right: 59 60 62
+sumop (76)
+    on left: 64 65, on right: 62
+term (77)
+    on left: 66 67, on right: 62 63 66
+mulop (78)
+    on left: 68 69 70, on right: 66
+unaryexpression (79)
+    on left: 71 72, on right: 66 67 71
+unaryop (80)
     on left: 73 74 75, on right: 71
-unaryexpression (81)
-    on left: 76 77, on right: 71 72 76
-unaryop (82)
-    on left: 78 79 80, on right: 76
-factor (83)
-    on left: 81 82, on right: 77
-mutable (84)
-    on left: 83 84 85, on right: 50 51 81 84 85
-immutable (85)
-    on left: 86 87 88, on right: 82
-call (86)
-    on left: 89, on right: 87
-args (87)
-    on left: 90, on right: 89
-arglist (88)
-    on left: 91 92, on right: 90 91
-constant (89)
-    on left: 93 94 95, on right: 88
+factor (81)
+    on left: 76 77, on right: 72
+mutable (82)
+    on left: 78 79 80, on right: 50 51 76 79 80
+immutable (83)
+    on left: 81 82 83, on right: 77
+call (84)
+    on left: 84, on right: 82
+args (85)
+    on left: 85, on right: 84
+arglist (86)
+    on left: 86 87, on right: 85 86
+constant (87)
+    on left: 88 89 90, on right: 83
 
 
 State 0
@@ -610,9 +594,6 @@ State 30
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    ';'       [reduce using rule 58 (unaryrelexpression)]
-    $default  reduce using rule 58 (unaryrelexpression)
-
     statement           go to state 53
     compoundst          go to state 54
     expressionst        go to state 55
@@ -698,19 +679,19 @@ State 37
 
 State 38
 
-   83 mutable: ID .
-   89 call: ID . '(' args ')'
+   78 mutable: ID .
+   84 call: ID . '(' args ')'
 
     '('  shift, and go to state 79
 
-    $default  reduce using rule 83 (mutable)
+    $default  reduce using rule 78 (mutable)
 
 
 State 39
 
-   93 constant: NUM .
+   88 constant: NUM .
 
-    $default  reduce using rule 93 (constant)
+    $default  reduce using rule 88 (constant)
 
 
 State 40
@@ -722,9 +703,9 @@ State 40
 
 State 41
 
-   94 constant: CHARCONST .
+   89 constant: CHARCONST .
 
-    $default  reduce using rule 94 (constant)
+    $default  reduce using rule 89 (constant)
 
 
 State 42
@@ -742,9 +723,6 @@ State 42
     ';'        shift, and go to state 81
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
-
-    ';'       [reduce using rule 58 (unaryrelexpression)]
-    $default  reduce using rule 58 (unaryrelexpression)
 
     expression          go to state 82
     simpleexpression    go to state 61
@@ -779,9 +757,9 @@ State 44
 
 State 45
 
-   95 constant: STRING .
+   90 constant: STRING .
 
-    $default  reduce using rule 95 (constant)
+    $default  reduce using rule 90 (constant)
 
 
 State 46
@@ -795,21 +773,21 @@ State 46
 
 State 47
 
-   78 unaryop: '-' .
+   73 unaryop: '-' .
 
-    $default  reduce using rule 78 (unaryop)
+    $default  reduce using rule 73 (unaryop)
 
 
 State 48
 
-   79 unaryop: '*' .
+   74 unaryop: '*' .
 
-    $default  reduce using rule 79 (unaryop)
+    $default  reduce using rule 74 (unaryop)
 
 
 State 49
 
-   86 immutable: '(' . expression ')'
+   81 immutable: '(' . expression ')'
 
     ID         shift, and go to state 38
     NUM        shift, and go to state 39
@@ -820,8 +798,6 @@ State 49
     '('        shift, and go to state 49
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
-
-    $default  reduce using rule 58 (unaryrelexpression)
 
     expression          go to state 86
     simpleexpression    go to state 61
@@ -860,8 +836,6 @@ State 51
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    $default  reduce using rule 58 (unaryrelexpression)
-
     unaryrelexpression  go to state 87
     relexpression       go to state 64
     sumexpression       go to state 65
@@ -877,9 +851,9 @@ State 51
 
 State 52
 
-   80 unaryop: '?' .
+   75 unaryop: '?' .
 
-    $default  reduce using rule 80 (unaryop)
+    $default  reduce using rule 75 (unaryop)
 
 
 State 53
@@ -967,54 +941,51 @@ State 63
 
 State 64
 
-   59 unaryrelexpression: relexpression .
+   58 unaryrelexpression: relexpression .
 
-    $default  reduce using rule 59 (unaryrelexpression)
+    $default  reduce using rule 58 (unaryrelexpression)
 
 
 State 65
 
-   60 relexpression: sumexpression . relop sumexpression
-   61              | sumexpression .
-   67 sumexpression: sumexpression . sumop term
+   59 relexpression: sumexpression . relop sumexpression
+   60              | sumexpression .
+   62 sumexpression: sumexpression . sumop term
 
-    '+'  shift, and go to state 92
-    '-'  shift, and go to state 93
-    '='  shift, and go to state 94
-    '!'  shift, and go to state 95
-    '<'  shift, and go to state 96
-    '>'  shift, and go to state 97
+    COMPARE  shift, and go to state 92
+    '+'      shift, and go to state 93
+    '-'      shift, and go to state 94
 
-    $default  reduce using rule 61 (relexpression)
+    $default  reduce using rule 60 (relexpression)
 
-    relop  go to state 98
-    sumop  go to state 99
+    relop  go to state 95
+    sumop  go to state 96
 
 
 State 66
 
-   68 sumexpression: term .
-   71 term: term . mulop unaryexpression
+   63 sumexpression: term .
+   66 term: term . mulop unaryexpression
 
-    '*'  shift, and go to state 100
-    '/'  shift, and go to state 101
-    '%'  shift, and go to state 102
+    '*'  shift, and go to state 97
+    '/'  shift, and go to state 98
+    '%'  shift, and go to state 99
 
-    $default  reduce using rule 68 (sumexpression)
+    $default  reduce using rule 63 (sumexpression)
 
-    mulop  go to state 103
+    mulop  go to state 100
 
 
 State 67
 
-   72 term: unaryexpression .
+   67 term: unaryexpression .
 
-    $default  reduce using rule 72 (term)
+    $default  reduce using rule 67 (term)
 
 
 State 68
 
-   76 unaryexpression: unaryop . unaryexpression
+   71 unaryexpression: unaryop . unaryexpression
 
     ID         shift, and go to state 38
     NUM        shift, and go to state 39
@@ -1025,7 +996,7 @@ State 68
     '('        shift, and go to state 49
     '?'        shift, and go to state 52
 
-    unaryexpression  go to state 104
+    unaryexpression  go to state 101
     unaryop          go to state 68
     factor           go to state 69
     mutable          go to state 88
@@ -1036,47 +1007,46 @@ State 68
 
 State 69
 
-   77 unaryexpression: factor .
+   72 unaryexpression: factor .
 
-    $default  reduce using rule 77 (unaryexpression)
+    $default  reduce using rule 72 (unaryexpression)
 
 
 State 70
 
    50 expression: mutable . '=' expression
    51           | mutable . UNARYOP
-   81 factor: mutable .
-   84 mutable: mutable . '[' expression ']'
-   85        | mutable . '.' ID
+   76 factor: mutable .
+   79 mutable: mutable . '[' expression ']'
+   80        | mutable . '.' ID
 
-    UNARYOP  shift, and go to state 105
-    '['      shift, and go to state 106
-    '='      shift, and go to state 107
-    '.'      shift, and go to state 108
+    UNARYOP  shift, and go to state 102
+    '['      shift, and go to state 103
+    '='      shift, and go to state 104
+    '.'      shift, and go to state 105
 
-    '='       [reduce using rule 81 (factor)]
-    $default  reduce using rule 81 (factor)
+    $default  reduce using rule 76 (factor)
 
 
 State 71
 
-   82 factor: immutable .
+   77 factor: immutable .
 
-    $default  reduce using rule 82 (factor)
+    $default  reduce using rule 77 (factor)
 
 
 State 72
 
-   87 immutable: call .
+   82 immutable: call .
 
-    $default  reduce using rule 87 (immutable)
+    $default  reduce using rule 82 (immutable)
 
 
 State 73
 
-   88 immutable: constant .
+   83 immutable: constant .
 
-    $default  reduce using rule 88 (immutable)
+    $default  reduce using rule 83 (immutable)
 
 
 State 74
@@ -1113,10 +1083,7 @@ State 76
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    ';'       [reduce using rule 58 (unaryrelexpression)]
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    statement           go to state 109
+    statement           go to state 106
     compoundst          go to state 54
     expressionst        go to state 55
     selectionst         go to state 56
@@ -1155,7 +1122,7 @@ State 78
 
 State 79
 
-   89 call: ID '(' . args ')'
+   84 call: ID '(' . args ')'
 
     ID         shift, and go to state 38
     NUM        shift, and go to state 39
@@ -1167,9 +1134,7 @@ State 79
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    expression          go to state 110
+    expression          go to state 107
     simpleexpression    go to state 61
     andexpression       go to state 62
     unaryrelexpression  go to state 63
@@ -1182,8 +1147,8 @@ State 79
     mutable             go to state 70
     immutable           go to state 71
     call                go to state 72
-    args                go to state 111
-    arglist             go to state 112
+    args                go to state 108
+    arglist             go to state 109
     constant            go to state 73
 
 
@@ -1201,9 +1166,7 @@ State 80
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    simpleexpression    go to state 113
+    simpleexpression    go to state 110
     andexpression       go to state 62
     unaryrelexpression  go to state 63
     relexpression       go to state 64
@@ -1229,7 +1192,7 @@ State 82
 
    48 returnst: RETURN expression . ';'
 
-    ';'  shift, and go to state 114
+    ';'  shift, and go to state 111
 
 
 State 83
@@ -1247,9 +1210,7 @@ State 83
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    simpleexpression    go to state 115
+    simpleexpression    go to state 112
     andexpression       go to state 62
     unaryrelexpression  go to state 63
     relexpression       go to state 64
@@ -1279,22 +1240,22 @@ State 85
     INT     shift, and go to state 2
     FLOAT   shift, and go to state 3
     CHAR    shift, and go to state 4
-    STATIC  shift, and go to state 116
+    STATIC  shift, and go to state 113
 
     $default  reduce using rule 41 (statementlist)
 
-    scopedvardeclaration  go to state 117
-    scopedtypespecifier   go to state 118
-    typespecifier         go to state 119
+    scopedvardeclaration  go to state 114
+    scopedtypespecifier   go to state 115
+    typespecifier         go to state 116
     returntypespecifier   go to state 11
-    statementlist         go to state 120
+    statementlist         go to state 117
 
 
 State 86
 
-   86 immutable: '(' expression . ')'
+   81 immutable: '(' expression . ')'
 
-    ')'  shift, and go to state 121
+    ')'  shift, and go to state 118
 
 
 State 87
@@ -1306,14 +1267,14 @@ State 87
 
 State 88
 
-   81 factor: mutable .
-   84 mutable: mutable . '[' expression ']'
-   85        | mutable . '.' ID
+   76 factor: mutable .
+   79 mutable: mutable . '[' expression ']'
+   80        | mutable . '.' ID
 
-    '['  shift, and go to state 106
-    '.'  shift, and go to state 108
+    '['  shift, and go to state 103
+    '.'  shift, and go to state 105
 
-    $default  reduce using rule 81 (factor)
+    $default  reduce using rule 76 (factor)
 
 
 State 89
@@ -1337,9 +1298,7 @@ State 90
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    andexpression       go to state 122
+    andexpression       go to state 119
     unaryrelexpression  go to state 63
     relexpression       go to state 64
     sumexpression       go to state 65
@@ -1367,9 +1326,7 @@ State 91
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    unaryrelexpression  go to state 123
+    unaryrelexpression  go to state 120
     relexpression       go to state 64
     sumexpression       go to state 65
     term                go to state 66
@@ -1384,51 +1341,28 @@ State 91
 
 State 92
 
-   69 sumop: '+' .
+   61 relop: COMPARE .
 
-    $default  reduce using rule 69 (sumop)
+    $default  reduce using rule 61 (relop)
 
 
 State 93
 
-   70 sumop: '-' .
+   64 sumop: '+' .
 
-    $default  reduce using rule 70 (sumop)
+    $default  reduce using rule 64 (sumop)
 
 
 State 94
 
-   65 relop: '=' . '='
+   65 sumop: '-' .
 
-    '='  shift, and go to state 124
+    $default  reduce using rule 65 (sumop)
 
 
 State 95
 
-   66 relop: '!' . '='
-
-    '='  shift, and go to state 125
-
-
-State 96
-
-   62 relop: '<' . '>'
-   63      | '<' . '='
-
-    '='  shift, and go to state 126
-    '>'  shift, and go to state 127
-
-
-State 97
-
-   64 relop: '>' . '='
-
-    '='  shift, and go to state 128
-
-
-State 98
-
-   60 relexpression: sumexpression relop . sumexpression
+   59 relexpression: sumexpression relop . sumexpression
 
     ID         shift, and go to state 38
     NUM        shift, and go to state 39
@@ -1439,7 +1373,7 @@ State 98
     '('        shift, and go to state 49
     '?'        shift, and go to state 52
 
-    sumexpression    go to state 129
+    sumexpression    go to state 121
     term             go to state 66
     unaryexpression  go to state 67
     unaryop          go to state 68
@@ -1450,9 +1384,9 @@ State 98
     constant         go to state 73
 
 
-State 99
+State 96
 
-   67 sumexpression: sumexpression sumop . term
+   62 sumexpression: sumexpression sumop . term
 
     ID         shift, and go to state 38
     NUM        shift, and go to state 39
@@ -1463,7 +1397,7 @@ State 99
     '('        shift, and go to state 49
     '?'        shift, and go to state 52
 
-    term             go to state 130
+    term             go to state 122
     unaryexpression  go to state 67
     unaryop          go to state 68
     factor           go to state 69
@@ -1473,30 +1407,30 @@ State 99
     constant         go to state 73
 
 
+State 97
+
+   69 mulop: '*' .
+
+    $default  reduce using rule 69 (mulop)
+
+
+State 98
+
+   68 mulop: '/' .
+
+    $default  reduce using rule 68 (mulop)
+
+
+State 99
+
+   70 mulop: '%' .
+
+    $default  reduce using rule 70 (mulop)
+
+
 State 100
 
-   74 mulop: '*' .
-
-    $default  reduce using rule 74 (mulop)
-
-
-State 101
-
-   73 mulop: '/' .
-
-    $default  reduce using rule 73 (mulop)
-
-
-State 102
-
-   75 mulop: '%' .
-
-    $default  reduce using rule 75 (mulop)
-
-
-State 103
-
-   71 term: term mulop . unaryexpression
+   66 term: term mulop . unaryexpression
 
     ID         shift, and go to state 38
     NUM        shift, and go to state 39
@@ -1507,7 +1441,7 @@ State 103
     '('        shift, and go to state 49
     '?'        shift, and go to state 52
 
-    unaryexpression  go to state 131
+    unaryexpression  go to state 123
     unaryop          go to state 68
     factor           go to state 69
     mutable          go to state 88
@@ -1516,23 +1450,23 @@ State 103
     constant         go to state 73
 
 
-State 104
+State 101
 
-   76 unaryexpression: unaryop unaryexpression .
+   71 unaryexpression: unaryop unaryexpression .
 
-    $default  reduce using rule 76 (unaryexpression)
+    $default  reduce using rule 71 (unaryexpression)
 
 
-State 105
+State 102
 
    51 expression: mutable UNARYOP .
 
     $default  reduce using rule 51 (expression)
 
 
-State 106
+State 103
 
-   84 mutable: mutable '[' . expression ']'
+   79 mutable: mutable '[' . expression ']'
 
     ID         shift, and go to state 38
     NUM        shift, and go to state 39
@@ -1544,9 +1478,7 @@ State 106
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    expression          go to state 132
+    expression          go to state 124
     simpleexpression    go to state 61
     andexpression       go to state 62
     unaryrelexpression  go to state 63
@@ -1562,7 +1494,7 @@ State 106
     constant            go to state 73
 
 
-State 107
+State 104
 
    50 expression: mutable '=' . expression
 
@@ -1576,9 +1508,7 @@ State 107
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    expression          go to state 133
+    expression          go to state 125
     simpleexpression    go to state 61
     andexpression       go to state 62
     unaryrelexpression  go to state 63
@@ -1594,71 +1524,71 @@ State 107
     constant            go to state 73
 
 
-State 108
+State 105
 
-   85 mutable: mutable '.' . ID
+   80 mutable: mutable '.' . ID
 
-    ID  shift, and go to state 134
+    ID  shift, and go to state 126
 
 
-State 109
+State 106
 
    20 fundeclaration: typespecifier ID '(' params ')' statement .
 
     $default  reduce using rule 20 (fundeclaration)
 
 
+State 107
+
+   87 arglist: expression .
+
+    $default  reduce using rule 87 (arglist)
+
+
+State 108
+
+   84 call: ID '(' args . ')'
+
+    ')'  shift, and go to state 127
+
+
+State 109
+
+   85 args: arglist .
+   86 arglist: arglist . ',' expression
+
+    ','  shift, and go to state 128
+
+    $default  reduce using rule 85 (args)
+
+
 State 110
-
-   92 arglist: expression .
-
-    $default  reduce using rule 92 (arglist)
-
-
-State 111
-
-   89 call: ID '(' args . ')'
-
-    ')'  shift, and go to state 135
-
-
-State 112
-
-   90 args: arglist .
-   91 arglist: arglist . ',' expression
-
-    ','  shift, and go to state 136
-
-    $default  reduce using rule 90 (args)
-
-
-State 113
 
    46 iterationst: WHILE '(' simpleexpression . ')' statement
    53 simpleexpression: simpleexpression . OR andexpression
 
     OR   shift, and go to state 90
-    ')'  shift, and go to state 137
+    ')'  shift, and go to state 129
 
 
-State 114
+State 111
 
    48 returnst: RETURN expression ';' .
 
     $default  reduce using rule 48 (returnst)
 
 
-State 115
+State 112
 
    44 selectionst: IF '(' simpleexpression . ')' statement
    45            | IF '(' simpleexpression . ')' statement ELSE statement
    53 simpleexpression: simpleexpression . OR andexpression
 
     OR   shift, and go to state 90
-    ')'  shift, and go to state 138
+    ')'  shift, and go to state 130
 
 
-State 116
+State 113
 
    14 scopedtypespecifier: STATIC . typespecifier
 
@@ -1666,36 +1596,36 @@ State 116
     FLOAT  shift, and go to state 3
     CHAR   shift, and go to state 4
 
-    typespecifier        go to state 139
+    typespecifier        go to state 131
     returntypespecifier  go to state 11
 
 
-State 117
+State 114
 
    38 localdeclarations: localdeclarations scopedvardeclaration .
 
     $default  reduce using rule 38 (localdeclarations)
 
 
-State 118
+State 115
 
     8 scopedvardeclaration: scopedtypespecifier . vardeclist
 
     ID  shift, and go to state 34
 
-    vardeclist        go to state 140
+    vardeclist        go to state 132
     vardecinitialize  go to state 18
     vardecid          go to state 19
 
 
-State 119
+State 116
 
    15 scopedtypespecifier: typespecifier .
 
     $default  reduce using rule 15 (scopedtypespecifier)
 
 
-State 120
+State 117
 
    37 compoundst: CO localdeclarations statementlist . CC
    40 statementlist: statementlist . statement
@@ -1708,7 +1638,7 @@ State 120
     IF         shift, and go to state 43
     STATEKW    shift, and go to state 44
     STRING     shift, and go to state 45
-    CC         shift, and go to state 141
+    CC         shift, and go to state 133
     CO         shift, and go to state 46
     '-'        shift, and go to state 47
     '*'        shift, and go to state 48
@@ -1717,10 +1647,7 @@ State 120
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    ';'       [reduce using rule 58 (unaryrelexpression)]
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    statement           go to state 142
+    statement           go to state 134
     compoundst          go to state 54
     expressionst        go to state 55
     selectionst         go to state 56
@@ -1743,14 +1670,14 @@ State 120
     constant            go to state 73
 
 
-State 121
+State 118
 
-   86 immutable: '(' expression ')' .
+   81 immutable: '(' expression ')' .
 
-    $default  reduce using rule 86 (immutable)
+    $default  reduce using rule 81 (immutable)
 
 
-State 122
+State 119
 
    53 simpleexpression: simpleexpression OR andexpression .
    55 andexpression: andexpression . AND unaryrelexpression
@@ -1760,113 +1687,78 @@ State 122
     $default  reduce using rule 53 (simpleexpression)
 
 
-State 123
+State 120
 
    55 andexpression: andexpression AND unaryrelexpression .
 
     $default  reduce using rule 55 (andexpression)
 
 
+State 121
+
+   59 relexpression: sumexpression relop sumexpression .
+   62 sumexpression: sumexpression . sumop term
+
+    '+'  shift, and go to state 93
+    '-'  shift, and go to state 94
+
+    $default  reduce using rule 59 (relexpression)
+
+    sumop  go to state 96
+
+
+State 122
+
+   62 sumexpression: sumexpression sumop term .
+   66 term: term . mulop unaryexpression
+
+    '*'  shift, and go to state 97
+    '/'  shift, and go to state 98
+    '%'  shift, and go to state 99
+
+    $default  reduce using rule 62 (sumexpression)
+
+    mulop  go to state 100
+
+
+State 123
+
+   66 term: term mulop unaryexpression .
+
+    $default  reduce using rule 66 (term)
+
+
 State 124
 
-   65 relop: '=' '=' .
+   79 mutable: mutable '[' expression . ']'
 
-    $default  reduce using rule 65 (relop)
+    ']'  shift, and go to state 135
 
 
 State 125
-
-   66 relop: '!' '=' .
-
-    $default  reduce using rule 66 (relop)
-
-
-State 126
-
-   63 relop: '<' '=' .
-
-    $default  reduce using rule 63 (relop)
-
-
-State 127
-
-   62 relop: '<' '>' .
-
-    $default  reduce using rule 62 (relop)
-
-
-State 128
-
-   64 relop: '>' '=' .
-
-    $default  reduce using rule 64 (relop)
-
-
-State 129
-
-   60 relexpression: sumexpression relop sumexpression .
-   67 sumexpression: sumexpression . sumop term
-
-    '+'  shift, and go to state 92
-    '-'  shift, and go to state 93
-
-    $default  reduce using rule 60 (relexpression)
-
-    sumop  go to state 99
-
-
-State 130
-
-   67 sumexpression: sumexpression sumop term .
-   71 term: term . mulop unaryexpression
-
-    '*'  shift, and go to state 100
-    '/'  shift, and go to state 101
-    '%'  shift, and go to state 102
-
-    $default  reduce using rule 67 (sumexpression)
-
-    mulop  go to state 103
-
-
-State 131
-
-   71 term: term mulop unaryexpression .
-
-    $default  reduce using rule 71 (term)
-
-
-State 132
-
-   84 mutable: mutable '[' expression . ']'
-
-    ']'  shift, and go to state 143
-
-
-State 133
 
    50 expression: mutable '=' expression .
 
     $default  reduce using rule 50 (expression)
 
 
-State 134
+State 126
 
-   85 mutable: mutable '.' ID .
+   80 mutable: mutable '.' ID .
 
-    $default  reduce using rule 85 (mutable)
-
-
-State 135
-
-   89 call: ID '(' args ')' .
-
-    $default  reduce using rule 89 (call)
+    $default  reduce using rule 80 (mutable)
 
 
-State 136
+State 127
 
-   91 arglist: arglist ',' . expression
+   84 call: ID '(' args ')' .
+
+    $default  reduce using rule 84 (call)
+
+
+State 128
+
+   86 arglist: arglist ',' . expression
 
     ID         shift, and go to state 38
     NUM        shift, and go to state 39
@@ -1878,9 +1770,7 @@ State 136
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    expression          go to state 144
+    expression          go to state 136
     simpleexpression    go to state 61
     andexpression       go to state 62
     unaryrelexpression  go to state 63
@@ -1896,7 +1786,7 @@ State 136
     constant            go to state 73
 
 
-State 137
+State 129
 
    46 iterationst: WHILE '(' simpleexpression ')' . statement
 
@@ -1916,10 +1806,7 @@ State 137
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    ';'       [reduce using rule 58 (unaryrelexpression)]
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    statement           go to state 145
+    statement           go to state 137
     compoundst          go to state 54
     expressionst        go to state 55
     selectionst         go to state 56
@@ -1942,7 +1829,7 @@ State 137
     constant            go to state 73
 
 
-State 138
+State 130
 
    44 selectionst: IF '(' simpleexpression ')' . statement
    45            | IF '(' simpleexpression ')' . statement ELSE statement
@@ -1963,10 +1850,7 @@ State 138
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    ';'       [reduce using rule 58 (unaryrelexpression)]
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    statement           go to state 146
+    statement           go to state 138
     compoundst          go to state 54
     expressionst        go to state 55
     selectionst         go to state 56
@@ -1989,14 +1873,14 @@ State 138
     constant            go to state 73
 
 
-State 139
+State 131
 
    14 scopedtypespecifier: STATIC typespecifier .
 
     $default  reduce using rule 14 (scopedtypespecifier)
 
 
-State 140
+State 132
 
     8 scopedvardeclaration: scopedtypespecifier vardeclist .
     9 vardeclist: vardeclist . ',' vardecinitialize
@@ -2006,53 +1890,53 @@ State 140
     $default  reduce using rule 8 (scopedvardeclaration)
 
 
-State 141
+State 133
 
    37 compoundst: CO localdeclarations statementlist CC .
 
     $default  reduce using rule 37 (compoundst)
 
 
-State 142
+State 134
 
    40 statementlist: statementlist statement .
 
     $default  reduce using rule 40 (statementlist)
 
 
-State 143
+State 135
 
-   84 mutable: mutable '[' expression ']' .
+   79 mutable: mutable '[' expression ']' .
 
-    $default  reduce using rule 84 (mutable)
-
-
-State 144
-
-   91 arglist: arglist ',' expression .
-
-    $default  reduce using rule 91 (arglist)
+    $default  reduce using rule 79 (mutable)
 
 
-State 145
+State 136
+
+   86 arglist: arglist ',' expression .
+
+    $default  reduce using rule 86 (arglist)
+
+
+State 137
 
    46 iterationst: WHILE '(' simpleexpression ')' statement .
 
     $default  reduce using rule 46 (iterationst)
 
 
-State 146
+State 138
 
    44 selectionst: IF '(' simpleexpression ')' statement .
    45            | IF '(' simpleexpression ')' statement . ELSE statement
 
-    ELSE  shift, and go to state 147
+    ELSE  shift, and go to state 139
 
     ELSE      [reduce using rule 44 (selectionst)]
     $default  reduce using rule 44 (selectionst)
 
 
-State 147
+State 139
 
    45 selectionst: IF '(' simpleexpression ')' statement ELSE . statement
 
@@ -2072,10 +1956,7 @@ State 147
     '!'        shift, and go to state 51
     '?'        shift, and go to state 52
 
-    ';'       [reduce using rule 58 (unaryrelexpression)]
-    $default  reduce using rule 58 (unaryrelexpression)
-
-    statement           go to state 148
+    statement           go to state 140
     compoundst          go to state 54
     expressionst        go to state 55
     selectionst         go to state 56
@@ -2098,7 +1979,7 @@ State 147
     constant            go to state 73
 
 
-State 148
+State 140
 
    45 selectionst: IF '(' simpleexpression ')' statement ELSE statement .
 

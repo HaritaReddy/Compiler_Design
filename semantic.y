@@ -79,7 +79,7 @@ int checkid(char *name)
 	struct node *temp=symtable[pos];
 	while(temp!=NULL)
 	{
-		if(strcmp(temp->name,name)==0&&globalscope==temp->scope)
+		if(strcmp(temp->name,name)==0&&globalscope>=temp->scope)
 		{
 			return 1;    //1=declared
 		}
@@ -99,9 +99,16 @@ void insertarray(char* type, char* name, char *size)
 		printf("Array identifier already declared\n\n");
 		return;
 	}
-
 	else
 	{
+
+		//Checking for array size less than 1
+		if(size[0]=='0'|| size[0]=='-')
+		{
+			printf("Array Size is Less Than 1! Illegal Size\n");
+			return;
+		}
+
 		int pos=poscalc(name);
 
 		printf("posiiton calculated\n");
@@ -225,7 +232,7 @@ void printsym()
 %left '+' '-'
 %left '*' '/'
 %%
-ED: program { printf("Parsing Completed\n"); }
+ED: program { printf("\n\n\n----------------------\t\t\t\tPARSING COMPLETED!\n"); }
 ;
 
 program : PREPRO code main 
@@ -298,7 +305,7 @@ statement :ID'='E  { if(checkid($1)==-1)
 | TYPE ID'='E {if(checkvar($2)==0) insertvar($1,$2); else printf("\n\nDuplicate declaration of %s\n\n",$2); printsym(); }
 | STRUCT ID CO declarations CC
 | STATEKW
-| TYPE ID '[' E ']' { printf("$4 : %s\n\n",$4);insertarray($1,$2,$4); printf("\n\narray ddetected\n\n");}
+| TYPE ID '[' E ']' { printf("$4 : %s\n\n",$4);insertarray($1,$2,$4); printf("\n\narray ddetected\n\n");printsym();}
 | TYPE ID '[' ']' {printf("Semantic Error! Array has no subscript.\n");}
 ;
 
@@ -327,6 +334,9 @@ E : E'+'E
 | UNARYOP ID 
 | ID UNARYOP
 ;
+
+
+
 %%
 
 #include <stdio.h>

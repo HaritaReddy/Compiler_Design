@@ -79,7 +79,7 @@ int checkid(char *name)
 	struct node *temp=symtable[pos];
 	while(temp!=NULL)
 	{
-		if(strcmp(temp->name,name)==0&&globalscope==temp->scope)
+		if(strcmp(temp->name,name)==0&&globalscope>=temp->scope)
 		{
 			return 1;    //1=declared
 		}
@@ -99,9 +99,16 @@ void insertarray(char* type, char* name, char *size)
 		printf("Array identifier already declared\n\n");
 		return;
 	}
-
 	else
 	{
+
+		//Checking for array size less than 1
+		if(size[0]=='0'|| size[0]=='-')
+		{
+			printf("Array Size is Less Than 1! Illegal Size\n");
+			return;
+		}
+
 		int pos=poscalc(name);
 
 		printf("posiiton calculated\n");
@@ -218,9 +225,8 @@ void printsym()
 		printf("\n");
 	}
 }
-
-
 %}
+
 %token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO MAIN INT RETURN IF ELSE STRUCT UNARYOP STATEKW STRING CC CO FLOAT CHAR STATIC AND OR
 %left '+' '-'
 %left '*' '/'
@@ -239,20 +245,20 @@ declaration : vardeclaration
 |fundeclaration
 ;
 
-vardeclaration : typespecifier vardeclist
+vardeclaration : typespecifier vardeclist   {printf("vardeclaration : %s %s\n",$1,$2);}
 ;
 
 scopedvardeclaration : scopedtypespecifier vardeclist
 ;
 
-vardeclist : vardeclist ',' vardecinitialize 
-|vardecinitialize
+vardeclist : vardeclist ',' vardecinitialize  
+|vardecinitialize   {printf("vardeclist : %s\n",$1);}
 ;
 
-vardecinitialize : vardecid
+vardecinitialize : vardecid   {printf("vardecinitialize : %s\n",$1);}
 ;
 
-vardecid : ID
+vardecid : ID   {printf("vardecid : %s\n",$1);}
 |ID '[' NUM ']'
 ;
 
@@ -260,10 +266,10 @@ scopedtypespecifier : STATIC typespecifier
 |typespecifier
 ;
 
-typespecifier : returntypespecifier 
+typespecifier : returntypespecifier   {printf("typespeicifier : %s\n",$1);}
 ;
 
-returntypespecifier: INT
+returntypespecifier: INT   {printf("\nreturntypespecifier : %s\n",$1);}
 |FLOAT
 |CHAR
 ;
@@ -342,7 +348,7 @@ andexpression: andexpression AND unaryrelexpression
 |unaryrelexpression
 ;
 
-unaryrelexpression: '!' unaryrelexpression|
+unaryrelexpression: '!' unaryrelexpression
 |relexpression
 ;
 
@@ -350,11 +356,7 @@ relexpression: sumexpression relop sumexpression
 |sumexpression
 ;
 
-relop : '<' '>'
-|'<' '='
-|'>' '='
-|'=' '='
-|'!' '='
+relop : COMPARE
 ;
 
 sumexpression: sumexpression sumop term

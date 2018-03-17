@@ -195,9 +195,9 @@ STRUCT ("struct")
 kw ("auto")|("case")|("const")|("default")|("do")|("double")|("enum")|("extern")|("for")|("goto")|("long")|("register")|("short")|("signed")|("sizeof")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")
 STATEKW ("break")|("continue")
 STATIC ("static")
+INT ("int")
 FLOAT ("float")
 CHAR ("char")
-INT ("int")
 ID [a-zA-Z][a-zA-Z0-9_]*
 NUM (([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
 CHARCONST [\'][a-zA-Z][\']
@@ -226,7 +226,9 @@ OR "||"
 {kw} {insert(yytext,"Keyword");printf("%s:Keyword\n",yytext);}
 {STATEKW} {insert(yytext,"Keyword"); return STATEKW;}
 {STATIC} {return STATIC;}
-{INT} {return INT;}
+{INT} {yylval = strdup(yytext); 
+       printf("%s detected",yylval); 
+		return INT;}
 {FLOAT} {return FLOAT;}
 {CHAR} {return CHAR;}
 {ID} { printf("id %s detected\n",yytext); yylval = strdup(yytext); return ID;}
