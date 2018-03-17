@@ -52,22 +52,23 @@ extern int yydebug;
     CHARCONST = 262,
     COMPARE = 263,
     PREPRO = 264,
-    MAIN = 265,
-    INT = 266,
-    RETURN = 267,
-    IF = 268,
-    ELSE = 269,
-    STRUCT = 270,
-    UNARYOP = 271,
-    STATEKW = 272,
-    STRING = 273,
-    CC = 274,
-    CO = 275,
-    FLOAT = 276,
-    CHAR = 277,
-    STATIC = 278,
-    AND = 279,
-    OR = 280
+    INT = 265,
+    RETURN = 266,
+    IF = 267,
+    ELSE = 268,
+    STRUCT = 269,
+    UNARYOP = 270,
+    STATEKW = 271,
+    STRING = 272,
+    CC = 273,
+    CO = 274,
+    FLOAT = 275,
+    CHAR = 276,
+    STATIC = 277,
+    AND = 278,
+    OR = 279,
+    BREAK = 280,
+    NEG = 281
   };
 #endif
 /* Tokens.  */
@@ -78,22 +79,23 @@ extern int yydebug;
 #define CHARCONST 262
 #define COMPARE 263
 #define PREPRO 264
-#define MAIN 265
-#define INT 266
-#define RETURN 267
-#define IF 268
-#define ELSE 269
-#define STRUCT 270
-#define UNARYOP 271
-#define STATEKW 272
-#define STRING 273
-#define CC 274
-#define CO 275
-#define FLOAT 276
-#define CHAR 277
-#define STATIC 278
-#define AND 279
-#define OR 280
+#define INT 265
+#define RETURN 266
+#define IF 267
+#define ELSE 268
+#define STRUCT 269
+#define UNARYOP 270
+#define STATEKW 271
+#define STRING 272
+#define CC 273
+#define CO 274
+#define FLOAT 275
+#define CHAR 276
+#define STATIC 277
+#define AND 278
+#define OR 279
+#define BREAK 280
+#define NEG 281
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
