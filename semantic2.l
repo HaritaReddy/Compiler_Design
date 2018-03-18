@@ -10,6 +10,8 @@
 		char type[10];
 		int scope;
 		char size[20];
+		char *arg[5];
+		char *argtype[5];
 		int defflag;
 	} ;
 	struct node* symtable[53],*constable[53];
@@ -198,8 +200,7 @@ INT ("int")
 FLOAT ("float")
 CHAR ("char")
 ID [a-zA-Z][a-zA-Z0-9_]*
-NUM (([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
-NEG [-]
+NUM [-]?(([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)
 CHARCONST [\'][a-zA-Z][\']
 CO "{"
 CC "}"
@@ -247,7 +248,6 @@ int isfloat=0; int i;
 	insertincons(yytext,"int");
 yylval=strdup(yytext);
 return NUM;}
-{NEG} {printf("NEG %s DETECTED\n",yytext); yylval=strdup(yytext); return NEG;}
 {CHARCONST} {insert(yytext,"Character Constant");
 insertincons(yytext,"character");
 return CHARCONST;}
