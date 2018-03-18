@@ -2,6 +2,16 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+
+struct treenode
+{
+	char nodeitem[20];
+	char* children[20];
+	int num_of_children;
+};
+
+struct treenode* root=NULL;
+
 struct node
 	{
 		char name[50];
@@ -24,6 +34,7 @@ char *arglist[5];
 char *argtypelist[5];
 int argindex=0;
 int callargcount=0;
+int intindex=0;
 
 void insertvar(char* type,char* name) //Inserts the token in symbol table
 	{
@@ -119,7 +130,7 @@ int checkidarray(char* name)
 void insertarray(char* type, char* name, char *size)
 {
 
-	printf("\n\nname: %s, TYPE : %s , size : %s \n\n",name, type, size);
+	printf("\n\n Array name: %s, TYPE : %s , size : %s \n\n",name, type, size);
 	if(checkvar(name)==1)
 	{
 		printf("Array identifier already declared\n\n");
@@ -314,6 +325,67 @@ int checknumarg(char* name)
 	
 }
 
+int checkifidisarray(char* name)
+{
+	int pos=poscalc(name);
+	struct node* temp=symtable[pos];
+	int flag=0;
+	if(symtable[pos]==NULL)
+	return 1;
+	while(strcmp(temp->name,name)!=0)
+	{
+	temp=temp->next;
+	}	
+	if(temp==NULL)
+	return 1;
+	if(strcmp(temp->class,"array")==0)
+	return 0;
+	return 1;
+}
+
+int checktype(char* name)
+{
+	int pos=poscalc(name);
+	struct node* temp=symtable[pos];
+	int flag=0;
+	if(symtable[pos]==NULL)
+	return 1;
+	while(strcmp(temp->name,name)!=0)
+	{
+	temp=temp->next;
+	}	
+	if(temp==NULL)
+	return 1;
+	if((temp->type)&&strcmp(temp->type,"int")!=0)
+	return 0;
+	return 1;
+}
+
+
+int checkconsttype(char* name)
+{
+	int pos=poscalc(name);
+	printf("Pos is %d\n",pos);
+	struct node* temp=constable[pos];
+	int flag=0;
+	if(constable[pos]==NULL)
+	return 1;
+	while(strcmp(temp->name,name)!=0)
+	{
+	temp=temp->next;
+	}	
+	if(temp==NULL)
+	return 1;
+	if(strcmp(temp->class,"int")!=0)
+	{
+	printf("temp->class is %s\n",temp->type);
+	return 0;
+	}
+	return 1;
+}
+
+
+
 void printsym()
 {
 	printf("\n\n\n");
@@ -356,6 +428,29 @@ void printsym()
 	printf("------------SYMBOL TABLE ENDED-----------------\n\n");
 }
 
+void printconst()
+{
+int j;
+printf("-------CONSTANT TABLE-------\n"); //Printing Constant Table
+	printf("\t\tConstant   Datatype\n\n");
+
+	for(j=0;j<53;j++)
+	{
+		
+		ptr=constable[j];
+		if(ptr==NULL)
+		continue;
+		printf("Position: %d\t",j);
+		while(ptr!=NULL)
+		{
+
+			printf("%-10s %-15s|\t",ptr->name,ptr->class);
+			ptr=ptr->next;
+		}
+		printf("\n");
+	}
+	printf("-------------------CONSTANT TABLE ENDED-------------\n");
+}
 
 
 %}
@@ -390,19 +485,26 @@ vardeclaration: typespecifier ID '=' simpleexpression  { printf("declaration don
 
 |typespecifier ID 			{ printf("declaration done\n"); int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\nDuplicate declaration of %s\n\n",$2); printsym();}
 
-|typespecifier ID '[' simpleexpression ']' '=' simpleexpression   { printf("$4 : %s\n\n",$4);insertarray($1,$2,$4); printf("\n\narray ddetected\n\n");printsym();}
+|typespecifier ID '[' simpleexpression ']' '=' simpleexpression   { printf("$4 : %s\n\n",$4);insertarray($1,$2,$4); printsym();}
 
-|typespecifier ID '[' simpleexpression ']'   { printf("$4= %s $5 : %s  \n\n",$4,$5);insertarray($1,$2,$4); printf("\n\narray ddetected\n\n");printsym();}
+|typespecifier ID '[' simpleexpression ']'   { printf("\n\narray ddetected %s\n\n",$1); printf("$4= %s $5 : %s  \n\n",$4,$5);insertarray($1,$2,$4); printf("\n\narray ddetected\n\n");printsym();}
 
-| TYPE ID '[' ']' {printf("Semantic Error! Array has no subscript.\n");}
+|typespecifier ID '[' ']' {printf("Semantic Error! Array has no subscript.\n");}
 
 ;
 
 
 
 
-statement: ID '=' simpleexpression ';'			{ if(checkid($1)==-1)
-									printf("\n\nError : %s Undeclared\n\n\n",$1);}
+statement: ID '=' simpleexpression ';'			{ int p=checkifidisarray($1); 
+if(p==0)
+printf("Error:Array Identifier %s has no subscript!\n",$1);
+else
+{
+if(checkid($1)==-1)
+printf("\n\nError : %s Undeclared\n\n\n",$1);
+}
+}
 |ID '[' NUM ']' '=' simpleexpression ';'		
 {int c=checkidarray($1); 
 if(c==0)
@@ -504,8 +606,18 @@ compoundst: CO declarationlist CC
 ;
 
 
-simpleexpression: simpleexpression OR andexpression
-|andexpression
+simpleexpression: simpleexpression OR andexpression 
+{ 
+if(intindex==1) 
+printf("Error: Expression must be of the type int!\n");
+intindex=0;
+}
+|andexpression 
+{
+if(intindex==1) 
+printf("Error: Expression must be of the type int!\n");
+intindex=0;
+}
 ;
 
 andexpression: andexpression AND unaryrelexpression
@@ -554,10 +666,10 @@ factor: mutable
 |immutable
 ;
 
-mutable: ID 
+mutable: ID {printf("Before checktype: %s\n",$1);int c=checktype($1); if(c==0) intindex=1;}
 |mutable '[' sumexpression ']' {int c=checkidarray($1); 
 if(c==0)
-	printf("\n\nError : %s Undeclared\n\n\n",$1);
+printf("\n\nError : %s Undeclared\n\n\n",$1);
 else if(c==-1)
 printf("Non array variable %s has a subscript!\n",$1);
 }  
@@ -565,7 +677,7 @@ printf("Non array variable %s has a subscript!\n",$1);
 
 immutable: '(' sumexpression ')' 
 |constant
-|call
+|call {int c=checktype($1); if(c==0) intindex=1;}
 ;
 
 
@@ -593,9 +705,18 @@ arglist: arglist ',' simpleexpression   {callargcount++;}
 ;
 
 
-constant: NUM     
-|CHARCONST
-|STRING
+constant: NUM   
+{
+printf("$1 is %s\n",$1);
+printconst();
+printf("\n\n");
+int c=checkconsttype($1); 
+printf("c value: %d\n",c);
+if(c==0) 
+intindex=1;
+}  
+|CHARCONST {intindex=1;}
+|STRING {intindex=1;}
 ;
 
 %%
@@ -623,24 +744,7 @@ int main()
 	printsym();
 
 	printf("\n\n");
-	printf("--CONSTANT TABLE--\n"); //Printing Constant Table
-	printf("\t\tConstant   Datatype\n\n");
-
-	for(j=0;j<53;j++)
-	{
-		
-		ptr=constable[j];
-		if(ptr==NULL)
-		continue;
-		printf("Position: %d\t",j);
-		while(ptr!=NULL)
-		{
-
-			printf("%-10s %-15s|\t",ptr->name,ptr->class);
-			ptr=ptr->next;
-		}
-		printf("\n");
-	}
+	
 	
 }
 yyerror(char *s) {
