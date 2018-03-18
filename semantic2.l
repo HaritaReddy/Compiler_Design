@@ -229,8 +229,10 @@ OR "||"
 {INT} {yylval = strdup(yytext); 
        printf("%s detected",yylval); 
 		return INT;}
-{FLOAT} {return FLOAT;}
-{CHAR} {return CHAR;}
+{FLOAT} {yylval = strdup(yytext); 
+       printf("%s detected",yylval); return FLOAT;}
+{CHAR} {yylval = strdup(yytext); 
+       printf("%s detected",yylval); return CHAR;}
 {ID} { yylval = strdup(yytext); return ID;}
 {NUM} { insert(yytext,"Constant");
 int isfloat=0; int i;
