@@ -14,7 +14,7 @@
 		char *argtype[5];
 		int defflag;
 	} ;
-	struct node* symtable[53],*constable[53];
+	struct node* symtable[53],*constable[53],*finalsymtable[53];
 	struct node* ptr;
 	int linecount=0;
 	int poscalc(char* name) //Calculates position of token in symbol table( hash function)
