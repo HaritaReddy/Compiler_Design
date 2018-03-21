@@ -1,0 +1,102 @@
+TEST CASE 1:
+
+#include<stdio.h>
+int main()
+{
+	int a;
+	float a;
+	char b;
+	{
+		char b; 
+	}
+
+	int array[-9];
+	return 1;
+}
+
+OUTPUT:
+
+5 Error: Duplicate declaration of a
+11 Error: Array Size is Less Than 1! Illegal Size
+
+
+TEST CASE 2:
+
+#include<stdio.h>
+
+int func(int g);
+
+void func(int h);
+
+void func1()
+{
+	int y;
+	return 2;
+}
+
+int func2()
+{
+	int g;
+	return;
+}
+int main()
+{
+int a;
+return 1;
+}
+
+
+OUTPUT:
+5 Error: Duplicate Declaration of Function func!
+11 Error:Non void return type for void function
+17 Error: Void return type for non void function
+
+
+TEST CASE 3:
+
+#include<stdio.h>
+void function(int a,int b,int c)
+{
+	int h;
+}
+
+int main()
+{
+	int a;
+	int c;
+	
+	fun();
+	a();
+
+	function(a,c)
+	return 1;
+}
+
+
+OUTPUT:
+12 Error: Function fun not defined! Illegal Call!
+13 Error: a is not a function
+15 Error: Number of arguments in the function call don't match with definition!
+
+
+
+TEST CASE 4
+
+#include<stdio.h>
+
+int main()
+{
+	float b;
+	if(b)
+	{
+	b=b+1;
+	}
+	int c=9;
+	while(c*4.3)
+	{
+	c=c-1;
+	}
+
+	return 1;
+}
+
