@@ -79,7 +79,7 @@
 		}
 
 
-	void insertincons(char* name,char* class) //Inserts token into constant table
+	void insertincons(char* name,char* type) //Inserts token into constant table
 	{
 		int pos=poscalc(name);
 		if(constable[pos]==NULL) //If there is no element already at that index
@@ -87,7 +87,7 @@
 			constable[pos]=(struct node*)malloc(sizeof(struct node));
 			strcpy(constable[pos]->name,name);
 
-			strcpy(constable[pos]->class,class);
+			strcpy(constable[pos]->type,type);
 			constable[pos]->next=NULL;
 		}
 		else //Chaining is required
@@ -107,10 +107,10 @@
 			return;
 			struct node* ptr=(struct node*)malloc(sizeof(struct node));
 			strcpy(ptr->name,constable[pos]->name);
-			strcpy(ptr->class,constable[pos]->class);
+			strcpy(ptr->type,constable[pos]->type);
 			ptr->next=constable[pos]->next;
 			strcpy(constable[pos]->name,name);
-			strcpy(constable[pos]->class,class);
+			strcpy(constable[pos]->type,type);
 			constable[pos]->next=ptr;
 		}
 	}
@@ -236,7 +236,7 @@ OR "||"
 {CHAR} {yylval = strdup(yytext); 
        printf("%s detected",yylval); return CHAR;}
 {ID} { yylval = strdup(yytext); return ID;}
-{NUM} { insert(yytext,"Constant");
+{NUM} { //insert(yytext,"Constant");
 int isfloat=0; int i;
 	for(i=0;i<yyleng;i++)
 	{

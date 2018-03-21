@@ -42,7 +42,6 @@ void insertvar(char* type,char* name) //Inserts the token in symbol table
 	printf("insertvar entered\n");
 		int pos=poscalc(name);
 
-		printf("posiiton calculated\n");
 		struct node *temp=symtable[pos];
 		struct node *temp1=finalsymtable[pos];
 		if(symtable[pos]==NULL)
@@ -167,13 +166,12 @@ void insertarray(char* type, char* name, char *size)
 		//Checking for array size less than 1
 		if(size[0]=='0'|| size[0]=='-')
 		{
-			printf("Array Size is Less Than 1! Illegal Size\n");
+			printf("%d Error: Array Size is Less Than 1! Illegal Size\n",linecount+1);
 			return;
 		}
 
 		int pos=poscalc(name);
 
-		printf("posiiton calculated\n");
 		struct node *temp=symtable[pos];
 		struct node *temp1=finalsymtable[pos];
 		if(symtable[pos]==NULL)
@@ -435,6 +433,15 @@ void insertparams(char *paramtype, char *param)
 	argindex++;
 }
 
+void insertargs(char *paramtype, char *param)
+{
+	arglist[argindex]=(char *)malloc(strlen(param)*sizeof(char));
+	argtypelist[argindex]=(char *)malloc(strlen(paramtype)*sizeof(char));
+	strcpy(arglist[argindex],param);
+	strcpy(argtypelist[argindex],paramtype);
+	argindex++;
+}
+
 int checkfuncdef(char* name)
 {
 	int pos=poscalc(name);
@@ -511,6 +518,8 @@ int checktype(char* name)
 	return 1;
 	if((temp->type)&&strcmp(temp->type,"int")!=0)
 	return 0;
+
+	printf("so %s has type %s\n",name,temp->type);
 	return 1;
 }
 
@@ -528,14 +537,92 @@ int checkconsttype(char* name)
 	}	
 	if(temp==NULL)
 	return 1;
-	if(strcmp(temp->class,"int")!=0)
+	if(strcmp(temp->type,"int")!=0)
 	{
 	return 0;
 	}
 	return 1;
 }
 
+int checknofunctions()
+{
+	struct node *temp;
+	int i;
 
+	for(i=0;i<53;i++)
+	{
+		temp=finalsymtable[i];
+		while(temp)
+		{
+			if(strcmp(temp->class,"function")==0)
+				return 1;                                //1=at least 1 function defined
+			else temp=temp->next;
+		}
+	}
+
+	return 0;          //0=NO functions defined
+
+}
+
+int checktypearg(char* name)
+{
+ 	printsym();
+	int pos = poscalc(name);
+
+	struct node *temp = symtable[pos];
+	while(temp)
+	{
+		if(strcmp(temp->name,name)==0&&strcmp(temp->class,"Constant")!=0)
+		{
+			break;
+		}
+		else temp=temp->next;
+	}
+	int n = temp->argcount;
+	int p;
+	int i;
+	for(i=0;i<n;i++)
+	{
+		p=poscalc(arglist[i]);
+		struct node *temp1 = symtable[p];
+		while(temp1)
+		{
+			if(strcmp(temp1->name,arglist[i])==0)
+			{
+				break;
+			}
+			else temp1=temp1->next;
+		}
+
+		struct node *temp2=constable[0];
+
+
+		if(temp1==NULL)
+		{
+		printf("Entering constant table check\n");
+		printconst();
+			p=poscalc(arglist[i]);
+			temp1 = constable[p];
+			while(temp1)
+			{
+				if(strcmp(temp1->name,arglist[i])==0)
+				{
+					break;
+				}
+				else temp1=temp1->next;
+			}
+		}
+
+		strcpy(argtypelist[i],temp1->type);
+	}
+
+	for(i=0;i<n;i++)
+	{
+		if(strcmp(argtypelist[i],temp->argtype[i])!=0)
+			return -1;
+	}
+	return 1;
+}
 
 void printsym()
 {
@@ -596,7 +683,7 @@ printf("-------CONSTANT TABLE-------\n"); //Printing Constant Table
 		while(ptr!=NULL)
 		{
 
-			printf("%-10s %-15s|\t",ptr->name,ptr->class);
+			printf("%-10s %-15s|\t",ptr->name,ptr->type);
 			ptr=ptr->next;
 		}
 		printf("\n");
@@ -653,7 +740,7 @@ void printfinalsym()
 %left '*' '/'
 
 %%
-ED: program
+ED: program  
 ;
 
 program: prepro declarationlist
@@ -676,9 +763,9 @@ declaration: vardeclaration ';'
 
 vardeclaration: typespecifier ID '=' simpleexpression  { printf("Declaration Done\n"); if(intindex==1) 
 printf("%d Error: Expression on RHS must be of the type int!\n",linecount+1);
-intindex=0;int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\nDuplicate declaration of %s\n\n",$2); printsym();}
+intindex=0;int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\n%d Error: Duplicate declaration of %s\n\n",linecount+1,$2); printsym();}
 
-|typespecifier ID 			{ printf("declaration done\n"); int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\nDuplicate declaration of %s\n\n",$2); printsym();}
+|typespecifier ID 			{ printf("declaration done\n"); int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\n%d Error: Duplicate declaration of %s\n\n",linecount+1,$2); printsym();}
 
 |typespecifier ID '[' simpleexpression ']' '=' simpleexpression {if(intindex==1) 
 printf("%d Error: Expression must be of the type int!\n",linecount+1);
@@ -695,7 +782,8 @@ intindex=0; insertarray($1,$2,$4); printf("\n\narray ddetected\n\n");printsym();
 
 
 
-statement: ID '=' simpleexpression ';'			{  
+statement: ID '=' simpleexpression ';'	{  
+printf("Intindex: %d\n",intindex);
 if(intindex==1) 
 printf("%d Error: Expression on RHS must be of the type int!\n",linecount+1);
 intindex=0;
@@ -728,7 +816,7 @@ printf("%d Error: Non array variable %s has a subscript!\n",linecount,$1);
 
 fundeclaration: typespecifier ID '(' params1 ')' ';'  { printf("Function Declaration\n"); 
 if(checkdupfunc($2)==1)
-	printf("%d Error: Duplicate Declaration of Function %d!\n",linecount+1,$2);
+	printf("%d Error: Duplicate Declaration of Function %s!\n",linecount+1,$2);
 else 
 { 
 insertfunc($1,$2,0);
@@ -737,7 +825,7 @@ argindex=0;
 }
 |typespecifier ID '('  ')' ';'    { printf("\nFunction Declaration\n"); 
 if(checkdupfunc($2)==1)
-	printf("%d Error: Duplicate Declaration of Function %d!\n",linecount+1,$2);
+	printf("%d Error: Duplicate Declaration of Function %s!\n",linecount+1,$2);
 else 
 { 
 insertfunc($1,$2,0);
@@ -824,11 +912,49 @@ printf("Function INSERTED\n");
 }
 argindex=0;
 }
+|typespecifier ID '(' params1 ')' CO returnst CC   { printf("\nI Function Definition\n");  printf("returnst : %s\n",$8);  
+int flag=0;
+printf("typespecifier : %s\n",$1);
+if($8){
+	printf("enntered to check\n");
+
+	if(strcmp($1,"void")==0)
+		{
+			printf("enntered to check2\n");
+
+			printf("%d Error:Non void return type for void function\n",linecount);
+			flag=1;
+		}
+} 
+
+else
+{
+	if(strcmp($1,"int")==0)
+		{
+			printf("%d Error: Void return type for non void function\n",linecount);
+			flag=1;
+		}
+}
+
+if(flag==0)
+{
+if(checkdupfuncdefinition($2)==1)
+	printf("%d Error: Duplicate Definition of Function %d!\n",linecount+1,$2);
+else if(checkdupfuncdefinition($2)==0)
+	 	;
+else if(checkdupfuncdefinition($2)==-1)
+{ 
+insertfunc($1,$2,1);
+}
+}
+argindex=0;
+}
+
 ;
 
 
-params1: typespecifier ID ',' params1   {insertparams($1,$2); printf("%s %s\n", $1,$2);}
-|typespecifier ID  { insertparams($1,$2);printf("%s %s\n", $1,$2);}
+params1: typespecifier ID ',' params1   {insertparams($1,$2); printf("%s %s\n", $1,$2);intindex=0;}
+|typespecifier ID  { insertparams($1,$2);printf("%s %s\n", $1,$2);intindex=0;}
 ;
 
 
@@ -883,8 +1009,8 @@ breakst:BREAK ';'
 ;
 
 returnst: RETURN ';'     { $$=0; printf("$$ = %d\n",$$); printf("\nRETURN\n");}
-|RETURN  simpleexpression  ';'    {$$=$3; printf("$$  : %s $3:%s\n",$$,$3);}
-|
+|RETURN  simpleexpression  ';'    {$$=$3; printf("$$  : %s $3:%s\n",$$,$3);intindex=0;}
+|    {$$=0;}
 ;
 
 compoundst: CO declarationlist CC
@@ -904,12 +1030,8 @@ unaryrelexpression: '!' unaryrelexpression
 |relexpression
 ;
 
-relexpression: sumexpression COMPARE sumexpression   { if(checkid($1)==-1)
-									printf("%d Error: %s Undeclared!\n",linecount+1,$1);
-								if(checkid($3)==-1)
-									printf("%d Error: %s Undeclared!\n",linecount+1,$3);}
-|sumexpression   { if(checkid($1)==-1)
-			printf("%d Error: %s Undeclared!\n",linecount+1,$1);}
+relexpression: sumexpression COMPARE sumexpression   
+|sumexpression   
 ;
 
 sumexpression: sumexpression sumop term
@@ -930,7 +1052,7 @@ mulop: '/'
 ;
 
 unaryexpression: unaryop unaryexpression
-|factor
+|factor      
 ;
 
 unaryop: '-'
@@ -939,10 +1061,14 @@ unaryop: '-'
 ;
 
 factor: mutable
-|immutable
+|immutable   
 ;
 
-mutable: ID {printf("Before checktype: %s\n",$1);int c=checktype($1); if(c==0) intindex=1;}
+mutable: ID {{ if(checkid($1)==-1)
+					printf("%d Error: %s Undeclared!\n",linecount+1,$1);
+								if(checkid($1)==-1)
+									printf("%d Error: %s Undeclared!\n",linecount+1,$1);}
+									printf("Before checktype: %s\n",$1);int c=checktype($1); if(c==0) intindex=1;}
 |mutable '[' sumexpression ']' {int c=checkidarray($1); 
 if(c==0)
 printf("%d Error: %s Undeclared!\n",linecount+1,$1);
@@ -952,22 +1078,34 @@ printf("%d Error: Non array variable %s has a subscript!\n",linecount+1,$1);
 ;
 
 immutable: '(' sumexpression ')' 
-|constant
-|call {int c=checktype($1); if(c==0) intindex=1;}
+|constant   
+|call {printf("Call $1 is %s\n",$1); int c=checktype($1); printf("intindex before call : %d\n",intindex); if(c==0) intindex=1;  printf("intindex after call : %d\n",intindex);}
 ;
 
 
-call: ID '(' args ')' { int f=checkfuncdef($1); printf("\n\nf=%d\n\n",f);
-			if(f==0) printf("%d Error: Function %s not defined! Illegal Call!\n",linecount+1,$1);
-			else if(f==-1) printf("%d Error: %s is not a function\n",linecount+1,$1);
+call: ID '(' args ')' 
+{ int f=checkfuncdef($1);
+  printf("\n\nf=%d\n\n",f);
+  if(f==0) 
+  	printf("%d Error: Function %s not defined! Illegal Call!\n",linecount+1,$1);
+  else 
+  	if(f==-1) printf("%d Error: %s is not a function\n",linecount+1,$1);
+else   
+if(checknumarg($1)==0)				//Checking if number of parameters and arguments match
+{
+printf("%d Error: Number of arguments in the function call don't match with definition!\n",linecount+1);
+
+}
+
 else 
 {
-//Checking if number of parameters and arguments match
-int c=checknumarg($1);
-if(c==0)
-printf("%d Error: Number of arguments in the function call don't match with definition!\n",linecount+1);
-callargcount=0;
+	printf("Before passing: %s\n",$1);
+	if(checktypearg($1)==-1)
+	printf("%d Error: Type of Arguments Passed and Parameters don't match for %s!\n",linecount+1,$1);
 }
+callargcount=0;
+argindex=0;
+
 }
 ;
 
@@ -975,21 +1113,29 @@ args: arglist
 |
 ;
 
-arglist: arglist ',' simpleexpression   {callargcount++;}
-|simpleexpression {callargcount++;}
+arglist: arglist ',' simple   {   callargcount++;}
+|simple { callargcount++;}
 ;
 
+simple: NUM    {insertargs("",$1);}
+|ID           {insertargs("",$1);  }
+;
 
 constant: NUM   
 {
 printconst();
 printf("\n\n");
 int c=checkconsttype($1); 
+printf("before constant %s intindex : %d\n",$1,intindex);
 if(c==0) 
 intindex=1;
+printf("after constant intindex : %d\n",intindex);
+
+$$=$1;
+
 }  
-|CHARCONST {intindex=1;}
-|STRING {intindex=1;}
+|CHARCONST {intindex=1; $$=$1;}
+|STRING {intindex=1; $$=$1;}
 ;
 
 %%
@@ -1014,8 +1160,11 @@ int main()
 	} while (!feof(yyin));
 
 	int j;
-	printsym();
-
+	j=checknofunctions();
+	if(j==0)
+	{
+		printf("Error: No functions defined\n");
+	}
 	printf("\n\n");
 	
 	printf("\n\nFINAL SYMBOL TABLE\n\n\n\n");

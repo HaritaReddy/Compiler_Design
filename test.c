@@ -1,10 +1,14 @@
 #include<stdio.h>
-void func(int a)
-{
-	int f;
-	return ; 
-}
+
+
+
 int main()
 {
-	int a=0;
+	int g;
+	int l;
+	while(3.5*g)
+	{
+		l=9;
+	}
+	return 0;
 }

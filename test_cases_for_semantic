@@ -80,3 +80,26 @@ OUTPUT:
 
 
 
+TEST CASE 4
+
+#include<stdio.h>
+
+int func(char a, int b)
+{
+	return 1;
+}
+
+int main()
+{
+	char b;
+	
+	int a = func(b,3.5)*3.5;
+
+	return 1;
+}
+
+OUTPUT:
+
+12 Error: Type of Arguments Passed and Parameters don't match for func!
+
+
