@@ -80,23 +80,3 @@ OUTPUT:
 
 
 
-TEST CASE 4
-
-#include<stdio.h>
-
-int main()
-{
-	float b;
-	if(b)
-	{
-	b=b+1;
-	}
-	int c=9;
-	while(c*4.3)
-	{
-	c=c-1;
-	}
-
-	return 1;
-}
-
