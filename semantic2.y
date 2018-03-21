@@ -553,29 +553,28 @@ void printsym()
 		while(ptr!=NULL)
 		{
 
-			printf("Name:%s Class:%s",ptr->name,ptr->class);
+			printf("Name : %s, Class:%s",ptr->name,ptr->class);
 			if(strlen(ptr->type)!=0)
-			printf(" Type:%s ",ptr->type);
-			if(strlen(ptr->size)!=0)
-				printf(" Size%s",ptr->size);
+			printf(" Type : %s ",ptr->type);
+			
 			if(ptr->scope>=0)
-				printf(" Scope:%d",ptr->scope);
-			if(ptr->size)
-				printf(" Array Dimension:%s",ptr->size);
+				printf(", Nesting level : %d",ptr->scope);
+			if(strlen(ptr->size)!=0)
+				printf(", Array dimension : %s",ptr->size);
 			if(ptr->arg[0])
 			{
-				printf("Arguments : ");
+				printf(", Arguments : ");
 				for(i=0;i<ptr->argcount;i++)
 				{
-					printf("%s %s, ",ptr->argtype[i],ptr->arg[i]);
+					printf(" %s %s, ",ptr->argtype[i],ptr->arg[i]);
 				}
 			}
 			if(ptr->defflag)
-				printf(" Definition flag: %d",ptr->defflag);
-			printf(" |\t\t");
+				printf(", Definition flag : %d",ptr->defflag);
+			printf("\t|\t");
 			ptr=ptr->next;
 		}
-		printf("\n");
+		printf("\n\n");
 	}
 
 	printf("------------SYMBOL TABLE ENDED-----------------\n\n");
@@ -621,36 +620,35 @@ void printfinalsym()
 		while(ptr!=NULL)
 		{
 
-			printf("Name:%s Class:%s",ptr->name,ptr->class);
+			printf("Name : %s, Class:%s",ptr->name,ptr->class);
 			if(strlen(ptr->type)!=0)
-			printf(" Type:%s ",ptr->type);
-			if(strlen(ptr->size)!=0)
-				printf(" Size%s",ptr->size);
+			printf(", Type : %s ",ptr->type);
+			
 			if(ptr->scope>=0)
-				printf(" Scope:%d",ptr->scope);
-			if(ptr->size)
-				printf(" Size:%s",ptr->size);
+				printf(", Nesting level : %d",ptr->scope);
+			if(strlen(ptr->size)!=0)
+				printf(", Array dimension : %s",ptr->size);
 			if(ptr->arg[0])
 			{
-				printf("Arguments : ");
+				printf(", Arguments : ");
 				for(i=0;i<ptr->argcount;i++)
 				{
-					printf("%s %s, ",ptr->argtype[i],ptr->arg[i]);
+					printf(", %s %s ",ptr->argtype[i],ptr->arg[i]);
 				}
 			}
 			if(ptr->defflag)
-				printf(" Definition flag: %d",ptr->defflag);
-			printf(" |\t\t");
+				printf(", Definition flag : %d",ptr->defflag);
+			printf("\t|\t");
 			ptr=ptr->next;
 		}
-		printf("\n");
+		printf("\n\n");
 	}
 
 	printf("------------FINAL SYMBOL TABLE ENDED-----------------\n\n");
 }
 %}
 
-%token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO INT RETURN IF ELSE STRUCT UNARYOP STATEKW STRING CC CO FLOAT CHAR STATIC AND OR BREAK NEG
+%token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO INT RETURN IF ELSE STRUCT UNARYOP STATEKW STRING CC CO FLOAT VOID CHAR STATIC AND OR BREAK NEG 
 %left '+' '-'
 %left '*' '/'
 
@@ -713,13 +711,13 @@ printf("%d Error: %s Undeclared!\n",linecount+1,$1);
 |ID '[' NUM ']' '=' simpleexpression ';'		
 {
 if(intindex==1) 
-printf("%d Error: Expression on RHS must be of the type int!\n",linecount+1);
+printf("%d Error: Expression on RHS must be of the type int!\n",linecount);
 intindex=0;
 int c=checkidarray($1); 
 if(c==0)
 	printf("\n\nError : %s Undeclared\n\n\n",$1);
 else if(c==-1)
-printf("%d Error: Non array variable %s has a subscript!\n",linecount+1,$1);
+printf("%d Error: Non array variable %s has a subscript!\n",linecount,$1);
 }
 |compoundst
 |breakst
@@ -737,7 +735,7 @@ insertfunc($1,$2,0);
 }
 argindex=0;
 }
-|typespecifier ID '('  ')' ';'    { printf("\nI Function Declaration\n"); 
+|typespecifier ID '('  ')' ';'    { printf("\nFunction Declaration\n"); 
 if(checkdupfunc($2)==1)
 	printf("%d Error: Duplicate Declaration of Function %d!\n",linecount+1,$2);
 else 
@@ -749,7 +747,32 @@ argindex=0;
 }
 ;
 
-fundefinition: typespecifier ID '(' params1 ')' CO declarationlist returnst CC   { printf("\nI Function Definition\n"); printf("return type:%s",$8);    
+fundefinition: typespecifier ID '(' params1 ')' CO declarationlist returnst CC   { printf("\nI Function Definition\n");  printf("returnst : %s\n",$8);  
+int flag=0;
+printf("typespecifier : %s\n",$1);
+if($8){
+	printf("enntered to check\n");
+
+	if(strcmp($1,"void")==0)
+		{
+			printf("enntered to check2\n");
+
+			printf("%d Error:Non void return type for void function\n",linecount);
+			flag=1;
+		}
+} 
+
+else
+{
+	if(strcmp($1,"int")==0)
+		{
+			printf("%d Error: Void return type for non void function\n",linecount);
+			flag=1;
+		}
+}
+
+if(flag==0)
+{
 if(checkdupfuncdefinition($2)==1)
 	printf("%d Error: Duplicate Definition of Function %d!\n",linecount+1,$2);
 else if(checkdupfuncdefinition($2)==0)
@@ -758,9 +781,37 @@ else if(checkdupfuncdefinition($2)==-1)
 { 
 insertfunc($1,$2,1);
 }
+}
 argindex=0;
 }
-|typespecifier ID '(' ')' CO  declarationlist returnst CC   { printf("\nI Function Definition\n");   printf("return type:%s",$7); 
+
+|typespecifier ID '(' ')' CO  declarationlist returnst CC   { printf("\nFunction Definition\n");     printf("returnst : %s\n",$7); 
+int flag=0;
+printf("typespecifier : %s\n",$1);
+
+if($7)
+{	
+	printf("enntered to check\n");
+	if(strcmp($1,"void")==0)
+		{
+				printf("enntered to check2\n");
+
+			printf("%d Error:Non void return type for void function\n",linecount+1);
+			flag=1;
+		}
+} 
+
+else
+{
+	if(strcmp($1,"int")==0)
+		{
+			printf("%d Error: Void return type for non void function\n",linecount+1);
+			flag=1;
+		}
+}
+
+if(flag==0)
+{
 if(checkdupfuncdefinition($2)==1)
 	printf("\nError : Duplicate definition of function %s\n",$2);
 else if(checkdupfuncdefinition($2)==0)
@@ -768,6 +819,8 @@ else if(checkdupfuncdefinition($2)==0)
 else if(checkdupfuncdefinition($2)==-1)
 { 
 insertfunc($1,$2,1);
+printf("Function INSERTED\n");
+}
 }
 argindex=0;
 }
@@ -783,6 +836,7 @@ params1: typespecifier ID ',' params1   {insertparams($1,$2); printf("%s %s\n", 
 typespecifier: INT
 |FLOAT
 |CHAR
+|VOID
 ;
 
 selectionst: matchedst
@@ -828,9 +882,8 @@ intindex=0;
 breakst:BREAK ';'
 ;
 
-returnst: RETURN ';'     {$$=0; printf("\nRETURN\n");}
-|RETURN NUM ';'          {$$=1;}
-|RETURN '(' simpleexpression ')' ';'   {$$=1;}
+returnst: RETURN ';'     { $$=0; printf("$$ = %d\n",$$); printf("\nRETURN\n");}
+|RETURN  simpleexpression  ';'    {$$=$3; printf("$$  : %s $3:%s\n",$$,$3);}
 |
 ;
 

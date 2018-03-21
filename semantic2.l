@@ -193,7 +193,8 @@ RETURN ("return")
 IF ("if")
 ELSE ("else")
 STRUCT ("struct")
-kw ("auto")|("case")|("const")|("default")|("do")|("double")|("enum")|("extern")|("for")|("goto")|("long")|("register")|("short")|("signed")|("sizeof")|("switch")|("typedef")|("union")|("unsigned")|("void")|("volatile")
+kw ("auto")|("case")|("const")|("default")|("do")|("double")|("enum")|("extern")|("for")|("goto")|("long")|("register")|("short")|("signed")|("sizeof")|("switch")|("typedef")|("union")|("unsigned")|("volatile")
+VOID ("void")
 STATEKW ("break")|("continue")
 STATIC ("static")
 INT ("int")
@@ -219,11 +220,12 @@ OR "||"
 {mcommentstart} ;
 {WHILE} { insert(yytext,"Keyword"); return WHILE;}
 {PREPRO} {return PREPRO;}
-{RETURN} { insert(yytext,"Keyword"); return RETURN;}
+{RETURN} { insert(yytext,"Keyword"); printf("return keyword dtecetd\n"); return RETURN;}
 {IF} {insert(yytext,"Keyword");return IF;}
 {ELSE} {insert(yytext,"Keyword");return ELSE;}
 {STRUCT} {insert(yytext,"Keyword");return STRUCT;}
 {kw} {insert(yytext,"Keyword");printf("%s:Keyword\n",yytext);}
+{VOID}  {yylval = strdup(yytext);return VOID;}
 {STATEKW} {insert(yytext,"Keyword"); return STATEKW;}
 {STATIC} {return STATIC;}
 {INT} {yylval = strdup(yytext); 

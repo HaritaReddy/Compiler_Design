@@ -63,12 +63,13 @@ extern int yydebug;
     CC = 273,
     CO = 274,
     FLOAT = 275,
-    CHAR = 276,
-    STATIC = 277,
-    AND = 278,
-    OR = 279,
-    BREAK = 280,
-    NEG = 281
+    VOID = 276,
+    CHAR = 277,
+    STATIC = 278,
+    AND = 279,
+    OR = 280,
+    BREAK = 281,
+    NEG = 282
   };
 #endif
 /* Tokens.  */
@@ -90,12 +91,13 @@ extern int yydebug;
 #define CC 273
 #define CO 274
 #define FLOAT 275
-#define CHAR 276
-#define STATIC 277
-#define AND 278
-#define OR 279
-#define BREAK 280
-#define NEG 281
+#define VOID 276
+#define CHAR 277
+#define STATIC 278
+#define AND 279
+#define OR 280
+#define BREAK 281
+#define NEG 282
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
