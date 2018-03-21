@@ -27,6 +27,7 @@ struct node
 	} ;
 extern struct node* symtable[53];
 extern struct node* constable[53];
+extern struct node* finalsymtable[53];
 extern struct node* ptr;
 extern int linecount;
 extern int globalscope=0;
@@ -43,7 +44,7 @@ void insertvar(char* type,char* name) //Inserts the token in symbol table
 
 		printf("posiiton calculated\n");
 		struct node *temp=symtable[pos];
-
+		struct node *temp1=finalsymtable[pos];
 		if(symtable[pos]==NULL)
 			{	
 				symtable[pos]=(struct node*)malloc(sizeof(struct node));
@@ -52,19 +53,43 @@ void insertvar(char* type,char* name) //Inserts the token in symbol table
 				strcpy(symtable[pos]->class,"identifier");
 				symtable[pos]->scope=globalscope;
 				symtable[pos]->next=NULL;
-				return;
 			}
-		while(temp->next!=NULL)
+
+		else 
+		{
+			while(temp->next!=NULL)
 		{
 			temp=temp->next;
 		}
-
-		  temp->next=(struct node*)malloc(sizeof(struct node));
+		temp->next=(struct node*)malloc(sizeof(struct node));
 				strcpy(temp->next->name,name);
 				strcpy(temp->next->type,type);
 				strcpy(temp->next->class,"identifier");
 				temp->next->scope=globalscope;
 				temp->next->next=NULL;
+		}
+
+			if(finalsymtable[pos]==NULL)
+			{	
+				finalsymtable[pos]=(struct node*)malloc(sizeof(struct node));
+				strcpy(finalsymtable[pos]->name,name);
+				strcpy(finalsymtable[pos]->type,type);
+				strcpy(finalsymtable[pos]->class,"identifier");
+				finalsymtable[pos]->scope=globalscope;
+				finalsymtable[pos]->next=NULL;
+				return;
+			}
+		
+		while(temp1->next!=NULL)
+		{
+			temp1=temp1->next;
+		}
+		  temp1->next=(struct node*)malloc(sizeof(struct node));
+				strcpy(temp1->next->name,name);
+				strcpy(temp1->next->type,type);
+				strcpy(temp1->next->class,"identifier");
+				temp1->next->scope=globalscope;
+				temp1->next->next=NULL;
 		
 	}
 
@@ -150,7 +175,7 @@ void insertarray(char* type, char* name, char *size)
 
 		printf("posiiton calculated\n");
 		struct node *temp=symtable[pos];
-
+		struct node *temp1=finalsymtable[pos];
 		if(symtable[pos]==NULL)
 			{	
 				symtable[pos]=(struct node*)malloc(sizeof(struct node));
@@ -160,10 +185,11 @@ void insertarray(char* type, char* name, char *size)
 				strcpy(symtable[pos]->size,size);
 				symtable[pos]->scope=globalscope;
 				symtable[pos]->next=NULL;
-				printf("size at the pos: %s\n",symtable[pos]->size);
-				return;
+				printf("size at the pos (in symtable): %s\n",symtable[pos]->size);
 			}
-		while(temp->next!=NULL)
+		else
+		{
+			while(temp->next!=NULL)
 		{
 			temp=temp->next;
 		}
@@ -175,6 +201,33 @@ void insertarray(char* type, char* name, char *size)
 				strcpy(temp->next->size,size);
 				temp->next->scope=globalscope;
 				temp->next->next=NULL;
+		}
+			if(finalsymtable[pos]==NULL)
+			{	
+				finalsymtable[pos]=(struct node*)malloc(sizeof(struct node));
+				strcpy(finalsymtable[pos]->name,name);
+				strcpy(finalsymtable[pos]->type,type);
+				strcpy(finalsymtable[pos]->class,"array");
+				strcpy(finalsymtable[pos]->size,size);
+				finalsymtable[pos]->scope=globalscope;
+				finalsymtable[pos]->next=NULL;
+				printf("size at the pos(in finalsymtable): %s\n",finalsymtable[pos]->size);
+				return;
+			}
+		
+		while(temp1->next!=NULL)
+		{
+			temp1=temp1->next;
+		}
+
+		  temp1->next=(struct node*)malloc(sizeof(struct node));
+				strcpy(temp1->next->name,name);
+				strcpy(temp1->next->type,type);
+				strcpy(temp1->next->class,"array");
+				strcpy(temp1->next->size,size);
+				temp1->next->scope=globalscope;
+				temp1->next->next=NULL;
+
 
 
 	}
@@ -188,6 +241,7 @@ void insertfunc(char *type, char *name,int defflag)
 
 		printf("posiiton calculated\n");
 		struct node *temp=symtable[pos];
+		struct node *temp1=finalsymtable[pos];
 		int i;
 		if(symtable[pos]==NULL)
 			{	
@@ -206,9 +260,10 @@ void insertfunc(char *type, char *name,int defflag)
 				}
 				symtable[pos]->argcount=n;
 				symtable[pos]->next=NULL;
-				return;
 			}
-		while(temp->next!=NULL)
+		else
+		{
+			while(temp->next!=NULL)
 		{
 			temp=temp->next;
 		}
@@ -225,11 +280,108 @@ void insertfunc(char *type, char *name,int defflag)
 					temp->next->argtype[n-1-i] = (char *)malloc(strlen(argtypelist[i])*sizeof(char));
 					strcpy(temp->next->arg[n-1-i],arglist[i]);
 					strcpy(temp->next->argtype[n-1-i],argtypelist[i]);
+
 				}
 				temp->next->argcount=n;
 				temp->next->next=NULL;
+		}
+		if(finalsymtable[pos]==NULL)
+			{	
+				finalsymtable[pos]=(struct node*)malloc(sizeof(struct node));
+				strcpy(finalsymtable[pos]->name,name);
+				strcpy(finalsymtable[pos]->type,type);
+				strcpy(finalsymtable[pos]->class,"function");
+				finalsymtable[pos]->scope=globalscope;
+				finalsymtable[pos]->defflag=defflag;
+				for(i=n-1;i>=0;i--)
+				{
+					finalsymtable[pos]->arg[n-1-i] = (char *)malloc(strlen(arglist[i])*sizeof(char));
+					strcpy(finalsymtable[pos]->arg[n-1-i],arglist[i]);
+					finalsymtable[pos]->argtype[n-1-i] = (char *)malloc(strlen(argtypelist[i])*sizeof(char));
+					strcpy(finalsymtable[pos]->argtype[n-1-i],argtypelist[i]);
+				}
+				finalsymtable[pos]->argcount=n;
+				finalsymtable[pos]->next=NULL;
+				return;
+			}
+		
+		while(temp1->next!=NULL)
+		{
+			temp1=temp1->next;
+		}
+
+		  temp1->next=(struct node*)malloc(sizeof(struct node));
+				strcpy(temp1->next->name,name);
+				strcpy(temp1->next->type,type);
+				strcpy(temp1->next->class,"function");
+				temp1->next->scope=globalscope;
+				temp1->next->defflag=defflag;
+				for(i=n-1;i>=0;i--)
+				{
+					temp1->next->arg[n-1-i] = (char *)malloc(strlen(arglist[i])*sizeof(char));
+					temp1->next->argtype[n-1-i] = (char *)malloc(strlen(argtypelist[i])*sizeof(char));
+					strcpy(temp1->next->arg[n-1-i],arglist[i]);
+					strcpy(temp1->next->argtype[n-1-i],argtypelist[i]);
+				}
+				temp1->next->argcount=n;
+				temp1->next->next=NULL;
 }
 
+void insertfuncvar(char *name,char *type)
+{
+	printf("insertvar entered\n");
+		int pos=poscalc(name);
+
+		printf("posiiton calculated\n");
+		struct node *temp=symtable[pos];
+		struct node *temp1=finalsymtable[pos];
+		if(symtable[pos]==NULL)
+			{	
+				symtable[pos]=(struct node*)malloc(sizeof(struct node));
+				strcpy(symtable[pos]->name,name);
+				strcpy(symtable[pos]->type,type);
+				strcpy(symtable[pos]->class,"identifier");
+				symtable[pos]->scope=globalscope+1;
+				symtable[pos]->next=NULL;
+			}
+
+		else 
+		{
+			while(temp->next!=NULL)
+		{
+			temp=temp->next;
+		}
+		temp->next=(struct node*)malloc(sizeof(struct node));
+				strcpy(temp->next->name,name);
+				strcpy(temp->next->type,type);
+				strcpy(temp->next->class,"identifier");
+				temp->next->scope=globalscope+1;
+				temp->next->next=NULL;
+		}
+
+			if(finalsymtable[pos]==NULL)
+			{	
+				finalsymtable[pos]=(struct node*)malloc(sizeof(struct node));
+				strcpy(finalsymtable[pos]->name,name);
+				strcpy(finalsymtable[pos]->type,type);
+				strcpy(finalsymtable[pos]->class,"identifier");
+				finalsymtable[pos]->scope=globalscope+1;
+				finalsymtable[pos]->next=NULL;
+				return;
+			}
+		
+		while(temp1->next!=NULL)
+		{
+			temp1=temp1->next;
+		}
+		  temp1->next=(struct node*)malloc(sizeof(struct node));
+				strcpy(temp1->next->name,name);
+				strcpy(temp1->next->type,type);
+				strcpy(temp1->next->class,"identifier");
+				temp1->next->scope=globalscope+1;
+				temp1->next->next=NULL;
+			
+}
 int checkdupfunc(char *name)
 {
 	int pos=poscalc(name);
@@ -278,6 +430,7 @@ void insertparams(char *paramtype, char *param)
 	arglist[argindex]=(char *)malloc(strlen(param)*sizeof(char));
 	argtypelist[argindex]=(char *)malloc(strlen(paramtype)*sizeof(char));
 	strcpy(arglist[argindex],param);
+	insertfuncvar(param,paramtype);
 	strcpy(argtypelist[argindex],paramtype);
 	argindex++;
 }
@@ -365,7 +518,6 @@ int checktype(char* name)
 int checkconsttype(char* name)
 {
 	int pos=poscalc(name);
-	printf("Pos is %d\n",pos);
 	struct node* temp=constable[pos];
 	int flag=0;
 	if(constable[pos]==NULL)
@@ -378,7 +530,6 @@ int checkconsttype(char* name)
 	return 1;
 	if(strcmp(temp->class,"int")!=0)
 	{
-	printf("temp->class is %s\n",temp->type);
 	return 0;
 	}
 	return 1;
@@ -410,7 +561,7 @@ void printsym()
 			if(ptr->scope>=0)
 				printf(" Scope:%d",ptr->scope);
 			if(ptr->size)
-				printf(" Size:%s",ptr->size);
+				printf(" Array Dimension:%s",ptr->size);
 			if(ptr->arg[0])
 			{
 				printf("Arguments : ");
@@ -419,7 +570,9 @@ void printsym()
 					printf("%s %s, ",ptr->argtype[i],ptr->arg[i]);
 				}
 			}
-			printf("|\t\t");
+			if(ptr->defflag)
+				printf(" Definition flag: %d",ptr->defflag);
+			printf(" |\t\t");
 			ptr=ptr->next;
 		}
 		printf("\n");
@@ -452,7 +605,49 @@ printf("-------CONSTANT TABLE-------\n"); //Printing Constant Table
 	printf("-------------------CONSTANT TABLE ENDED-------------\n");
 }
 
+void printfinalsym()
+{
+	printf("\n\n\n");
+	int j;
+	int i;
+	printf("--------------FINAL SYMBOL TABLE-----------------\n"); //Printing Symbol Table
+	for(j=0;j<53;j++)
+	{
+		
+		ptr=finalsymtable[j];
+		if(ptr==NULL)
+		continue;
+		printf("Position: %d\t",j);
+		while(ptr!=NULL)
+		{
 
+			printf("Name:%s Class:%s",ptr->name,ptr->class);
+			if(strlen(ptr->type)!=0)
+			printf(" Type:%s ",ptr->type);
+			if(strlen(ptr->size)!=0)
+				printf(" Size%s",ptr->size);
+			if(ptr->scope>=0)
+				printf(" Scope:%d",ptr->scope);
+			if(ptr->size)
+				printf(" Size:%s",ptr->size);
+			if(ptr->arg[0])
+			{
+				printf("Arguments : ");
+				for(i=0;i<ptr->argcount;i++)
+				{
+					printf("%s %s, ",ptr->argtype[i],ptr->arg[i]);
+				}
+			}
+			if(ptr->defflag)
+				printf(" Definition flag: %d",ptr->defflag);
+			printf(" |\t\t");
+			ptr=ptr->next;
+		}
+		printf("\n");
+	}
+
+	printf("------------FINAL SYMBOL TABLE ENDED-----------------\n\n");
+}
 %}
 
 %token ID NUM WHILE TYPE CHARCONST COMPARE PREPRO INT RETURN IF ELSE STRUCT UNARYOP STATEKW STRING CC CO FLOAT CHAR STATIC AND OR BREAK NEG
@@ -481,57 +676,70 @@ declaration: vardeclaration ';'
 |fundefinition
 ;
 
-vardeclaration: typespecifier ID '=' simpleexpression  { printf("declaration done\n"); int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\nDuplicate declaration of %s\n\n",$2); printsym();}
+vardeclaration: typespecifier ID '=' simpleexpression  { printf("Declaration Done\n"); if(intindex==1) 
+printf("%d Error: Expression on RHS must be of the type int!\n",linecount+1);
+intindex=0;int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\nDuplicate declaration of %s\n\n",$2); printsym();}
 
 |typespecifier ID 			{ printf("declaration done\n"); int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\nDuplicate declaration of %s\n\n",$2); printsym();}
 
-|typespecifier ID '[' simpleexpression ']' '=' simpleexpression   { printf("$4 : %s\n\n",$4);insertarray($1,$2,$4); printsym();}
+|typespecifier ID '[' simpleexpression ']' '=' simpleexpression {if(intindex==1) 
+printf("%d Error: Expression must be of the type int!\n",linecount+1);
+intindex=0;insertarray($1,$2,$4); printsym();}
 
-|typespecifier ID '[' simpleexpression ']'   { printf("\n\narray ddetected %s\n\n",$1); printf("$4= %s $5 : %s  \n\n",$4,$5);insertarray($1,$2,$4); printf("\n\narray ddetected\n\n");printsym();}
+|typespecifier ID '[' simpleexpression ']'   { printf("\n\narray detected %s\n\n",$1);if(intindex==1) 
+printf("%d Error: Expression in subscript must be of the type int!\n",linecount+1);
+intindex=0; insertarray($1,$2,$4); printf("\n\narray ddetected\n\n");printsym();}
 
-|typespecifier ID '[' ']' {printf("Semantic Error! Array has no subscript.\n");}
+|typespecifier ID '[' ']' {printf("%d Error: Array has no subscript!\n",linecount+1);}
 
 ;
 
 
 
 
-statement: ID '=' simpleexpression ';'			{ int p=checkifidisarray($1); 
+statement: ID '=' simpleexpression ';'			{  
+if(intindex==1) 
+printf("%d Error: Expression on RHS must be of the type int!\n",linecount+1);
+intindex=0;
+int p=checkifidisarray($1); 
 if(p==0)
-printf("Error:Array Identifier %s has no subscript!\n",$1);
+printf("%d Error: Array Identifier has no subscript!!\n",linecount+1);
 else
 {
 if(checkid($1)==-1)
-printf("\n\nError : %s Undeclared\n\n\n",$1);
+printf("%d Error: %s Undeclared!\n",linecount+1,$1);
 }
 }
 |ID '[' NUM ']' '=' simpleexpression ';'		
-{int c=checkidarray($1); 
+{
+if(intindex==1) 
+printf("%d Error: Expression on RHS must be of the type int!\n",linecount+1);
+intindex=0;
+int c=checkidarray($1); 
 if(c==0)
 	printf("\n\nError : %s Undeclared\n\n\n",$1);
 else if(c==-1)
-printf("Non array variable %s has a subscript!\n",$1);
+printf("%d Error: Non array variable %s has a subscript!\n",linecount+1,$1);
 }
 |compoundst
-|returnst
 |breakst
 |whileloop
 |call ';'
 |error
 ;
 
-fundeclaration: typespecifier ID '(' params1 ')' ';'  { printf("I CAME TO FUNCDECLARATION\n"); 
+fundeclaration: typespecifier ID '(' params1 ')' ';'  { printf("Function Declaration\n"); 
 if(checkdupfunc($2)==1)
-	printf("\nError : Duplicate declaration of function %s\n",$2);
+	printf("%d Error: Duplicate Declaration of Function %d!\n",linecount+1,$2);
 else 
 { 
 insertfunc($1,$2,0);
 }
 argindex=0;
 }
-|typespecifier ID '('  ')' ';'    { printf("\nI CAME TO FUNCDECLARATION\n"); 
+|typespecifier ID '('  ')' ';'    { printf("\nI Function Declaration\n"); 
 if(checkdupfunc($2)==1)
-	printf("\nError : Duplicate declaration of function %s\n",$2);
+	printf("%d Error: Duplicate Declaration of Function %d!\n",linecount+1,$2);
 else 
 { 
 insertfunc($1,$2,0);
@@ -541,7 +749,18 @@ argindex=0;
 }
 ;
 
-fundefinition: typespecifier ID '(' params1 ')' CO declarationlist CC   { printf("\nI CAME TO FUNCDEFINITION\n"); 
+fundefinition: typespecifier ID '(' params1 ')' CO declarationlist returnst CC   { printf("\nI Function Definition\n"); printf("return type:%s",$8);    
+if(checkdupfuncdefinition($2)==1)
+	printf("%d Error: Duplicate Definition of Function %d!\n",linecount+1,$2);
+else if(checkdupfuncdefinition($2)==0)
+	 	;
+else if(checkdupfuncdefinition($2)==-1)
+{ 
+insertfunc($1,$2,1);
+}
+argindex=0;
+}
+|typespecifier ID '(' ')' CO  declarationlist returnst CC   { printf("\nI Function Definition\n");   printf("return type:%s",$7); 
 if(checkdupfuncdefinition($2)==1)
 	printf("\nError : Duplicate definition of function %s\n",$2);
 else if(checkdupfuncdefinition($2)==0)
@@ -552,22 +771,11 @@ insertfunc($1,$2,1);
 }
 argindex=0;
 }
-|typespecifier ID '(' ')' CO  declarationlist CC   { printf("\nI CAME TO FUNCDEFINITION\n"); 
-if(checkdupfuncdefinition($2)==1)
-	printf("\nError : Duplicate definition of function %s\n",$2);
-else if(checkdupfuncdefinition($2)==0)
-	 	;
-else if(checkdupfuncdefinition($2)==-1)
-{ 
-insertfunc($1,$2,1);
-}
-argindex=0;
-}
 ;
 
 
-params1: typespecifier ID ',' params1   {printf("I CAME TO PARAMS1\n"); insertparams($1,$2); printf("%s %s\n", $1,$2);}
-|typespecifier ID  {printf("I CAME TO PARAMS1\n"); insertparams($1,$2);printf("%s %s\n", $1,$2);}
+params1: typespecifier ID ',' params1   {insertparams($1,$2); printf("%s %s\n", $1,$2);}
+|typespecifier ID  { insertparams($1,$2);printf("%s %s\n", $1,$2);}
 ;
 
 
@@ -581,24 +789,49 @@ selectionst: matchedst
 |unmatchedst
 ;
 
-matchedst: IF '(' simpleexpression ')' statement ELSE matchedst
-|IF '(' simpleexpression ')' statement ELSE statement
+matchedst: IF '(' simpleexpression ')' statement ELSE matchedst { 
+if(intindex==1) 
+printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+intindex=0;
+}
+|IF '(' simpleexpression ')' statement ELSE statement { 
+if(intindex==1) 
+printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+intindex=0;
+}
 ;
 
-unmatchedst: IF '(' simpleexpression ')' statement
-|IF '(' simpleexpression ')' matchedst ELSE unmatchedst
-|IF '(' simpleexpression ')' statement ELSE unmatchedst
+unmatchedst: IF '(' simpleexpression ')' statement { 
+if(intindex==1) 
+printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+intindex=0;
+}
+|IF '(' simpleexpression ')' matchedst ELSE unmatchedst { 
+if(intindex==1) 
+printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+intindex=0;
+}
+|IF '(' simpleexpression ')' statement ELSE unmatchedst{ 
+if(intindex==1) 
+printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+intindex=0;
+}
 ;
 
-whileloop: WHILE '(' simpleexpression ')' compoundst 
+whileloop: WHILE '(' simpleexpression ')' compoundst { 
+if(intindex==1) 
+printf("%d Error: Expression in while must be of the type int!\n",linecount+1);
+intindex=0;
+}
 ;
 
 breakst:BREAK ';'
 ;
 
-returnst: RETURN ';'     {printf("\nRETURN\n");}
-|RETURN NUM ';'
-|RETURN '(' simpleexpression ')' ';'
+returnst: RETURN ';'     {$$=0; printf("\nRETURN\n");}
+|RETURN NUM ';'          {$$=1;}
+|RETURN '(' simpleexpression ')' ';'   {$$=1;}
+|
 ;
 
 compoundst: CO declarationlist CC
@@ -607,17 +840,7 @@ compoundst: CO declarationlist CC
 
 
 simpleexpression: simpleexpression OR andexpression 
-{ 
-if(intindex==1) 
-printf("Error: Expression must be of the type int!\n");
-intindex=0;
-}
 |andexpression 
-{
-if(intindex==1) 
-printf("Error: Expression must be of the type int!\n");
-intindex=0;
-}
 ;
 
 andexpression: andexpression AND unaryrelexpression
@@ -629,11 +852,11 @@ unaryrelexpression: '!' unaryrelexpression
 ;
 
 relexpression: sumexpression COMPARE sumexpression   { if(checkid($1)==-1)
-									printf("\n\nError : %s Undeclared\n\n\n",$1);
+									printf("%d Error: %s Undeclared!\n",linecount+1,$1);
 								if(checkid($3)==-1)
-									printf("\n\nError : %s Undeclared\n\n\n",$3);}
+									printf("%d Error: %s Undeclared!\n",linecount+1,$3);}
 |sumexpression   { if(checkid($1)==-1)
-			printf("\n\nError : %s Undeclared\n\n\n",$1);}
+			printf("%d Error: %s Undeclared!\n",linecount+1,$1);}
 ;
 
 sumexpression: sumexpression sumop term
@@ -669,9 +892,9 @@ factor: mutable
 mutable: ID {printf("Before checktype: %s\n",$1);int c=checktype($1); if(c==0) intindex=1;}
 |mutable '[' sumexpression ']' {int c=checkidarray($1); 
 if(c==0)
-printf("\n\nError : %s Undeclared\n\n\n",$1);
+printf("%d Error: %s Undeclared!\n",linecount+1,$1);
 else if(c==-1)
-printf("Non array variable %s has a subscript!\n",$1);
+printf("%d Error: Non array variable %s has a subscript!\n",linecount+1,$1);
 }  
 ;
 
@@ -682,15 +905,14 @@ immutable: '(' sumexpression ')'
 
 
 call: ID '(' args ')' { int f=checkfuncdef($1); printf("\n\nf=%d\n\n",f);
-			if(f==0) printf("Error: Function %s not defined! Illegal Call!\n",$1);
-			else if(f==-1) printf("Error: %s is not a function\n",$1);
+			if(f==0) printf("%d Error: Function %s not defined! Illegal Call!\n",linecount+1,$1);
+			else if(f==-1) printf("%d Error: %s is not a function\n",linecount+1,$1);
 else 
 {
 //Checking if number of parameters and arguments match
 int c=checknumarg($1);
 if(c==0)
-printf("Error: Number of arguments in the function call don't match with definition!\n");
-printf("Callargcount: %d\n",callargcount);
+printf("%d Error: Number of arguments in the function call don't match with definition!\n",linecount+1);
 callargcount=0;
 }
 }
@@ -707,11 +929,9 @@ arglist: arglist ',' simpleexpression   {callargcount++;}
 
 constant: NUM   
 {
-printf("$1 is %s\n",$1);
 printconst();
 printf("\n\n");
 int c=checkconsttype($1); 
-printf("c value: %d\n",c);
 if(c==0) 
 intindex=1;
 }  
@@ -745,6 +965,8 @@ int main()
 
 	printf("\n\n");
 	
+	printf("\n\nFINAL SYMBOL TABLE\n\n\n\n");
+	printfinalsym();
 	
 }
 yyerror(char *s) {
