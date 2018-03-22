@@ -1,25 +1,20 @@
 #include<stdio.h>
-void fff()
-{
-	int h;
-}
+void fff();
 int func()
 {
 	int arr[10];
-	return arr;
+
+	return 1;
 }
 
-int main()
+void main()
 {
 	int a;
-	float a;
-	char b;
+	while(3.5*a)
 	{
-		char b; 
+		int g;
 	}
 
-	int array[-9];
-	return 1;
 }
 
 

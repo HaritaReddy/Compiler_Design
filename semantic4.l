@@ -255,11 +255,11 @@ return NUM;}
 insertincons(yytext,"char");
 return CHARCONST;}
 {CO} {globalscope++;
-			printf("globalscope = %d\n",globalscope);
+			printf("\n\nGlobalscope = %d  (ie. Nesting started)\n",globalscope);
 			return CO;}
 {CC} {deleteoutofscope();
 			 globalscope--;
-			 printf("globalscope = %d\n",globalscope);
+			 printf("Globalscope = %d  (ie. Nesting ended)\n\n",globalscope);
 			  return CC;}
 {COMPARE} {//insert(yytext,"Comparison Operator");
 			return COMPARE;}

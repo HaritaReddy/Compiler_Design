@@ -1163,7 +1163,7 @@ case 21:
 YY_RULE_SETUP
 #line 257 "semantic4.l"
 {globalscope++;
-			printf("globalscope = %d\n",globalscope);
+			printf("\n\nGlobalscope = %d  (ie. Nesting started)\n",globalscope);
 			return CO;}
 	YY_BREAK
 case 22:
@@ -1171,7 +1171,7 @@ YY_RULE_SETUP
 #line 260 "semantic4.l"
 {deleteoutofscope();
 			 globalscope--;
-			 printf("globalscope = %d\n",globalscope);
+			 printf("Globalscope = %d  (ie. Nesting ended)\n\n",globalscope);
 			  return CC;}
 	YY_BREAK
 case 23:

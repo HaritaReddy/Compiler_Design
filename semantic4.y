@@ -91,7 +91,7 @@ void insertvar(char* type,char* name) //Inserts the token in symbol table
 				strcpy(temp1->next->class,"identifier");
 				temp1->next->scope=globalscope;
 				temp1->next->next=NULL;
-		
+	
 	}
 
 int checkvar(char *name)
@@ -715,25 +715,25 @@ void printfinalsym()
 		while(ptr!=NULL)
 		{
 
-			printf("Name : %s, Class:%s",ptr->name,ptr->class);
+			printf("Name:%s, Class:%s",ptr->name,ptr->class);
 			if(strlen(ptr->type)!=0)
-			printf(", Type : %s ",ptr->type);
+			printf(", Type:%s ",ptr->type);
 			
 			if(ptr->scope>=0)
-				printf(", Nesting level : %d",ptr->scope);
+				printf(", Nesting level:%d",ptr->scope);
 			if(strlen(ptr->size)!=0)
-				printf(", Array dimension : %s",ptr->size);
+				printf(", Array dimension:%s",ptr->size);
 			if(ptr->arg[0])
 			{
-				printf(", Arguments : ");
+				printf(", Arguments: ");
 				for(i=0;i<ptr->argcount;i++)
 				{
 					printf(", %s %s ",ptr->argtype[i],ptr->arg[i]);
 				}
 			}
-			if(ptr->defflag)
-				printf(", Definition flag : %d",ptr->defflag);
-			printf("\t|\t");
+			if(strcmp(ptr->class,"function")==0)
+				printf(", Definition flag:%d",ptr->defflag);
+			printf("|\t");
 			ptr=ptr->next;
 		}
 		printf("\n\n");
@@ -779,39 +779,39 @@ else if(strcmp($1,"char")==0)
 type=2;
 
 if(type==0&&($4==1||$4==2))
-printf("%d Error: Expression on RHS must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression on RHS must be of the type int!\n",linecount+1);
 else if(type==1&&$4==2)
-printf("%d Error: Expression on RHS must be of the type float!\n",linecount+1);
+printf("\n%d Error: Expression on RHS must be of the type float!\n",linecount+1);
 else if(type==1&&($4==0))
-printf("%d Error: Expression on RHS contains INT type but type conversion happens to float!\n",linecount+1);
+printf("\n%d Error: Expression on RHS contains INT type but type conversion happens to float!\n",linecount+1);
 else if(type==2&&($4==0||$4==1))
-printf("%d Error: Expression on RHS must be of the type char!\n",linecount+1);
+printf("\n%d Error: Expression on RHS must be of the type char!\n",linecount+1);
 intindex=0;
 floatindex=0;
 charindex=0;
-int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\n%d Error: Duplicate declaration of %s\n\n",linecount+1,$2);}
+int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n%d Error: Duplicate declaration of %s\n",linecount+1,$2);}
 
-|typespecifier ID 			{  int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\n%d Error: Duplicate declaration of %s\n\n",linecount+1,$2);}
+|typespecifier ID 			{  int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n%d Error: Duplicate declaration of %s\n",linecount+1,$2);}
 
 |typespecifier ID '[' NUM ']' '=' simpleexpression { if(checkconsttype($4)!=0) 
-printf("%d Error: Expression must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression must be of the type int!\n",linecount+1);
 intindex=0;insertarray($1,$2,$4); }
 
 |typespecifier ID '[' NUM ']'   { 
 if(checkconsttype($4)!=0)  
-printf("%d Error: Expression in subscript must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in subscript must be of the type int!\n",linecount+1);
 intindex=0; insertarray($1,$2,$4); }
 
 |typespecifier ID '[' ID ']' '=' simpleexpression {if(checktype($4)!=0) 
-printf("%d Error: Expression must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression must be of the type int!\n",linecount+1);
 intindex=0;insertarray($1,$2,$4);}
 
 |typespecifier ID '[' ID ']'   {
 if(checktype($4)!=0) 
-printf("%d Error: Expression in subscript must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in subscript must be of the type int!\n",linecount+1);
 intindex=0; insertarray($1,$2,$4); }
 
-|typespecifier ID '[' ']' {printf("%d Error: Array has no subscript!\n",linecount+1);}
+|typespecifier ID '[' ']' {printf("\n%d Error: Array has no subscript!\n",linecount+1);}
 
 ;
 
@@ -821,32 +821,32 @@ intindex=0; insertarray($1,$2,$4); }
 statement: ID '=' simpleexpression ';'	{  
 int type=checktype($1); 
 if(type==0&&($3==1||$3==2))
-	printf("%d Error: Expression on RHS must be of the type int! hshshssh\n",linecount+1);
+	printf("\n%d Error: Expression on RHS must be of the type int! hshshssh\n",linecount+1);
 else if(type==1&&($3==0||$3==2))
-		printf("%d Error: Expression on RHS must be of the type float!\n",linecount+1);
+		printf("\n%d Error: Expression on RHS must be of the type float!\n",linecount+1);
 else if(type==1&&($3==0))
-		printf("%d Error: Expression on RHS contains INT type but type conversion happens to float!\n",linecount+1);
+		printf("\n%d Error: Expression on RHS contains INT type but type conversion happens to float!\n",linecount+1);
 else if(type==2&&($3==1||$3==0))
-		printf("%d Error: Expression on RHS must be of the type char!\n",linecount+1);
+		printf("\n%d Error: Expression on RHS must be of the type char!\n",linecount+1);
 
 int p=checkifidisarray($1); 
 if(p==0)
-printf("%d Error: Array Identifier has no subscript!!\n",linecount+1);
+printf("\n%d Error: Array Identifier has no subscript!!\n",linecount+1);
 else
 {
 if(checkid($1)==-1)
-printf("%d Error: %s Undeclared!\n",linecount+1,$1);
+printf("\n%d Error: %s Undeclared!\n",linecount+1,$1);
 }
 }
 |ID '[' NUM ']' '=' simpleexpression ';'		
 {
 if($6==1||$6==2) 
-printf("%d Error: Expression on RHS must be of the type int!\n",linecount);
+printf("\n%d Error: Expression on RHS must be of the type int!\n",linecount);
 int c=checkidarray($1); 
 if(c==0)
 	printf("\n\nError : %s Undeclared\n\n\n",$1);
 else if(c==-1)
-printf("%d Error: Non array variable %s has a subscript!\n",linecount,$1);
+printf("\n%d Error: Non array variable %s has a subscript!\n",linecount,$1);
 }
 |compoundst
 |breakst
@@ -855,18 +855,18 @@ printf("%d Error: Non array variable %s has a subscript!\n",linecount,$1);
 |error
 ;
 
-fundeclaration: typespecifier ID '(' params1 ')' ';'  { printf("Function Declaration\n"); 
+fundeclaration: typespecifier ID '(' params1 ')' ';'  { 
 if(checkdupfunc($2)==1)
-	printf("%d Error: Duplicate Declaration of Function %s!\n",linecount+1,$2);
+	printf("\n%d Error: Duplicate Declaration of Function %s!\n",linecount+1,$2);
 else 
 { 
 insertfunc($1,$2,0);
 }
 argindex=0;
 }
-|typespecifier ID '('  ')' ';'    { printf("\nFunction Declaration\n"); 
+|typespecifier ID '('  ')' ';'    {  
 if(checkdupfunc($2)==1)
-	printf("%d Error: Duplicate Declaration of Function %s!\n",linecount+1,$2);
+	printf("\n%d Error: Duplicate Declaration of Function %s!\n",linecount+1,$2);
 else 
 { 
 insertfunc($1,$2,0);
@@ -876,14 +876,14 @@ argindex=0;
 }
 ;
 
-fundefinition: typespecifier ID '(' params1 ')' CO declarationlist returnst CC   { printf("\nI Function %s Definition\n",$2);   
+fundefinition: typespecifier ID '(' params1 ')' CO declarationlist returnst CC   { 
 int flag=0;
 if($8){
 
 	if(strcmp($1,"void")==0)
 		{
 
-			printf("%d Error:Non void return type for void function\n",linecount);
+			printf("\n%d Error:Non void return type for void function\n",linecount);
 			flag=1;
 		}
 } 
@@ -892,7 +892,7 @@ else
 {
 	if(strcmp($1,"int")==0)
 		{
-			printf("%d Error: Void return type for non void function\n",linecount);
+			printf("\n%d Error: Void return type for non void function\n",linecount);
 			flag=1;
 		}
 }
@@ -900,7 +900,7 @@ else
 if(flag==0)
 {
 if(checkdupfuncdefinition($2)==1)
-	printf("%d Error: Duplicate Definition of Function %d!\n",linecount+1,$2);
+	printf("\n%d Error: Duplicate Definition of Function %d!\n",linecount+1,$2);
 else if(checkdupfuncdefinition($2)==0)
 	 	;
 else if(checkdupfuncdefinition($2)==-1)
@@ -911,14 +911,14 @@ insertfunc($1,$2,1);
 argindex=0;
 }
 
-|typespecifier ID '(' ')' CO  declarationlist returnst CC   { printf("\nFunction  %s Definition\n",$2); 
+|typespecifier ID '(' ')' CO  declarationlist returnst CC   { 
 int flag=0;
 
 if($7)
 {	
 	if(strcmp($1,"void")==0)
 		{
-			printf("%d Error:Non void return type for void function\n",linecount+1);
+			printf("\n%d Error:Non void return type for void function\n",linecount+1);
 			flag=1;
 		}
 } 
@@ -927,7 +927,7 @@ else
 {
 	if(strcmp($1,"int")==0)
 		{
-			printf("%d Error: Void return type for non void function\n",linecount+1);
+			printf("\n%d Error: Void return type for non void function\n",linecount+1);
 			flag=1;
 		}
 }
@@ -945,14 +945,14 @@ insertfunc($1,$2,1);
 }
 argindex=0;
 }
-|typespecifier ID '(' params1 ')' CO returnst CC   { printf("\nI Function Definition\n");    
+|typespecifier ID '(' params1 ')' CO returnst CC   {    
 int flag=0;
 if($8){
 
 	if(strcmp($1,"void")==0)
 		{
 
-			printf("%d Error:Non void return type for void function\n",linecount);
+			printf("\n%d Error:Non void return type for void function\n",linecount);
 			flag=1;
 		}
 } 
@@ -961,7 +961,7 @@ else
 {
 	if(strcmp($1,"int")==0)
 		{
-			printf("%d Error: Void return type for non void function\n",linecount);
+			printf("\n%d Error: Void return type for non void function\n",linecount);
 			flag=1;
 		}
 }
@@ -969,7 +969,7 @@ else
 if(flag==0)
 {
 if(checkdupfuncdefinition($2)==1)
-	printf("%d Error: Duplicate Definition of Function %d!\n",linecount+1,$2);
+	printf("\n%d Error: Duplicate Definition of Function %d!\n",linecount+1,$2);
 else if(checkdupfuncdefinition($2)==0)
 	 	;
 else if(checkdupfuncdefinition($2)==-1)
@@ -1008,7 +1008,7 @@ printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
 |IF '(' simpleexpression ')' statement ELSE statement { 
 
 if($3==1||$3==2)
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in if must be of the type int!\n",linecount+1);
 
 }
 ;
@@ -1016,26 +1016,26 @@ printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
 unmatchedst: IF '(' simpleexpression ')' statement { 
 
 if($3==1||$3==2)
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in if must be of the type int!\n",linecount+1);
 
 }
 |IF '(' simpleexpression ')' matchedst ELSE unmatchedst { 
 
 if($3==1||$3==2)
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in if must be of the type int!\n",linecount+1);
 
 }
 |IF '(' simpleexpression ')' statement ELSE unmatchedst{ 
 
 if($3==1||$3==2)
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in if must be of the type int!\n",linecount+1);
 
 }
 ;
 
 whileloop: WHILE '(' simpleexpression ')' compoundst { 
 if($3==1||$3==2) 
-printf("%d Error: Expression in while must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in while must be of the type int!\n",linecount+1);
 }
 ;
 
@@ -1043,7 +1043,7 @@ breakst:BREAK ';'
 ;
 
 returnst: RETURN ';'     { $$=0;}
-|RETURN  simpleexpression  ';'    { if($2>2) printf("%d Error: Invalid Return Type!\n",linecount+1); intindex=0;}
+|RETURN  simpleexpression  ';'    { if($2>2) printf("\n%d Error: Invalid Return Type!\n",linecount+1); intindex=0;}
 |    {$$=0;}
 ;
 
@@ -1079,7 +1079,7 @@ sumop: '+'
 |'-'
 ;
 
-term: term mulop unaryexpression    {$$=$3;}
+term: term mulop unaryexpression    {$$=$3; if($1>$$) $$=$1;}
 |unaryexpression                    {$$=$1;}
 ;
 
@@ -1104,15 +1104,15 @@ factor: mutable   {$$=$1;}
 ;
 
 mutable: ID {{ if(checkid($1)==-1)
-					printf("%d Error: %s Undeclared!\n",linecount+1,$1);
-								if(checkid($1)==-1)
-									printf("%d Error: %s Undeclared!\n",linecount+1,$1);}
-									$$=checktype($1);}
+					printf("\n%d Error: %s Undeclared!\n",linecount+1,$1);
+				if(checkid($1)==-1)
+					printf("\n%d Error: %s Undeclared!\n",linecount+1,$1);}
+				$$=checktype($1);}
 |mutable '[' sumexpression ']' {int c=checkidarray($1); 
 if(c==0)
-printf("%d Error: %s Undeclared!\n",linecount+1,$1);
+printf("\n%d Error: %s Undeclared!\n",linecount+1,$1);
 else if(c==-1)
-printf("%d Error: Non array variable %s has a subscript!\n",linecount+1,$1);
+printf("\n%d Error: Non array variable %s has a subscript!\n",linecount+1,$1);
 }  
 ;
 
@@ -1129,16 +1129,16 @@ call: ID '(' args ')'
   int glag=0;
   if(f==0) 
   	{ 	glag=1;
-       printf("%d Error: Function %s not defined! Illegal Call!\n",linecount+1,$1);
+       printf("\n%d Error: Function %s not defined! Illegal Call!\n",linecount+1,$1);
       }
   else 
   	if(f==-1) { glag=1;
-                 printf("%d Error: %s is not a function\n",linecount+1,$1);
+                 printf("\n%d Error: %s is not a function\n",linecount+1,$1);
                 }
 else   
 if(checknumarg($1)==0)				//Checking if number of parameters and arguments match
 {
-printf("%d Error: Number of arguments in the function call don't match with definition!\n",linecount+1);
+printf("\n%d Error: Number of arguments in the function call don't match with definition!\n",linecount+1);
 	glag=1;
 
 }
@@ -1146,7 +1146,7 @@ printf("%d Error: Number of arguments in the function call don't match with defi
 else 
 {
 	if(checktypearg($1)==-1)
-	printf("%d Error: Type of Arguments Passed and Parameters don't match for %s!\n",linecount+1,$1);
+	printf("\n%d Error: Type of Arguments Passed and Parameters don't match for %s!\n",linecount+1,$1);
 	glag=1;
 }
 callargcount=0;
@@ -1173,7 +1173,6 @@ simple: NUM    {insertargs("",$1);}
 
 constant: NUM   
 {
-printf("\n\n");
 int c=checkconsttype($1); 
 if(c==0) 
 $$=0;

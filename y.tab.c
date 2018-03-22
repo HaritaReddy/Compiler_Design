@@ -156,7 +156,7 @@ void insertvar(char* type,char* name) //Inserts the token in symbol table
 				strcpy(temp1->next->class,"identifier");
 				temp1->next->scope=globalscope;
 				temp1->next->next=NULL;
-		
+	
 	}
 
 int checkvar(char *name)
@@ -780,25 +780,25 @@ void printfinalsym()
 		while(ptr!=NULL)
 		{
 
-			printf("Name : %s, Class:%s",ptr->name,ptr->class);
+			printf("Name:%s, Class:%s",ptr->name,ptr->class);
 			if(strlen(ptr->type)!=0)
-			printf(", Type : %s ",ptr->type);
+			printf(", Type:%s ",ptr->type);
 			
 			if(ptr->scope>=0)
-				printf(", Nesting level : %d",ptr->scope);
+				printf(", Nesting level:%d",ptr->scope);
 			if(strlen(ptr->size)!=0)
-				printf(", Array dimension : %s",ptr->size);
+				printf(", Array dimension:%s",ptr->size);
 			if(ptr->arg[0])
 			{
-				printf(", Arguments : ");
+				printf(", Arguments: ");
 				for(i=0;i<ptr->argcount;i++)
 				{
 					printf(", %s %s ",ptr->argtype[i],ptr->arg[i]);
 				}
 			}
-			if(ptr->defflag)
-				printf(", Definition flag : %d",ptr->defflag);
-			printf("\t|\t");
+			if(strcmp(ptr->class,"function")==0)
+				printf(", Definition flag:%d",ptr->defflag);
+			printf("|\t");
 			ptr=ptr->next;
 		}
 		printf("\n\n");
@@ -1220,8 +1220,8 @@ static const yytype_uint16 yyrline[] =
     1050,  1051,  1055,  1056,  1059,  1060,  1063,  1064,  1067,  1071,
     1074,  1075,  1078,  1079,  1082,  1083,  1086,  1087,  1088,  1091,
     1092,  1095,  1096,  1097,  1100,  1101,  1106,  1111,  1119,  1120,
-    1123,  1127,  1162,  1163,  1166,  1167,  1170,  1171,  1174,  1183,
-    1184
+    1123,  1127,  1162,  1163,  1166,  1167,  1170,  1171,  1174,  1182,
+    1183
 };
 #endif
 
@@ -2137,30 +2137,30 @@ else if(strcmp((yyvsp[-3]),"char")==0)
 type=2;
 
 if(type==0&&((yyvsp[0])==1||(yyvsp[0])==2))
-printf("%d Error: Expression on RHS must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression on RHS must be of the type int!\n",linecount+1);
 else if(type==1&&(yyvsp[0])==2)
-printf("%d Error: Expression on RHS must be of the type float!\n",linecount+1);
+printf("\n%d Error: Expression on RHS must be of the type float!\n",linecount+1);
 else if(type==1&&((yyvsp[0])==0))
-printf("%d Error: Expression on RHS contains INT type but type conversion happens to float!\n",linecount+1);
+printf("\n%d Error: Expression on RHS contains INT type but type conversion happens to float!\n",linecount+1);
 else if(type==2&&((yyvsp[0])==0||(yyvsp[0])==1))
-printf("%d Error: Expression on RHS must be of the type char!\n",linecount+1);
+printf("\n%d Error: Expression on RHS must be of the type char!\n",linecount+1);
 intindex=0;
 floatindex=0;
 charindex=0;
-int c; if(checkvar((yyvsp[-2]))==0) insertvar((yyvsp[-3]),(yyvsp[-2])); else printf("\n\n%d Error: Duplicate declaration of %s\n\n",linecount+1,(yyvsp[-2]));}
+int c; if(checkvar((yyvsp[-2]))==0) insertvar((yyvsp[-3]),(yyvsp[-2])); else printf("\n%d Error: Duplicate declaration of %s\n",linecount+1,(yyvsp[-2]));}
 #line 2152 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
 #line 794 "semantic4.y" /* yacc.c:1646  */
-    {  int c; if(checkvar((yyvsp[0]))==0) insertvar((yyvsp[-1]),(yyvsp[0])); else printf("\n\n%d Error: Duplicate declaration of %s\n\n",linecount+1,(yyvsp[0]));}
+    {  int c; if(checkvar((yyvsp[0]))==0) insertvar((yyvsp[-1]),(yyvsp[0])); else printf("\n%d Error: Duplicate declaration of %s\n",linecount+1,(yyvsp[0]));}
 #line 2158 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
 #line 796 "semantic4.y" /* yacc.c:1646  */
     { if(checkconsttype((yyvsp[-3]))!=0) 
-printf("%d Error: Expression must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression must be of the type int!\n",linecount+1);
 intindex=0;insertarray((yyvsp[-6]),(yyvsp[-5]),(yyvsp[-3])); }
 #line 2166 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -2169,7 +2169,7 @@ intindex=0;insertarray((yyvsp[-6]),(yyvsp[-5]),(yyvsp[-3])); }
 #line 800 "semantic4.y" /* yacc.c:1646  */
     { 
 if(checkconsttype((yyvsp[-1]))!=0)  
-printf("%d Error: Expression in subscript must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in subscript must be of the type int!\n",linecount+1);
 intindex=0; insertarray((yyvsp[-4]),(yyvsp[-3]),(yyvsp[-1])); }
 #line 2175 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -2177,7 +2177,7 @@ intindex=0; insertarray((yyvsp[-4]),(yyvsp[-3]),(yyvsp[-1])); }
   case 17:
 #line 805 "semantic4.y" /* yacc.c:1646  */
     {if(checktype((yyvsp[-3]))!=0) 
-printf("%d Error: Expression must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression must be of the type int!\n",linecount+1);
 intindex=0;insertarray((yyvsp[-6]),(yyvsp[-5]),(yyvsp[-3]));}
 #line 2183 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -2186,14 +2186,14 @@ intindex=0;insertarray((yyvsp[-6]),(yyvsp[-5]),(yyvsp[-3]));}
 #line 809 "semantic4.y" /* yacc.c:1646  */
     {
 if(checktype((yyvsp[-1]))!=0) 
-printf("%d Error: Expression in subscript must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in subscript must be of the type int!\n",linecount+1);
 intindex=0; insertarray((yyvsp[-4]),(yyvsp[-3]),(yyvsp[-1])); }
 #line 2192 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
 #line 814 "semantic4.y" /* yacc.c:1646  */
-    {printf("%d Error: Array has no subscript!\n",linecount+1);}
+    {printf("\n%d Error: Array has no subscript!\n",linecount+1);}
 #line 2198 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2202,21 +2202,21 @@ intindex=0; insertarray((yyvsp[-4]),(yyvsp[-3]),(yyvsp[-1])); }
     {  
 int type=checktype((yyvsp[-3])); 
 if(type==0&&((yyvsp[-1])==1||(yyvsp[-1])==2))
-	printf("%d Error: Expression on RHS must be of the type int! hshshssh\n",linecount+1);
+	printf("\n%d Error: Expression on RHS must be of the type int! hshshssh\n",linecount+1);
 else if(type==1&&((yyvsp[-1])==0||(yyvsp[-1])==2))
-		printf("%d Error: Expression on RHS must be of the type float!\n",linecount+1);
+		printf("\n%d Error: Expression on RHS must be of the type float!\n",linecount+1);
 else if(type==1&&((yyvsp[-1])==0))
-		printf("%d Error: Expression on RHS contains INT type but type conversion happens to float!\n",linecount+1);
+		printf("\n%d Error: Expression on RHS contains INT type but type conversion happens to float!\n",linecount+1);
 else if(type==2&&((yyvsp[-1])==1||(yyvsp[-1])==0))
-		printf("%d Error: Expression on RHS must be of the type char!\n",linecount+1);
+		printf("\n%d Error: Expression on RHS must be of the type char!\n",linecount+1);
 
 int p=checkifidisarray((yyvsp[-3])); 
 if(p==0)
-printf("%d Error: Array Identifier has no subscript!!\n",linecount+1);
+printf("\n%d Error: Array Identifier has no subscript!!\n",linecount+1);
 else
 {
 if(checkid((yyvsp[-3]))==-1)
-printf("%d Error: %s Undeclared!\n",linecount+1,(yyvsp[-3]));
+printf("\n%d Error: %s Undeclared!\n",linecount+1,(yyvsp[-3]));
 }
 }
 #line 2223 "y.tab.c" /* yacc.c:1646  */
@@ -2226,21 +2226,21 @@ printf("%d Error: %s Undeclared!\n",linecount+1,(yyvsp[-3]));
 #line 842 "semantic4.y" /* yacc.c:1646  */
     {
 if((yyvsp[-1])==1||(yyvsp[-1])==2) 
-printf("%d Error: Expression on RHS must be of the type int!\n",linecount);
+printf("\n%d Error: Expression on RHS must be of the type int!\n",linecount);
 int c=checkidarray((yyvsp[-6])); 
 if(c==0)
 	printf("\n\nError : %s Undeclared\n\n\n",(yyvsp[-6]));
 else if(c==-1)
-printf("%d Error: Non array variable %s has a subscript!\n",linecount,(yyvsp[-6]));
+printf("\n%d Error: Non array variable %s has a subscript!\n",linecount,(yyvsp[-6]));
 }
 #line 2237 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
 #line 858 "semantic4.y" /* yacc.c:1646  */
-    { printf("Function Declaration\n"); 
+    { 
 if(checkdupfunc((yyvsp[-4]))==1)
-	printf("%d Error: Duplicate Declaration of Function %s!\n",linecount+1,(yyvsp[-4]));
+	printf("\n%d Error: Duplicate Declaration of Function %s!\n",linecount+1,(yyvsp[-4]));
 else 
 { 
 insertfunc((yyvsp[-5]),(yyvsp[-4]),0);
@@ -2252,9 +2252,9 @@ argindex=0;
 
   case 28:
 #line 867 "semantic4.y" /* yacc.c:1646  */
-    { printf("\nFunction Declaration\n"); 
+    {  
 if(checkdupfunc((yyvsp[-3]))==1)
-	printf("%d Error: Duplicate Declaration of Function %s!\n",linecount+1,(yyvsp[-3]));
+	printf("\n%d Error: Duplicate Declaration of Function %s!\n",linecount+1,(yyvsp[-3]));
 else 
 { 
 insertfunc((yyvsp[-4]),(yyvsp[-3]),0);
@@ -2267,14 +2267,14 @@ argindex=0;
 
   case 29:
 #line 879 "semantic4.y" /* yacc.c:1646  */
-    { printf("\nI Function %s Definition\n",(yyvsp[-7]));   
+    { 
 int flag=0;
 if((yyvsp[-1])){
 
 	if(strcmp((yyvsp[-8]),"void")==0)
 		{
 
-			printf("%d Error:Non void return type for void function\n",linecount);
+			printf("\n%d Error:Non void return type for void function\n",linecount);
 			flag=1;
 		}
 } 
@@ -2283,7 +2283,7 @@ else
 {
 	if(strcmp((yyvsp[-8]),"int")==0)
 		{
-			printf("%d Error: Void return type for non void function\n",linecount);
+			printf("\n%d Error: Void return type for non void function\n",linecount);
 			flag=1;
 		}
 }
@@ -2291,7 +2291,7 @@ else
 if(flag==0)
 {
 if(checkdupfuncdefinition((yyvsp[-7]))==1)
-	printf("%d Error: Duplicate Definition of Function %d!\n",linecount+1,(yyvsp[-7]));
+	printf("\n%d Error: Duplicate Definition of Function %d!\n",linecount+1,(yyvsp[-7]));
 else if(checkdupfuncdefinition((yyvsp[-7]))==0)
 	 	;
 else if(checkdupfuncdefinition((yyvsp[-7]))==-1)
@@ -2306,14 +2306,14 @@ argindex=0;
 
   case 30:
 #line 914 "semantic4.y" /* yacc.c:1646  */
-    { printf("\nFunction  %s Definition\n",(yyvsp[-6])); 
+    { 
 int flag=0;
 
 if((yyvsp[-1]))
 {	
 	if(strcmp((yyvsp[-7]),"void")==0)
 		{
-			printf("%d Error:Non void return type for void function\n",linecount+1);
+			printf("\n%d Error:Non void return type for void function\n",linecount+1);
 			flag=1;
 		}
 } 
@@ -2322,7 +2322,7 @@ else
 {
 	if(strcmp((yyvsp[-7]),"int")==0)
 		{
-			printf("%d Error: Void return type for non void function\n",linecount+1);
+			printf("\n%d Error: Void return type for non void function\n",linecount+1);
 			flag=1;
 		}
 }
@@ -2345,14 +2345,14 @@ argindex=0;
 
   case 31:
 #line 948 "semantic4.y" /* yacc.c:1646  */
-    { printf("\nI Function Definition\n");    
+    {    
 int flag=0;
 if((yyvsp[0])){
 
 	if(strcmp((yyvsp[-7]),"void")==0)
 		{
 
-			printf("%d Error:Non void return type for void function\n",linecount);
+			printf("\n%d Error:Non void return type for void function\n",linecount);
 			flag=1;
 		}
 } 
@@ -2361,7 +2361,7 @@ else
 {
 	if(strcmp((yyvsp[-7]),"int")==0)
 		{
-			printf("%d Error: Void return type for non void function\n",linecount);
+			printf("\n%d Error: Void return type for non void function\n",linecount);
 			flag=1;
 		}
 }
@@ -2369,7 +2369,7 @@ else
 if(flag==0)
 {
 if(checkdupfuncdefinition((yyvsp[-6]))==1)
-	printf("%d Error: Duplicate Definition of Function %d!\n",linecount+1,(yyvsp[-6]));
+	printf("\n%d Error: Duplicate Definition of Function %d!\n",linecount+1,(yyvsp[-6]));
 else if(checkdupfuncdefinition((yyvsp[-6]))==0)
 	 	;
 else if(checkdupfuncdefinition((yyvsp[-6]))==-1)
@@ -2410,7 +2410,7 @@ printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
     { 
 
 if((yyvsp[-4])==1||(yyvsp[-4])==2)
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in if must be of the type int!\n",linecount+1);
 
 }
 #line 2417 "y.tab.c" /* yacc.c:1646  */
@@ -2421,7 +2421,7 @@ printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
     { 
 
 if((yyvsp[-2])==1||(yyvsp[-2])==2)
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in if must be of the type int!\n",linecount+1);
 
 }
 #line 2428 "y.tab.c" /* yacc.c:1646  */
@@ -2432,7 +2432,7 @@ printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
     { 
 
 if((yyvsp[-4])==1||(yyvsp[-4])==2)
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in if must be of the type int!\n",linecount+1);
 
 }
 #line 2439 "y.tab.c" /* yacc.c:1646  */
@@ -2443,7 +2443,7 @@ printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
     { 
 
 if((yyvsp[-4])==1||(yyvsp[-4])==2)
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in if must be of the type int!\n",linecount+1);
 
 }
 #line 2450 "y.tab.c" /* yacc.c:1646  */
@@ -2453,7 +2453,7 @@ printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
 #line 1036 "semantic4.y" /* yacc.c:1646  */
     { 
 if((yyvsp[-2])==1||(yyvsp[-2])==2) 
-printf("%d Error: Expression in while must be of the type int!\n",linecount+1);
+printf("\n%d Error: Expression in while must be of the type int!\n",linecount+1);
 }
 #line 2459 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -2466,7 +2466,7 @@ printf("%d Error: Expression in while must be of the type int!\n",linecount+1);
 
   case 48:
 #line 1046 "semantic4.y" /* yacc.c:1646  */
-    { if((yyvsp[-1])>2) printf("%d Error: Invalid Return Type!\n",linecount+1); intindex=0;}
+    { if((yyvsp[-1])>2) printf("\n%d Error: Invalid Return Type!\n",linecount+1); intindex=0;}
 #line 2471 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2535,7 +2535,7 @@ printf("%d Error: Expression in while must be of the type int!\n",linecount+1);
 
   case 64:
 #line 1082 "semantic4.y" /* yacc.c:1646  */
-    {(yyval)=(yyvsp[0]);}
+    {(yyval)=(yyvsp[0]); if((yyvsp[-2])>(yyval)) (yyval)=(yyvsp[-2]);}
 #line 2540 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2568,10 +2568,10 @@ printf("%d Error: Expression in while must be of the type int!\n",linecount+1);
   case 76:
 #line 1106 "semantic4.y" /* yacc.c:1646  */
     {{ if(checkid((yyvsp[0]))==-1)
-					printf("%d Error: %s Undeclared!\n",linecount+1,(yyvsp[0]));
-								if(checkid((yyvsp[0]))==-1)
-									printf("%d Error: %s Undeclared!\n",linecount+1,(yyvsp[0]));}
-									(yyval)=checktype((yyvsp[0]));}
+					printf("\n%d Error: %s Undeclared!\n",linecount+1,(yyvsp[0]));
+				if(checkid((yyvsp[0]))==-1)
+					printf("\n%d Error: %s Undeclared!\n",linecount+1,(yyvsp[0]));}
+				(yyval)=checktype((yyvsp[0]));}
 #line 2576 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2579,9 +2579,9 @@ printf("%d Error: Expression in while must be of the type int!\n",linecount+1);
 #line 1111 "semantic4.y" /* yacc.c:1646  */
     {int c=checkidarray((yyvsp[-3])); 
 if(c==0)
-printf("%d Error: %s Undeclared!\n",linecount+1,(yyvsp[-3]));
+printf("\n%d Error: %s Undeclared!\n",linecount+1,(yyvsp[-3]));
 else if(c==-1)
-printf("%d Error: Non array variable %s has a subscript!\n",linecount+1,(yyvsp[-3]));
+printf("\n%d Error: Non array variable %s has a subscript!\n",linecount+1,(yyvsp[-3]));
 }
 #line 2587 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -2606,16 +2606,16 @@ printf("%d Error: Non array variable %s has a subscript!\n",linecount+1,(yyvsp[-
   int glag=0;
   if(f==0) 
   	{ 	glag=1;
-       printf("%d Error: Function %s not defined! Illegal Call!\n",linecount+1,(yyvsp[-3]));
+       printf("\n%d Error: Function %s not defined! Illegal Call!\n",linecount+1,(yyvsp[-3]));
       }
   else 
   	if(f==-1) { glag=1;
-                 printf("%d Error: %s is not a function\n",linecount+1,(yyvsp[-3]));
+                 printf("\n%d Error: %s is not a function\n",linecount+1,(yyvsp[-3]));
                 }
 else   
 if(checknumarg((yyvsp[-3]))==0)				//Checking if number of parameters and arguments match
 {
-printf("%d Error: Number of arguments in the function call don't match with definition!\n",linecount+1);
+printf("\n%d Error: Number of arguments in the function call don't match with definition!\n",linecount+1);
 	glag=1;
 
 }
@@ -2623,7 +2623,7 @@ printf("%d Error: Number of arguments in the function call don't match with defi
 else 
 {
 	if(checktypearg((yyvsp[-3]))==-1)
-	printf("%d Error: Type of Arguments Passed and Parameters don't match for %s!\n",linecount+1,(yyvsp[-3]));
+	printf("\n%d Error: Type of Arguments Passed and Parameters don't match for %s!\n",linecount+1,(yyvsp[-3]));
 	glag=1;
 }
 callargcount=0;
@@ -2664,30 +2664,29 @@ if(glag==0)
   case 88:
 #line 1175 "semantic4.y" /* yacc.c:1646  */
     {
-printf("\n\n");
 int c=checkconsttype((yyvsp[0])); 
 if(c==0) 
 (yyval)=0;
 else if(c==1)
 (yyval)=1;
 }
-#line 2675 "y.tab.c" /* yacc.c:1646  */
+#line 2674 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 1183 "semantic4.y" /* yacc.c:1646  */
+#line 1182 "semantic4.y" /* yacc.c:1646  */
     { (yyval)=2;}
-#line 2681 "y.tab.c" /* yacc.c:1646  */
+#line 2680 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 1184 "semantic4.y" /* yacc.c:1646  */
+#line 1183 "semantic4.y" /* yacc.c:1646  */
     { (yyval)=(yyvsp[0]);}
-#line 2687 "y.tab.c" /* yacc.c:1646  */
+#line 2686 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2691 "y.tab.c" /* yacc.c:1646  */
+#line 2690 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2915,7 +2914,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1187 "semantic4.y" /* yacc.c:1906  */
+#line 1186 "semantic4.y" /* yacc.c:1906  */
 
 
 extern int yylex();
