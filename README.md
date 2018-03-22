@@ -10,7 +10,7 @@ switchcase  http://www.professionalcipher.com/2017/07/intermediate-code-generati
 
 ifelse      https://github.com/nishanth1991/Compiler-Design---Intermediate-code-generation
 
-### http://www.comrevo.com/2015/10/intermediate-code-generation-for-sample-language-using-LEX-and-YACC.html
+#### http://www.comrevo.com/2015/10/intermediate-code-generation-for-sample-language-using-LEX-and-YACC.html
 
 while   -   http://2k8618.blogspot.in/2011/06/intermediate-code-generator-for-while.html    
 
