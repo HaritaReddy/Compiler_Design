@@ -220,23 +220,22 @@ OR "||"
 {mcommentstart} ;
 {WHILE} { insert(yytext,"Keyword"); return WHILE;}
 {PREPRO} {return PREPRO;}
-{RETURN} { insert(yytext,"Keyword"); printf("return keyword dtecetd\n"); return RETURN;}
+{RETURN} { insert(yytext,"Keyword");  return RETURN;}
 {IF} {insert(yytext,"Keyword");return IF;}
 {ELSE} {insert(yytext,"Keyword");return ELSE;}
 {STRUCT} {insert(yytext,"Keyword");return STRUCT;}
-{kw} {insert(yytext,"Keyword");printf("%s:Keyword\n",yytext);}
+{kw} {insert(yytext,"Keyword");}
 {VOID}  {yylval = strdup(yytext);return VOID;}
 {STATEKW} {insert(yytext,"Keyword"); return STATEKW;}
 {STATIC} {return STATIC;}
 {INT} {yylval = strdup(yytext); 
-       printf("%s detected",yylval); 
 		return INT;}
 {FLOAT} {yylval = strdup(yytext); 
-       printf("%s detected",yylval); return FLOAT;}
+       return FLOAT;}
 {CHAR} {yylval = strdup(yytext); 
-       printf("%s detected",yylval); return CHAR;}
+        return CHAR;}
 {ID} { yylval = strdup(yytext); return ID;}
-{NUM} { //insert(yytext,"Constant");
+{NUM} { 
 int isfloat=0; int i;
 	for(i=0;i<yyleng;i++)
 	{
@@ -257,11 +256,8 @@ insertincons(yytext,"char");
 return CHARCONST;}
 {CO} {globalscope++;
 			printf("globalscope = %d\n",globalscope);
-			printf("%s detected\n",yytext);
 			return CO;}
 {CC} {deleteoutofscope();
-			printf("%s detected\n",yytext);
-
 			 globalscope--;
 			 printf("globalscope = %d\n",globalscope);
 			  return CC;}
