@@ -1,0 +1,1 @@
+while(k=c/s)k=k*c+d;
