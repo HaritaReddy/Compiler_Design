@@ -101,5 +101,21 @@ int main()
 OUTPUT:
 
 12 Error: Type of Arguments Passed and Parameters don't match for func!
+12 Error: Expression on RHS must be of the type int!
 
 
+TEST CASE 5:
+#include<stdio.h>
+
+
+
+int main()
+{
+	int g=9;
+	while(3.5*g)
+	{
+		g=g+1;
+	}
+	return 1;
+
+}

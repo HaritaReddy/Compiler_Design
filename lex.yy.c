@@ -575,8 +575,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "semantic2.l"
-#line 2 "semantic2.l"
+#line 1 "semantic4.l"
+#line 2 "semantic4.l"
 	#include "y.tab.h"
 	#include<stdlib.h>
 	extern int yylval;
@@ -977,7 +977,7 @@ YY_DECL
 		}
 
 	{
-#line 216 "semantic2.l"
+#line 216 "semantic4.l"
 
 #line 983 "lex.yy.c"
 
@@ -1038,104 +1038,104 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 217 "semantic2.l"
+#line 217 "semantic4.l"
 ;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 218 "semantic2.l"
+#line 218 "semantic4.l"
 {linecount++;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 219 "semantic2.l"
+#line 219 "semantic4.l"
 {linecount++;}
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 220 "semantic2.l"
+#line 220 "semantic4.l"
 ;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 221 "semantic2.l"
+#line 221 "semantic4.l"
 { insert(yytext,"Keyword"); return WHILE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 222 "semantic2.l"
+#line 222 "semantic4.l"
 {return PREPRO;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 223 "semantic2.l"
+#line 223 "semantic4.l"
 { insert(yytext,"Keyword"); printf("return keyword dtecetd\n"); return RETURN;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 224 "semantic2.l"
+#line 224 "semantic4.l"
 {insert(yytext,"Keyword");return IF;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 225 "semantic2.l"
+#line 225 "semantic4.l"
 {insert(yytext,"Keyword");return ELSE;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 226 "semantic2.l"
+#line 226 "semantic4.l"
 {insert(yytext,"Keyword");return STRUCT;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 227 "semantic2.l"
+#line 227 "semantic4.l"
 {insert(yytext,"Keyword");printf("%s:Keyword\n",yytext);}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 228 "semantic2.l"
+#line 228 "semantic4.l"
 {yylval = strdup(yytext);return VOID;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 229 "semantic2.l"
+#line 229 "semantic4.l"
 {insert(yytext,"Keyword"); return STATEKW;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 230 "semantic2.l"
+#line 230 "semantic4.l"
 {return STATIC;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 231 "semantic2.l"
+#line 231 "semantic4.l"
 {yylval = strdup(yytext); 
        printf("%s detected",yylval); 
 		return INT;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 234 "semantic2.l"
+#line 234 "semantic4.l"
 {yylval = strdup(yytext); 
        printf("%s detected",yylval); return FLOAT;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 236 "semantic2.l"
+#line 236 "semantic4.l"
 {yylval = strdup(yytext); 
        printf("%s detected",yylval); return CHAR;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 238 "semantic2.l"
+#line 238 "semantic4.l"
 { yylval = strdup(yytext); return ID;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 239 "semantic2.l"
+#line 239 "semantic4.l"
 { //insert(yytext,"Constant");
 int isfloat=0; int i;
 	for(i=0;i<yyleng;i++)
@@ -1155,14 +1155,14 @@ return NUM;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 255 "semantic2.l"
+#line 255 "semantic4.l"
 {insert(yytext,"Character Constant");
-insertincons(yytext,"character");
+insertincons(yytext,"char");
 return CHARCONST;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 258 "semantic2.l"
+#line 258 "semantic4.l"
 {globalscope++;
 			printf("globalscope = %d\n",globalscope);
 			printf("%s detected\n",yytext);
@@ -1170,7 +1170,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 262 "semantic2.l"
+#line 262 "semantic4.l"
 {deleteoutofscope();
 			printf("%s detected\n",yytext);
 
@@ -1180,40 +1180,40 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 268 "semantic2.l"
+#line 268 "semantic4.l"
 {//insert(yytext,"Comparison Operator");
 			return COMPARE;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 270 "semantic2.l"
+#line 270 "semantic4.l"
 {//insert(yytext,"Unary Operator");
 			  return UNARYOP;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 272 "semantic2.l"
+#line 272 "semantic4.l"
 {return AND;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 273 "semantic2.l"
+#line 273 "semantic4.l"
 {return OR;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 274 "semantic2.l"
+#line 274 "semantic4.l"
 {insert(yytext,"String Constant");
 insertincons(yytext,"string");return STRING; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 276 "semantic2.l"
+#line 276 "semantic4.l"
 return yytext[0];
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 278 "semantic2.l"
+#line 278 "semantic4.l"
 ECHO;
 	YY_BREAK
 #line 1220 "lex.yy.c"
@@ -2217,7 +2217,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 278 "semantic2.l"
+#line 278 "semantic4.l"
 
 
 
