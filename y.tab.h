@@ -48,56 +48,14 @@ extern int yydebug;
     ID = 258,
     NUM = 259,
     WHILE = 260,
-    TYPE = 261,
-    CHARCONST = 262,
-    COMPARE = 263,
-    PREPRO = 264,
-    INT = 265,
-    RETURN = 266,
-    IF = 267,
-    ELSE = 268,
-    STRUCT = 269,
-    UNARYOP = 270,
-    STATEKW = 271,
-    STRING = 272,
-    CC = 273,
-    CO = 274,
-    FLOAT = 275,
-    VOID = 276,
-    CHAR = 277,
-    STATIC = 278,
-    AND = 279,
-    OR = 280,
-    BREAK = 281,
-    NEG = 282
+    UMINUS = 261
   };
 #endif
 /* Tokens.  */
 #define ID 258
 #define NUM 259
 #define WHILE 260
-#define TYPE 261
-#define CHARCONST 262
-#define COMPARE 263
-#define PREPRO 264
-#define INT 265
-#define RETURN 266
-#define IF 267
-#define ELSE 268
-#define STRUCT 269
-#define UNARYOP 270
-#define STATEKW 271
-#define STRING 272
-#define CC 273
-#define CO 274
-#define FLOAT 275
-#define VOID 276
-#define CHAR 277
-#define STATIC 278
-#define AND 279
-#define OR 280
-#define BREAK 281
-#define NEG 282
+#define UMINUS 261
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
