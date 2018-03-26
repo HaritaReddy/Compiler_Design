@@ -427,6 +427,11 @@ int checkdupfuncdefinition(char *name)
 
 void insertparams(char *paramtype, char *param)
 {
+	if(strcmp(paramtype,"void")==0)
+		{
+			printf("Error : Void type parameter for function\n");
+			return;
+		}
 	arglist[argindex]=(char *)malloc(strlen(param)*sizeof(char));
 	argtypelist[argindex]=(char *)malloc(strlen(paramtype)*sizeof(char));
 	strcpy(arglist[argindex],param);

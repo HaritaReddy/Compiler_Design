@@ -6,7 +6,7 @@ struct node {
 		char name[50],class[50],type[10],size[20],*arg[5],*argtype[5];
 		struct node* next;
 		int scope,defflag,argcount;
-} ;
+};
 
 extern struct node* symtable[53],constable[53],finalsymtable[53],ptr;
 extern int linecount,globalscope=0;
