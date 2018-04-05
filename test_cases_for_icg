@@ -1,0 +1,230 @@
+TEST CASE 1 - simple while
+
+#include<stdio.h>
+int main()
+{
+	int a;
+	int b;
+	int c;
+
+	a=b+c;
+
+	while(b+c)
+	{
+		c=c+1;
+	}
+	return 1;
+}
+
+OUTPUT : 
+
+t0 = b + c
+a = t0
+L1:
+t1 = b + c
+t2 = not t1
+if t2 goto L2
+
+
+t3 = c + 1
+c = t3
+goto L1
+L2:
+
+---------------------------------------------------------------
+
+TEST CASE 2  -complex expression
+
+#include<stdio.h>
+int main()
+{
+	int a;
+	int b;
+	int c;
+	int d;
+
+	a=b+c*b-d/a*b;
+
+	
+	return 1;
+}
+
+OUTPUT : 
+
+t0 = c * b
+t1 = b + t0
+t2 = d / a
+t3 = t2 * b
+t4 = t1 - t3
+a = t4
+
+---------------------------------------------------------------------
+
+TEST CASE 3 - simple if-else
+
+#include<stdio.h>
+int main()
+{
+	int a;
+	int b;
+	int c;
+	int d;
+
+	if(a==b+c)
+	{
+		a=a+b;
+	}
+	else a=a+b;
+
+	return 1;
+}
+
+func begin main:
+t0 = b + c
+t1 = a == t0
+t2 = not t1
+if t2 goto L1
+t3 = a + b
+a = t3
+goto L2
+L1: 
+t4 = a + b
+a = t4
+L2:
+
+
+func end main
+
+--------------------------------------------------------------------
+TEST CASE 6 - nested if-else
+#include<stdio.h>
+int main()
+{
+	int a;
+	int b;
+	int c;
+	int d;
+
+	if(a==b+c)
+	{
+		a=a+b;
+	}
+	else if(a==c)
+			a=a+b;
+		else a=2;
+	return 1;
+}
+
+OUTPUT :
+function begin main:
+t0 = b + c
+t1 = a == t0
+t2 = not t1
+if t2 goto L1
+t3 = a + b
+a = t3
+goto L2
+L1: 
+t4 = a == c
+t5 = not t4
+if t5 goto L3
+t6 = a + b
+a = t6
+goto L4
+L3: 
+
+
+a = 2
+L4:
+L2:
+
+
+function end main
+
+---------------------------------------------------------
+
+TEST CASE 4:  - function call
+
+
+#include<stdio.h>
+void func(int b,int c)
+{
+	int a;
+	a=b+c;
+	return ;
+}
+
+int main()
+{
+	int l;
+	func(l,l);
+	return 1;
+}
+
+OUTPUT:
+function begin func:
+t0 = b + c
+a = t0
+function end func
+
+
+function begin main:
+call func, number of arguments - 2
+
+
+function end main
+
+-------------------------------------------------------------------
+
+TEST CASE 5:  -nested while
+
+#include<stdio.h>
+int main()
+{
+	int a;
+	int b;
+	int c;
+
+	a=b+c;
+
+	while(b+c)
+	{
+		c=c+1;
+		while(c==0)
+		{
+			c=a+b;
+		}
+	}
+	return 1;
+}
+
+
+function begin main:
+t0 = b + c
+a = t0
+L1:
+t1 = b + c
+t2 = not t1
+if t2 goto L2
+
+
+t2 = c + 1
+c = t2
+L3:
+
+
+t3 = c == 0
+t4 = not t3
+if t4 goto L4
+t4 = a + b
+c = t4
+goto L3
+L4:
+goto L1
+L2:
+
+
+function end main
+
+---------------------------------------------------------------------
+
