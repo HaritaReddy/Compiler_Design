@@ -2,62 +2,100 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-int i=1;
-int stack[100],index1=0,end[100],arr[10],gl1,gl2,ct,c,b,fl,top=0,label[20],lnum=0,ltop=0;
-char st1[100][10];
-char i_[2]="0";
+
+char codestack[100][10];
+char i_[3]="0";
+int tnum=0;
 char temp[2]="t";
-char null[2]=" ";
-void push(char *a)
+int retindex=0;
+int i=1;
+int top=0,label[20],labelnum=0,labeltop=0;
+void pushonstack(char *a)
 {
-	strcpy(st1[++top],a);
+	strcpy(codestack[++top],a);
 }
-void w1()
+void selection1()
 {
-	lnum++;
-	label[++ltop]=lnum;
-	printf("L%d:\n",lnum);
-}
-void w2()
-{
-	lnum++;
+	labelnum++;
 	strcpy(temp,"t");
+	snprintf (i_, sizeof(i_), "%d",tnum);
 	strcat(temp,i_);
-	printf("%s = not %s\n",temp,st1[top--]);
- 	printf("if %s goto L%d\n",temp,lnum);
-	i_[0]++;
-	label[++ltop]=lnum;
+	printf("%s = not %s\n",temp,codestack[top]);
+ 	printf("if %s goto L%d\n",temp,labelnum);
+	tnum++;
+	label[++labeltop]=labelnum;	
+	
 }
-void w3()
+void selection2()
 {
-	int y=label[ltop--];
-	printf("goto L%d\n",label[ltop--]);
+	labelnum++;
+	printf("goto L%d\n",labelnum);
+	printf("L%d: \n",label[labeltop--]);
+	label[++labeltop]=labelnum;
+}
+void selection3()
+{
+	printf("L%d:\n",label[labeltop--]);
+}
+void functionbegin(char* funcname)
+{
+	printf("function begin %s:\n",funcname);
+}
+void whilekeyword()
+{
+	labelnum++;
+	label[++labeltop]=labelnum;
+	printf("L%d:\n",labelnum);
+}
+void arr1(char *arrayname, int size)
+{
+	tnum++;
+	char temp1[3];
+	snprintf(temp1,3,"%d",tnum);
+	strcat(temp,temp1);
+	printf("t%d = %s + %s*%d",tnum,arrayname,codestack[top--],size);
+	strcpy(codestack[top++],temp);
+}
+void assignment_codearray(char *name)
+{
+	printf("%s[%s] = %s\n",name,codestack[top-2],codestack[top]);
+	top-=2;
+}
+void afterexpression()
+{
+	labelnum++;
+	strcpy(temp,"t");
+	snprintf (i_, sizeof(i_), "%d",tnum);
+	strcat(temp,i_);
+	printf("%s = not %s\n",temp,codestack[top--]);
+ 	printf("if %s goto L%d\n",temp,labelnum);
+	tnum;
+	label[++labeltop]=labelnum;
+}
+void endofwhile()
+{
+	int y=label[labeltop--];
+	printf("goto L%d\n",label[labeltop--]);
 	printf("L%d:\n",y);
 }
 
-void codegen()
+void code_3addr()
 {
 	strcpy(temp,"t");
+	snprintf (i_, sizeof(i_), "%d",tnum);
 	strcat(temp,i_);
-	printf("%s = %s %s %s\n",temp,st1[top-2],st1[top-1],st1[top]);
+	printf("%s = %s %s %s\n",temp,codestack[top-2],codestack[top-1],codestack[top]);
 	top-=2;
-	strcpy(st1[top],temp);
-	i_[0]++;
+	strcpy(codestack[top],temp);
+	tnum++;
 }
-void codegen_umin()
+
+void assignment_code()
 {
-	strcpy(temp,"t");
-	strcat(temp,i_);
-	printf("%s = -%s\n",temp,st1[top]);
-	top--;
-	strcpy(st1[top],temp);
-	i_[0]++;
-}
-void codegen_assign()
-{
-	printf("%s = %s\n",st1[top-2],st1[top]);
+	printf("%s = %s\n",codestack[top-2],codestack[top]);
 	top-=2;
 }
+
 struct node
 	{
 		char name[50];
@@ -84,6 +122,7 @@ int callargcount=0;
 int intindex=0;
 int floatindex=0;
 int charindex=0;
+
 
 void insertvar(char* type,char* name) //Inserts the token in symbol table
 	{
@@ -532,7 +571,21 @@ int checknumarg(char* name)
 	return 1;
 	
 }
-
+int countfuncargs(char* name)
+{
+int pos=poscalc(name);
+	struct node* temp=symtable[pos];
+	int flag=0;
+	if(symtable[pos]==NULL)
+	return 0;
+	while(strcmp(temp->name,name)!=0)
+	{
+	temp=temp->next;
+	}	
+	if(temp==NULL)
+	return 0;
+	return temp->argcount;
+}
 int checkifidisarray(char* name)
 {
 	int pos=poscalc(name);
@@ -809,12 +862,11 @@ declarationlist: declarationlist declaration
 
 declaration: vardeclaration ';'
 |statement 
-|selectionst
 |fundeclaration
 |fundefinition
 ;
 
-vardeclaration: typespecifier ID '=' simpleexpression  {  
+vardeclaration: typespecifier ID {pushonstack($2);} '=' {strcpy(codestack[++top],"=");} simpleexpression  {  assignment_code();
 int type;
 if(strcmp($1,"int")==0)
 type=0; 
@@ -822,6 +874,7 @@ else if(strcmp($1,"float")==0)
 type=1; 
 else if(strcmp($1,"char")==0)
 type=2;
+/*
 if(type==0&&(floatindex==1||charindex==1))
 printf("%d Error: Expression on RHS must be of the type int!\n",linecount+1);
 else if(type==1&&charindex==1)
@@ -830,6 +883,7 @@ else if(type==1&&charindex==0&&intindex==1)
 printf("%d Error: Expression on RHS contains INT type but type conversion happens to float!\n",linecount+1);
 else if(type==2&&(intindex==1||charindex==1))
 printf("%d Error: Expression on RHS must be of the type char!\n",linecount+1);
+*/
 intindex=0;
 floatindex=0;
 charindex=0;
@@ -841,8 +895,8 @@ int c; if(checkvar($2)==0) insertvar($1,$2); else printf("\n\n%d Error: Duplicat
 printf("%d Error: Expression must be of the type int!\n",linecount+1);
 intindex=0;insertarray($1,$2,$4); }
 
-|typespecifier ID '[' simpleexpression ']'   { if(intindex==1) 
-printf("%d Error: Expression in subscript must be of the type int!\n",linecount+1);
+|typespecifier ID '[' simpleexpression ']'   { /*if(intindex==1) 
+printf("%d Error: Expression in subscript must be of the type int!\n",linecount+1);*/
 intindex=0; insertarray($1,$2,$4); ;}
 
 |typespecifier ID '[' ']' {printf("%d Error: Array has no subscript!\n",linecount+1);}
@@ -852,7 +906,7 @@ intindex=0; insertarray($1,$2,$4); ;}
 
 
 
-statement: ID{push($1);} '=' {strcpy(st1[++top],"=");}simpleexpression {codegen_assign();}';'	{  
+statement: ID{pushonstack($1);} '=' {strcpy(codestack[++top],"=");}simpleexpression {assignment_code();}';'	{  
 int type=checktype($1);
 if(type==0&&(floatindex==1||charindex==1))
 printf("%d Error: Expression on RHS must be of the type int!\n",linecount+1);
@@ -874,18 +928,24 @@ if(checkid($1)==-1)
 printf("%d Error: %s Undeclared!\n",linecount+1,$1);
 }
 }
-|ID '[' NUM ']' '=' simpleexpression ';'		
-{
+|ID '[' simpleexpression ']' '='  {int val=checktype($1); 
+int size;
+if(val==0) size=4;else if(val==1) size=4; else size=2; 
+arr1($1,size); 
+} simpleexpression {assignment_codearray($1);} ';'		
+{/*
 if(intindex==1) 
-printf("%d Error: Expression on RHS must be of the type int!\n",linecount);
+printf("%d Error: Expression on RHS must be of the type int!\n",linecount);*/
 intindex=0;
 int c=checkidarray($1); 
 if(c==0)
 	printf("\n\nError : %s Undeclared\n\n\n",$1);
 else if(c==-1)
 printf("%d Error: Non array variable %s has a subscript!\n",linecount,$1);
+
 }
 |compoundst
+|selectionst
 |breakst
 |whileloop
 |call ';'
@@ -913,11 +973,23 @@ argindex=0;
 }
 ;
 
-fundefinition: typespecifier ID '(' params1 ')' CO declarationlist returnst CC   {   printf("returnst : %s\n",$8);  
+fundefinition: typespecifier ID '(' params1 ')' CO {functionbegin($2);} declarationlist returnst CC   {   printf("function end %s\n",$2);printf("\n\n");
 int flag=0;
+if(strcmp($1,"void")==0&&retindex==1)
+{
+	printf("%d Error:Non void return type for void function\n",linecount);
+		flag=1;
+		retindex=0;
+}
+if(strcmp($1,"int")==0&&retindex==0)
+{
+	printf("%d Error: Void return type for non void function\n",linecount);
+			flag=1;
+		retindex=0;
+}
 
-if($8){
-	printf("enntered to check\n");
+/*if($8!=0){
+	
 
 	if(strcmp($1,"void")==0)
 		{
@@ -936,7 +1008,7 @@ else
 			flag=1;
 		}
 }
-
+*/
 if(flag==0)
 {
 if(checkdupfuncdefinition($2)==1)
@@ -951,10 +1023,23 @@ insertfunc($1,$2,1);
 argindex=0;
 }
 
-|typespecifier ID '(' ')' CO  declarationlist returnst CC   {    
-int flag=0;
+|typespecifier ID '(' ')' CO {functionbegin($2);} declarationlist returnst CC   {     printf("function end %s\n",$2);printf("\n\n");
 
-if($7)
+int flag=0;
+if(strcmp($1,"void")==0&&retindex==1)
+{
+	printf("%d Error:Non void return type for void function\n",linecount);
+		flag=1;
+		retindex=0;
+}
+if(strcmp($1,"int")==0&&retindex==0)
+{
+	printf("%d Error: Void return type for non void function\n",linecount);
+			flag=1;
+		retindex=0;
+}
+/*
+if($7!=0)
 {	
 	
 	if(strcmp($1,"void")==0)
@@ -974,7 +1059,7 @@ else
 			flag=1;
 		}
 }
-
+*/
 if(flag==0)
 {
 if(checkdupfuncdefinition($2)==1)
@@ -988,10 +1073,22 @@ insertfunc($1,$2,1);
 }
 argindex=0;
 }
-|typespecifier ID '(' params1 ')' CO returnst CC   {
+|typespecifier ID '(' params1 ')' CO {functionbegin($2);}returnst CC   {   printf("function end %s\n",$2);printf("\n\n");
 int flag=0;
-
-if($8){
+if(strcmp($1,"void")==0&&retindex==1)
+{
+	printf("%d Error:Non void return type for void function\n",linecount);
+		flag=1;
+		retindex=0;
+}
+if(strcmp($1,"int")==0&&retindex==0)
+{
+	printf("%d Error: Void return type for non void function\n",linecount);
+			flag=1;
+		retindex=0;
+}
+/*
+if($8!=0){
 	
 	if(strcmp($1,"void")==0)
 		{
@@ -1010,7 +1107,7 @@ else
 			flag=1;
 		}
 }
-
+*/
 if(flag==0)
 {
 if(checkdupfuncdefinition($2)==1)
@@ -1040,50 +1137,14 @@ typespecifier: INT
 |VOID
 ;
 
-selectionst: matchedst
-|unmatchedst
+
+selectionst : IF '(' simpleexpression ')' {selection1();} statement {selection2();} else
+;
+else : ELSE statement {selection3();}
 ;
 
-matchedst: IF '(' simpleexpression ')' statement ELSE matchedst { 
-if(floatindex==1||charindex==1) 
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
-intindex=0;
-floatindex=0;
-charindex=0;
-}
-|IF '(' simpleexpression ')' statement ELSE statement { 
-if(floatindex==1||charindex==1) 
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
-intindex=0;
-floatindex=0;
-charindex=0;
-}
-;
 
-unmatchedst: IF '(' simpleexpression ')' statement { 
-if(floatindex==1||charindex==1) 
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
-intindex=0;
-floatindex=0;
-charindex=0;
-}
-|IF '(' simpleexpression ')' matchedst ELSE unmatchedst { 
-if(floatindex==1||charindex==1) 
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
-intindex=0;
-floatindex=0;
-charindex=0;
-}
-|IF '(' simpleexpression ')' statement ELSE unmatchedst{ 
-if(floatindex==1||charindex==1) 
-printf("%d Error: Expression in if must be of the type int!\n",linecount+1);
-intindex=0;
-floatindex=0;
-charindex=0;
-}
-;
-
-whileloop: WHILE {w1();}'(' simpleexpression ')' {w2();} compoundst { w3();
+whileloop: WHILE {whilekeyword();}'(' simpleexpression ')' {afterexpression();} compoundst { endofwhile();
 if(floatindex==1||charindex==1) 
 printf("%d Error: Expression in while must be of the type int!\n",linecount+1);
 intindex=0;
@@ -1095,9 +1156,9 @@ charindex=0;
 breakst:BREAK ';'
 ;
 
-returnst: RETURN ';'     { $$=0;  printf("\nRETURN\n");}
-|RETURN  simpleexpression  ';'    {$$=$3; intindex=0;}
-|    {$$=0;}
+returnst: RETURN ';'     { $$=0; retindex=0;}
+|RETURN  simpleexpression  ';'    {$$=$3; intindex=0;retindex=1;}
+|    {$$=0;retindex=0;}
 ;
 
 compoundst: CO declarationlist CC
@@ -1117,25 +1178,25 @@ unaryrelexpression: '!' unaryrelexpression
 |relexpression
 ;
 
-relexpression: sumexpression LE {strcpy(st1[++top],"<=");} sumexpression  {codegen();}
-|sumexpression GE {strcpy(st1[++top],">=");} sumexpression   {codegen();}
-|sumexpression EE {strcpy(st1[++top],"==");} sumexpression {codegen();}
-|sumexpression LT {strcpy(st1[++top],"<");} sumexpression   {codegen();}
-|sumexpression GT {strcpy(st1[++top],">");} sumexpression   {codegen();}
-|sumexpression NE {strcpy(st1[++top],"!=");} sumexpression {codegen();}
+relexpression: sumexpression LE {strcpy(codestack[++top],"<=");} sumexpression  {code_3addr();}
+|sumexpression GE {strcpy(codestack[++top],">=");} sumexpression   {code_3addr();}
+|sumexpression EE {strcpy(codestack[++top],"==");} sumexpression {code_3addr();}
+|sumexpression LT {strcpy(codestack[++top],"<");} sumexpression   {code_3addr();}
+|sumexpression GT {strcpy(codestack[++top],">");} sumexpression   {code_3addr();}
+|sumexpression NE {strcpy(codestack[++top],"!=");} sumexpression {code_3addr();}
 |sumexpression  
 ;
 
 
-sumexpression: sumexpression '+' {strcpy(st1[++top],"+");} term {codegen();}
-|sumexpression '-' {strcpy(st1[++top],"-");} term {codegen();}
+sumexpression: sumexpression '+' {strcpy(codestack[++top],"+");} term {code_3addr();}
+|sumexpression '-' {strcpy(codestack[++top],"-");} term {code_3addr();}
 |term
 ;
 
 
 
-term: term '*' { strcpy(st1[++top],"*");} unaryexpression {codegen();}
-|term '/' { strcpy(st1[++top],"/");} unaryexpression {codegen();}
+term: term '*' { strcpy(codestack[++top],"*");} unaryexpression {code_3addr();}
+|term '/' { strcpy(codestack[++top],"/");} unaryexpression {code_3addr();}
 |unaryexpression
 ;
 
@@ -1154,18 +1215,19 @@ mutable: ID {{ if(checkid($1)==-1)
 					printf("%d Error: %s Undeclared!\n",linecount+1,$1);
 								if(checkid($1)==-1)
 									printf("%d Error: %s Undeclared!\n",linecount+1,$1);}
-									int c=checktype($1); if(c==0) intindex=1; else if(c==1) floatindex=1 ;else if(c==2)charindex=1;push($1);}
+									int c=checktype($1); if(c==0) intindex=1; else if(c==1) floatindex=1 ;else if(c==2)charindex=1;pushonstack($1);}
 |mutable '[' sumexpression ']' {int c=checkidarray($1); 
 if(c==0)
 printf("%d Error: %s Undeclared!\n",linecount+1,$1);
 else if(c==-1)
 printf("%d Error: Non array variable %s has a subscript!\n",linecount+1,$1);
+
 }  
 ;
 
 immutable: '(' sumexpression ')' 
 |constant   
-|call {printf("Call $1 is %s\n",$1); int c=checktype($1); printf("intindex before call : %d\n",intindex); if(c==0) intindex=1; else if(c==1) floatindex=1 ;else if(c==2)charindex=1;}
+|call { int c=checktype($1);  if(c==0) intindex=1; else if(c==1) floatindex=1 ;else if(c==2)charindex=1;}
 ;
 
 
@@ -1191,6 +1253,8 @@ else
 }
 callargcount=0;
 argindex=0;
+int farg=countfuncargs($1);
+printf("call %s, number of arguments - %d\n",$1,farg);
 
 }
 ;
@@ -1215,12 +1279,12 @@ if(c==1)
 floatindex=1;
 else if(c==0)
 intindex=1;
-push($1);
+pushonstack($1);
 $$=$1;
 
 }  
-|CHARCONST {charindex=1; $$=$1;push($1);}
-|STRING { $$=$1;push($1);}
+|CHARCONST {charindex=1; $$=$1;pushonstack($1);}
+|STRING { $$=$1;pushonstack($1);}
 ;
 
 %%
@@ -1245,13 +1309,13 @@ int main()
 	} while (!feof(yyin));
 
 	int j;
-	j=checknofunctions();
+	/*j=checknofunctions();
 	if(j==0)
 	{
 		printf("Error: No functions defined\n");
 	}
 	printf("\n\n");
-	
+	*/
 	printf("\n\nFINAL SYMBOL TABLE\n\n\n\n");
 	printfinalsym();
 	
