@@ -1,5 +1,7 @@
 # Compiler_Design
 
+Project for all 4 phases of designing a compiler
+
 Roll Numbers: 15CO217, 15CO214
 
 Lab Batch: Thursday
